@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Boggler{% endblock %}
+
+
+{% block page_content %}
+<table class="table table-dark table-bordered table-sm">
+    <tbody>
+    {% for row in range(0,4) %}
+        <tr>
+            {% for col in range(0,4) %}
+            <td>{{ letters[row*4 + col] }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>
+{% endblock %}
