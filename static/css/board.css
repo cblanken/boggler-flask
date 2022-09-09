@@ -1,0 +1,26 @@
+:root {
+    --block-size: 10vw;
+    --letter-size: calc(var(--block-size) / 1.2);
+}
+
+#board {
+    /* font-family: 'Courier New', Courier, monospace; */
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-weight: bolder;
+    width: 50vw;
+    aspect-ratio: 1 / 1;
+    border-collapse: separate;
+    position: absolute;
+}
+
+#board td {
+    width: var(--block-size);
+    font-size: var(--letter-size);
+    margin: 0;
+    padding: 0;
+}
+
+#board td:hover {
+    background-color: #AA88FF;
+    box-shadow: 1px 1px 5px #555 inset;
+}

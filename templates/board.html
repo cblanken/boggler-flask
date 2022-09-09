@@ -1,19 +1,27 @@
 {% extends "base.html" %}
 
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/board.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
+</style>
+{% endblock %}
+
 {% block title %}Boggler{% endblock %}
 
-
 {% block page_content %}
-<table class="table table-dark table-bordered table-sm">
-    <tbody>
-    {% for row in range(0,4) %}
-        <tr>
-            {% for col in range(0,4) %}
-            <td>{{ letters[row*4 + col] }}</td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-    </tbody>
-
-</table>
+<div class="container justify-content-end">
+    <table id=board class="table-dark table-bordered">
+        <tbody>
+        {% for row in range(0,4) %}
+            <tr>
+                {% for col in range(0,4) %}
+                <td class="text-uppercase text-center align-text-bottom">{{ letters[row*4 + col] }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
