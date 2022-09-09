@@ -11,13 +11,13 @@
 {% block title %}Boggler{% endblock %}
 
 {% block page_content %}
-<div class="container justify-content-end">
+<div class="container justify-content-end disable-select">
     <table id=board class="table-dark table-bordered">
         <tbody>
-        {% for row in range(0,4) %}
+        {% for row in range(0, rows) %}
             <tr>
-                {% for col in range(0,4) %}
-                <td class="text-uppercase text-center align-text-bottom">{{ letters[row*4 + col] }}</td>
+                {% for col in range(0, cols) %}
+                <td class="text-uppercase text-center align-text-bottom">{{ letters[row*cols + col] }}</td>
                 {% endfor %}
             </tr>
         {% endfor %}

@@ -16,6 +16,10 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
+    
+    @app.route('/solved')
+    def solved():
+        return render_template('solved.html')
 
     from . import board
     app.register_blueprint(board.bp)

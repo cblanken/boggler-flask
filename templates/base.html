@@ -9,13 +9,10 @@
 
 {% block head %}
 {{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename='B2.png') }}"
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"
     type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='B2.png') }}"
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}"
     type="image/x-icon">
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
-</style>
 {% endblock %}
 
 {% block navbar %}
@@ -33,6 +30,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
+                <li><a href="/solved">Solved</a></li>
             </ul>
         </div>
     </div>
