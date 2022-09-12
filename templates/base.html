@@ -9,11 +9,14 @@
     {% block styles %}
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/custom-boostrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='/css/mermaid.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/board.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/words_table.css') }}">
     {% endblock %}
 {% endblock %}
 </head>
+
+<script src="{{ url_for('static', filename='/js/gridjs.umd.js') }}"></script>
 
 <body>
 {% block body %}
@@ -40,7 +43,7 @@
             </li>
             <li class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                Dictionary Selection
+                Dictionary
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dictionarySelectButton">
                     <li><a class="dropdown-item" href="#">dwyl</a></li>
@@ -60,5 +63,5 @@
 </body>
 
 {% block scripts %}
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
 {% endblock %}

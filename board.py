@@ -58,7 +58,7 @@ def solve():
 
     try :
         boggle_board = BoggleBoard(board_letters, max_depth)
-        boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/dwyl')
+        boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/scrabble_2019')
 
         found_paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
 

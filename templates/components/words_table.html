@@ -2,24 +2,37 @@
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
 </style>
 <table id=word-table class="table">
-    <thead>
+    <thead class="table-dark">
         <tr>
-            <th>Word</th>
-            <th>Length</th>
-            <th>Path</th>
+            <th scope="col">Word</th>
+            <th scope="col">Length</th>
+            <th scope="col">Path</th>
         </tr>
     </thead>
     <tbody>
     {% for word, path in found_words %}
         {% if word|length > 2 %}
         <tr>
-            <td class="text-center text-uppercase">
-                <a href="https://www.wordnik.com/words/{{ word }}">{{ word }}</a>
+            <td scope="row" class="text-center">
+                <a href="https://www.wordnik.com/words/{{ word }}">{{ word|upper }}</a>
             </td>
-            <td class="text-center">{{ word|length }}</td>
-            <td class="text-center">{{ path }}</td>
+            <td scope="row" class="text-center">{{ word|length }}</td>
+            <td scope="row" class="text-center">{{ path }}</td>
         </tr>
         {% endif %}
     {% endfor %}
     </tbody>
 </table>
+<table id="test"></table>
+<script>
+    new gridjs.Grid({
+        columns: ["Word", "Length", "Path"],
+        data: [
+        ["John", "john@example.com", "(353) 01 222 3333"],
+        ["Mark", "mark@gmail.com", "(01) 22 888 4444"],
+        ["Eoin", "eoin@gmail.com", "0097 22 654 00033"],
+        ["Sarah", "sarahcdd@gmail.com", "+322 876 1233"],
+        ["Afshin", "afshin@mail.com", "(353) 22 87 8356"]
+        ]
+    }).render(document.getElementById("test"));
+</script>
