@@ -1,0 +1,13 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
+</style>
+<table id=word-table class="table">
+    <tbody>
+    {% for word, path in found_words %}
+        <tr>
+            <td class="text-center text-uppercase">{{ word }}</td>
+            <td class="text-center">{{ path }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

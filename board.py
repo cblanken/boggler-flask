@@ -1,4 +1,5 @@
 import functools
+import operator
 
 from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for
@@ -57,20 +58,19 @@ def solve():
 
     try :
         boggle_board = BoggleBoard(board_letters, max_depth)
-        # TODO add wordlist selection
-        boggle_tree = build_full_boggle_tree(boggle_board, '/static/wordlists/dwyl')
+        boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/dwyl')
 
-        # print("\nBOARD")
-        # print(boggle_board)
+        found_paths_by_word = [("quip", [(0,0), (0,1)]),
+            ("quack", [(0,0), (0,2)]),
+            ("quaint", [(0,0), (0,3)])
+        ]
 
-        # for start_pos, tree in boggle_tree.items():
-        #     print(f"\nStarting @ {start_pos}...")
-        #     for word in tree.word_paths:
-        #         print(f"{word[0]: <{boggle_board.max_word_len}}: {word[1]}")
+        found_paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
 
     except ValueError as e:
         print("The [MAX_WORD_LENGTH] argument must be an integer.")
         print("Please try again.")
 
-    # return url_for('/solved')
-    return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
+    return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
+    # return render_template('components/words_table.html', found_words=found_paths_by_word)
+    # return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
