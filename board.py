@@ -60,11 +60,6 @@ def solve():
         boggle_board = BoggleBoard(board_letters, max_depth)
         boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/dwyl')
 
-        found_paths_by_word = [("quip", [(0,0), (0,1)]),
-            ("quack", [(0,0), (0,2)]),
-            ("quaint", [(0,0), (0,3)])
-        ]
-
         found_paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
 
     except ValueError as e:

@@ -2,12 +2,24 @@
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
 </style>
 <table id=word-table class="table">
+    <thead>
+        <tr>
+            <th>Word</th>
+            <th>Length</th>
+            <th>Path</th>
+        </tr>
+    </thead>
     <tbody>
     {% for word, path in found_words %}
+        {% if word|length > 2 %}
         <tr>
-            <td class="text-center text-uppercase">{{ word }}</td>
+            <td class="text-center text-uppercase">
+                <a href="https://www.wordnik.com/words/{{ word }}">{{ word }}</a>
+            </td>
+            <td class="text-center">{{ word|length }}</td>
             <td class="text-center">{{ path }}</td>
         </tr>
+        {% endif %}
     {% endfor %}
     </tbody>
 </table>

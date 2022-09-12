@@ -1,9 +1,7 @@
 from flask import Flask, request, render_template
-from flask_bootstrap import Bootstrap
 
 def create_app():
     app = Flask(__name__)
-    bootstrap = Bootstrap(app)
 
     @app.errorhandler(404)
     def page_not_found(e):
