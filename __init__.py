@@ -24,8 +24,4 @@ def create_app():
     from . import board
     app.register_blueprint(board.bp)
 
-    # @app.route('/board/<letters>')
-    # def user(letters):
-    #     return render_template('solved.html', letters=letters)
-
     return app

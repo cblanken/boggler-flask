@@ -1,6 +1,6 @@
 :root {
-    --block-size: 10vw;
-    --letter-size: calc(var(--block-size) / 1.2);
+    --letter-size: 3rem;
+    --block-size: calc(var(--letter-size) * 2);
 }
 
 .disable-select {
@@ -13,22 +13,23 @@
 #board {
     font-family: 'DM Sans', Arial, sans-serif;
     font-weight: bolder;
-    width: 50vw;
+    /* width: calc(35vw + 10vh); */
     min-width: 150px;
+    /* max-height: 75vh; */
     aspect-ratio: 1 / 1;
-    border-collapse: separate;
-    position: absolute;
+    border: 4px solid #555;
+    /* position: absolute; */
 }
 
 #board td {
-    width: var(--block-size);
-    height: var(--block-size);
+    min-width: var(--block-size);
+    max-width: var(--block-size);
+    aspect-ratio: 1/1;
     font-size: var(--letter-size);
-    margin: 0;
-    padding: 0;
+    border: 2px solid #BBB;
 }
 
 #board td:hover {
-    background-color: #AA88FF;
-    box-shadow: 1px 1px 5px #555 inset;
+    background-color: #ddcfff;
+    box-shadow: 1px 1px 5px #555 outset;
 }
