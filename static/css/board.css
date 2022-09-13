@@ -1,6 +1,6 @@
 :root {
     --board-width: 50vw;
-    --letter-size: calc(1.5rem + 1vw);
+    --letter-size: calc(1rem + 3vw);
     --block-size: calc(var(--letter-size) * 1.75);
 }
 
@@ -19,7 +19,7 @@
     color: black;
     aspect-ratio: 1 / 1;
     border: 2px solid #555;
-    border-width: 2px;
+    border-width: 3px;
     border-collapse: collapse;
 }
 

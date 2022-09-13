@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <title>
 {% block title %}Boggler{% endblock %}
 </title>
@@ -7,16 +9,15 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     {% block styles %}
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/bootstrap/custom-boostrap.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='/css/mermaid.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/board.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='/css/words_table.css') }}">
     {% endblock %}
 {% endblock %}
 </head>
 
-<script src="{{ url_for('static', filename='/js/gridjs.umd.js') }}"></script>
 
 <body>
 {% block body %}
@@ -63,5 +64,8 @@
 </body>
 
 {% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
     <script src="{{ url_for('static', filename='/js/bootstrap.bundle.min.js') }}"></script>
 {% endblock %}
+</html>

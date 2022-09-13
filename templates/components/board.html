@@ -3,7 +3,7 @@
     {% for row in range(0, rows) %}
         <tr>
             {% for col in range(0, cols) %}
-            <td class="text-uppercase text-center align-text-bottom">{{ board_letters[row][col] }}</td>
+            <td class="text-center align-text-bottom">{{ board_letters[row][col]|capitalize }}</td>
             {% endfor %}
         </tr>
     {% endfor %}

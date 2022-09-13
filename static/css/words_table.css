@@ -1,7 +1,8 @@
-#word-table {
-    background-color: #f3effa;
-}
-
 #word-table th {
     text-align: center;
+}
+
+#word-table td a {
+    text-decoration: none;
+    font-weight: bold;
 }

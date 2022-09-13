@@ -14,16 +14,18 @@ def parse_board_params():
     letters = args.get("letters")
 
     # Default size of board is 4x4
-    if rows is None or cols is None:
-        rows = 4
-        cols = 4
-    else:
+    try:
         rows = int(rows)
+    except:
+        rows = 4
+    try:
         cols = int(cols)
+    except:
+        cols = 4
 
     # Default empty board
     if letters is None:
-        letters = "" 
+        letters = "_" 
 
     letters = letters.split(',')
 
@@ -40,32 +42,45 @@ def parse_board_params():
 
     return (board_letters, rows, cols)
 
-@bp.route('/', methods=('GET', 'POST'))
-def board():
-    (board_letters, rows, cols) = parse_board_params()
-    return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
-
-@bp.route('/solve', methods=('GET', 'POST'))
-def solve():
+def find_paths_by_word(board_letters, rows, cols):
     from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 
-    (board_letters, rows, cols) = parse_board_params()
     max_depth = request.args.get("max_depth")
     if max_depth is None:
         max_depth = 14
     else:
         max_depth = int(max_depth)
 
-    try :
-        boggle_board = BoggleBoard(board_letters, max_depth)
-        boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/scrabble_2019')
+    boggle_board = BoggleBoard(board_letters, max_depth)
+    boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/scrabble_2019')
+    paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
+    return paths_by_word
 
-        found_paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
+@bp.route('/', methods=['GET'])
+def board():
+    (board_letters, rows, cols) = parse_board_params()
+    return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
 
-    except ValueError as e:
-        print("The [MAX_WORD_LENGTH] argument must be an integer.")
-        print("Please try again.")
+@bp.route('/api', methods=['GET'])
+def api():
+    # TODO: add DB
+    is_db = False
+    if is_db:
+        # Read from db
+        pass
+    else:
+        (board_letters, rows, cols) = parse_board_params()
+        word_data = find_paths_by_word(board_letters, rows, cols)
+        word_data = [{'word': word, 'len': len(word), 'path': str(path)}
+            for word, path in word_data]
+        return {
+            'words': word_data,
+            'total': len(word_data)
+        }
+
+@bp.route('/solve', methods=['GET'])
+def solve():
+    (board_letters, rows, cols) = parse_board_params()
+    found_paths_by_word = find_paths_by_word(board_letters, rows, cols)
 
     return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
-    # return render_template('components/words_table.html', found_words=found_paths_by_word)
-    # return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
