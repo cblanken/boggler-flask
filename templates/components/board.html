@@ -1,11 +1,11 @@
-<table id=board class="table-dark table-bordered disable-select">
-    <tbody>
+<div id="board" class="grid">
     {% for row in range(0, rows) %}
-        <tr>
+        <div class="board-row">
             {% for col in range(0, cols) %}
-            <td class="text-center align-text-bottom">{{ board_letters[row][col]|capitalize }}</td>
+            <div class="board-cell">
+                {{ board_letters[row][col]|capitalize }}
+            </div>
             {% endfor %}
-        </tr>
+        </div>
     {% endfor %}
-    </tbody>
-</table>
+</div>

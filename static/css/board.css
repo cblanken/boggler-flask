@@ -1,6 +1,6 @@
 :root {
     --board-width: 50vw;
-    --letter-size: calc(1rem + 3vw);
+    --letter-size: calc(1rem + 2.5vw);
     --block-size: calc(var(--letter-size) * 1.75);
 }
 
@@ -15,25 +15,32 @@
     font-family: 'DM Sans', Arial, sans-serif;
     font-weight: bolder;
     min-width: 250px;
+    max-width: 800px;
     width: var(--board-width);
-    color: black;
-    aspect-ratio: 1 / 1;
-    border: 2px solid #555;
-    border-width: 3px;
-    border-collapse: collapse;
+    border: 3px solid #555;
 }
 
-#board td {
-    min-width: var(--block-size);
-    max-width: var(--block-size);
+.grid {
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: 1fr;
     aspect-ratio: 1 / 1;
+}
+
+.board-row {
+    grid-row: 1;
+}
+
+.board-cell {
     border: 1px solid #BBB;
     font-size: var(--letter-size);
-    text-align: center;
-    vertical-align: middle !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
 }
 
-#board td:hover {
+.board-cell:hover {
     background-color: #ddcfff;
     box-shadow: 1px 1px 5px #555 outset;
-}
+} 

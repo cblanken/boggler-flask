@@ -1,8 +1,17 @@
-#word-table th {
+#word-table {
+
+}
+
+#word-table th,
+#word-table td {
     text-align: center;
 }
 
 #word-table td a {
     text-decoration: none;
     font-weight: bold;
+}
+
+.path-cell {
+    white-space: nowrap;
 }

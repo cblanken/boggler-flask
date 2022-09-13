@@ -1,3 +1,6 @@
+<script>
+    const $ = (x) => document.querySelector(x);
+</script>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&display=swap');
 </style>
@@ -5,26 +8,53 @@
     <table 
         id="word-table"
         data-toggle="table"
+        data-pagination="true"
+        data-page-size="15"
+        data-sortable="true"
+        data-search="true"
+        data-visible-search="true"
+        data-search-accent-neutralise="true"
+        data-search-align="left"
+        data-show-columns="true"
+        data-show-pagination-switch="true"
+        data-show-fullscreen="true"
+        data-pagination-v-align="bottom"
+        data-single-select="true"
+        data-click-to-select="true"
         data-url='api?letters={{ request.args.get("letters") }}&rows={{ request.args.get("rows") }}&cols={{ request.args.get("cols") }}'>
         <thead class="table-dark">
             <tr>
-                <th scope="col">Word</th>
-                <th scope="col">Length</th>
-                <th scope="col">Path</th>
+                <th scope="col" data-field="state" data-checkbox="true"></th>
+                <th scope="col" data-field="word" data-sortable="true">Word</th>
+                <th scope="col" data-field="len" data-sortable="true">Length</th>
+                <th scope="col" data-field="path" data-sortable="true">Path</th>
             </tr>
         </thead>
         <tbody>
         {% for word, path in found_words %}
             {% if word|length > 2 %}
             <tr>
+                <td scope="row"></td>
                 <td scope="row" class="text-center">
                     <a href="https://www.wordnik.com/words/{{ word }}">{{ word }}</a>
                 </td>
-                <td scope="row" class="text-center">{{ word|length }}</td>
-                <td scope="row" class="text-center">{{ path }}</td>
+                <td scope="row">{{ word|length }}</td>
+                <td scope="row" class="path-cell">{{ path }}</td>
             </tr>
             {% endif %}
         {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+// Apply table icons
+    // t = $("#word-table")
+    // let icons = { 
+    //     fullscreen: "/static/images/maximize.svg",
+    //     columns: "/static/images/columns.svg"
+    // };
+    // t.bootstrapTable('destroy').bootstrapTable({
+    //     icons: icons
+    // })
+</script>
