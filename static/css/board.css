@@ -1,7 +1,6 @@
 :root {
     --board-width: 50vw;
-    --letter-size: calc(1rem + 2.5vw);
-    --block-size: calc(var(--letter-size) * 1.75);
+    --letter-size: calc(1rem + 2.75vw);
 }
 
 .disable-select {
@@ -15,7 +14,7 @@
     font-family: 'DM Sans', Arial, sans-serif;
     font-weight: bolder;
     min-width: 250px;
-    max-width: 800px;
+    max-width: 750px;
     width: var(--board-width);
     border: 3px solid #555;
 }
