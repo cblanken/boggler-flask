@@ -1,8 +1,8 @@
 <div id="board" class="grid">
-    {% for row in range(0, rows) %}
-        <div class="board-row">
-            {% for col in range(0, cols) %}
-            <div class="board-cell">
+    {% for col in range(0, cols) %}
+        <div class="board-col">
+            {% for row in range(0, rows) %}
+            <div class="board-cell" data-pos="{{row}},{{col}}">
                 {{ board_letters[row][col]|capitalize }}
             </div>
             {% endfor %}

@@ -26,7 +26,7 @@
     aspect-ratio: 1 / 1;
 }
 
-.board-row {
+.board-col {
     grid-row: 1;
 }
 
