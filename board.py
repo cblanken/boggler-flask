@@ -71,8 +71,14 @@ def api():
     else:
         (board_letters, rows, cols) = parse_board_params()
         word_data = find_paths_by_word(board_letters, rows, cols)
-        word_data = [{'word': word, 'len': len(word), 'path': str(path)}
-            for word, path in word_data]
+        word_data = [{
+            'word': word,
+            'len': len(word),
+            'path': [{
+                'row': node[0],
+                'col': node[1],
+            } for node in path]
+        } for word, path in word_data]
         return {
             'words': word_data,
             'total': len(word_data)
