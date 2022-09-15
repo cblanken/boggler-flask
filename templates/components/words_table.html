@@ -23,25 +23,29 @@
         data-search="true"
         data-regex-search="true"
         data-visible-search="true"
+        data-filter-control="true"
+        data-filter-control-visible="true"
         data-search-accent-neutralise="true"
         data-search-align="left"
         data-search-time-out="150"
+        data-show-search-clear-button="true"
         data-show-refresh="true"
         data-show-columns="true"
         data-show-pagination-switch="true"
         data-show-fullscreen="true"
         data-icons-prefix="icon"
         data-icons="icons"
-        data-pagination-v-align="bottom"
+        data-pagination-parts="[pageInfo, pageList]"
+        data-pagination-v-align="top"
         data-pagination-loop="false"
         data-single-select="true"
         data-click-to-select="true">
         <thead class="table-dark">
             <tr>
                 <th scope="col" class="text-center" data-field="state" data-checkbox="true" data-width="20"></th>
-                <th scope="col" class="text-center" data-field="word" data-sortable="true" data-width="14" data-width-unit="rem">Word</th>
+                <th scope="col" class="text-center" data-field="word" data-sortable="true" data-width="10" data-width-unit="rem">Word</th>
                 <th scope="col" class="text-center" data-field="len" data-sortable="true" data-width="1" data-width-unit="rem">Length</th>
-                <th scope="col" class="text-center" data-field="path" data-sortable="true" data-width="100" data-width-unit="%" data-events="operateEvents">Path</th>
+                <th scope="col" class="text-center" data-field="path" data-sortable="true" data-events="operateEvents">Path</th>
             </tr>
         </thead>
         <tbody>

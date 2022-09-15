@@ -2,13 +2,6 @@ let $table = $("#word-table");
 let board_cells = document.querySelectorAll(".board-cell");
 let path_buttons = document.querySelectorAll("#test-table tr .path-cell button")
 
-// Add table filter board click events
-window.operateEvents = {
-    'click .path-cell': function (e, value, row, index) {
-        console.log(value)
-    }
-}
-
 function unhighlight_board() {
     cells = document.querySelectorAll("#board [data-pos]")
     cells.forEach(cell => {
@@ -91,7 +84,6 @@ function draw_path_connections(path) {
 }
 
 function remove_arrows(arrows) {
-    console.log(arrows)
     if (arrows.length > 0) {
         arrows.forEach(arrow => {
             if(arrow !== undefined) { arrow.remove(); } 
@@ -120,15 +112,45 @@ function get_path_from_string(path_string) {
     return path
 }
 
+// Add table filter board click events
+window.operateEvents = {
+    'click .path-cell': function (e, value, row, index) {
+        console.log(value)
+    }
+}
+
+let remove_filter_btn = document.querySelector("#remove-filter-btn")
+remove_filter_btn.addEventListener("click", _ => {
+        $table.bootstrapTable("filterBy", {
+        }, {
+            'filterAlgorithm': (row, filters) => {
+                return true
+            }
+        });
+        remove_filter_btn.style.display = "none"
+        unhighlight_board()
+        remove_arrows(active_arrows)
+        active_arrows = []
+})
+
 board_cells.forEach( cell => {
     cell.addEventListener("click", (event) => {
         $table.bootstrapTable("filterBy", {
-            word: [cell.textContent.trim()]
+            pos: cell.dataset.pos
+        }, {
+            'filterAlgorithm': (row, filters) => {
+                pos = filters.pos.split(',')
+                return row.path.includes(`${pos[0]}, ${pos[1]}`)
+            }
         });
-        console.log("Filtering by: " + cell.textContent.trim());
+        unhighlight_board()
+        remove_arrows(active_arrows)
+        active_arrows = []
         cell.classList.toggle("cell-highlight")
+        remove_filter_btn.style.display = "block"
     })
 })
+
 
 // Add board highlight table click events
 let active_arrows = []
@@ -137,7 +159,6 @@ $table.bootstrapTable({
         // TODO: implement correct API query to avoid doing this weird parsing
         // TODO: current solution only works for single digit indices
         unhighlight_board()
-        console.log("onCheck", active_arrows)
         remove_arrows(active_arrows)
         path = get_path_from_string(row.path)
         toggle_path_highlight(path)

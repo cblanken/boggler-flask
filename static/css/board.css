@@ -53,3 +53,12 @@
     background-color: var(--cell-bg-color);
     box-shadow: 1px 1px 5px #555 outset;
 } 
+
+#remove-filter-btn {
+    margin-top: 4px;
+    padding: 0;
+    width: 100%;
+    font-weight: bolder;
+    font-size: 1.5rem;
+    display: none;
+}
