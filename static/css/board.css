@@ -2,6 +2,7 @@
     --board-width: 50vw;
     --letter-size: calc(1.5rem + 5vw);
     --cell-bg-color: #ddcfff;
+    --cell-bg-color-dark: #9f76ff;
 }
 
 .disable-select {
@@ -18,7 +19,6 @@
     max-width: 750px;
     width: var(--board-width);
     border: 3px solid #555;
-    /* user-select: none; */
 }
 
 .grid {
@@ -26,6 +26,10 @@
     grid-auto-rows: 1fr;
     grid-auto-columns: 1fr;
     aspect-ratio: 1 / 1;
+}
+
+.cell-highlight-first-letter {
+    background-color: var(--cell-bg-color-dark);
 }
 
 .cell-highlight {
