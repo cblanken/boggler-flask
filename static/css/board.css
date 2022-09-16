@@ -62,3 +62,16 @@
     font-size: 1.5rem;
     display: none;
 }
+
+#remove-filter-btn span {
+    position: relative;
+    left: -5px;
+    top: 3px;
+    font-size: 1.15rem;
+    /* color: rgba(253, 0, 0, 0.777); */
+    color: rgb(255, 96, 96);
+}
+
+#remove-filter-btn i {
+    position: relative;
+}
