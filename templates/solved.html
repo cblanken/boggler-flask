@@ -7,11 +7,9 @@
 {% endblock %}
 
 {% block page_content %}
-    <div class="pt-3 mt-5 m-2">
-        <div class="d-flex flex-wrap flex-md-wrap flex-lg-nowrap justify-content-start">
-            <div>{% include 'components/board.html' %}</div>
-            <div class="flex-grow-1">{% include 'components/words_table.html' %}</div>
-        </div>
+    <div class="pt-3 mt-5 mx-2 d-flex flex-wrap flex-md-wrap flex-lg-nowrap justify-content-center">
+        <div>{% include 'components/board.html' %}</div>
+        <div class="flex-grow-1 m-2">{% include 'components/words_table.html' %}</div>
     </div>
 </div>
 {% endblock %}

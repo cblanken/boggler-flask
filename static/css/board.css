@@ -1,8 +1,9 @@
 :root {
-    --board-width: 50vw;
-    --letter-size: calc(1.5rem + 5vw);
+    --board-width: 100%;
+    --letter-size: calc(2.5rem + 1vw);
     --cell-bg-color: #ddcfff;
     --cell-bg-color-dark: #9f76ff;
+    --cell-gap: min(calc(5px + 1vw), 15px);
 }
 
 .disable-select {
@@ -18,14 +19,39 @@
     min-width: 300px;
     max-width: 750px;
     width: var(--board-width);
-    border: 3px solid #555;
 }
 
 .grid {
     display: grid;
-    grid-auto-rows: 1fr;
+    gap: var(--cell-gap);
     grid-auto-columns: 1fr;
     aspect-ratio: 1 / 1;
+    padding: 0 var(--cell-gap) 0 var(--cell-gap);
+    border: 3px solid #CB8E0A;
+    border-radius: calc(1.5 * var(--cell-gap));
+    background-color: #CB8E0A;
+}
+
+.board-col {
+    grid-row: 1;
+    min-width: 75px;
+}
+
+.board-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: var(--cell-gap) 0 var(--cell-gap) 0;
+    aspect-ratio: 1 / 1;
+
+    border: 3px solid #BD7100;
+    border-style: inset;
+    border-collapse: separati;
+    border-radius: var(--cell-gap);
+
+    font-size: var(--letter-size);
+    background-color: #eeebe5f7
 }
 
 .cell-highlight-first-letter {
@@ -34,19 +60,6 @@
 
 .cell-highlight {
     background-color: var(--cell-bg-color);
-}
-
-.board-col {
-    grid-row: 1;
-}
-
-.board-cell {
-    border: 1px solid #BBB;
-    font-size: var(--letter-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1 / 1;
 }
 
 .board-cell:hover {
@@ -61,6 +74,8 @@
     font-weight: bolder;
     font-size: 1.5rem;
     display: none;
+    background-color: rgb(230, 73, 73);
+    border-color: white;
 }
 
 #remove-filter-btn span {
@@ -68,8 +83,7 @@
     left: -5px;
     top: 3px;
     font-size: 1.15rem;
-    /* color: rgba(253, 0, 0, 0.777); */
-    color: rgb(255, 96, 96);
+    color: white;
 }
 
 #remove-filter-btn i {
