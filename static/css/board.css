@@ -30,6 +30,7 @@
     border: 3px solid #CB8E0A;
     border-radius: calc(1.5 * var(--cell-gap));
     background-color: #CB8E0A;
+    border-style: outset;
 }
 
 .board-col {
@@ -41,17 +42,43 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     width: 100%;
     margin: var(--cell-gap) 0 var(--cell-gap) 0;
     aspect-ratio: 1 / 1;
 
     border: 3px solid #BD7100;
     border-style: inset;
-    border-collapse: separati;
+    border-collapse: separate;
     border-radius: var(--cell-gap);
 
     font-size: var(--letter-size);
     background-color: #eeebe5f7
+}
+
+.board-cell input {
+    font-family: inherit;
+    padding: 0;
+    cursor: pointer;
+    color: rgb(74, 74, 74);
+    border-radius: var(--cell-gap);
+    text-align: center;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.board-cell input:focus {
+    border-width: 0;
+    color: black;
+}
+
+.board-cell input::placeholder {
+    font-family: 'DM Sans', Arial, sans-serif;
+}
+
+.board-cell input::selection {
+    background-color: var(--cell-bg-color);
 }
 
 .cell-highlight-first-letter {

@@ -151,7 +151,6 @@ board_cells.forEach( cell => {
     })
 })
 
-
 // Add board highlight table click events
 let active_arrows = []
 $table.bootstrapTable({

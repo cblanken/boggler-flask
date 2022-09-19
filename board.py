@@ -1,5 +1,6 @@
 import functools
 import operator
+import os
 
 from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for
@@ -7,12 +8,7 @@ from flask import (
 
 bp = Blueprint('board', __name__, url_prefix='/board')
 
-def parse_board_params():
-    args = request.args
-    rows = args.get("rows")
-    cols = args.get("cols")
-    letters = args.get("letters")
-
+def parse_board_params(rows, cols, letters):
     # Default size of board is 4x4
     try:
         rows = int(rows)
@@ -29,8 +25,17 @@ def parse_board_params():
 
     letters = letters.split(',')
 
+    # Remove whitespace
+    letters = [letter.strip() for letter in letters]
+
+    # Replace blanks
+    letters = list(map(lambda x: "_" if len(x) == 0 else x, letters))
+
     # Limit blocks to max of 2 letters
     letters = list(map(lambda x: x[:2] if len(x) >= 2 else x, letters))
+
+    # Lowercase
+    letters = [x.lower() for x in letters]
 
     # Fill letters to fit board size
     letters.extend("_" * (rows * cols - len(letters)))
@@ -56,10 +61,23 @@ def find_paths_by_word(board_letters, rows, cols):
     paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
     return paths_by_word
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET', 'POST'])
 def board():
-    (board_letters, rows, cols) = parse_board_params()
-    return render_template('components/board.html', board_letters=board_letters, rows=rows, cols=cols)
+    if request.form:
+        print(request.form)
+
+    if request.method == "GET":
+        rows = cols = 4
+        board_letters = " " * rows * cols
+        return render_template('solver.html', board_letters=board_letters, rows=rows, cols=cols)
+    elif request.method == "POST":
+        rows = cols = request.form["sizeSelect"]
+        letters = request.form["letters"]
+
+        session["rows"] = rows
+        session["cols"] = cols
+        session["letters"] = letters
+        return redirect(url_for("board.solve"))
 
 @bp.route('/api', methods=['GET'])
 def api():
@@ -86,7 +104,22 @@ def api():
 
 @bp.route('/solve', methods=['GET'])
 def solve():
-    (board_letters, rows, cols) = parse_board_params()
+    if request.method == "GET":
+        print("GET")
+        args = request.args
+        if args.get("rows") or args.get("cols") or args.get("letters"):
+            rows = request.args.get("rows")
+            cols = request.args.get("cols")
+            letters = request.args.get("letters")
+        else:
+            rows = session.get("rows")
+            cols = session.get("cols")
+            letters = session.get("letters")
+
+    (board_letters, rows, cols) = parse_board_params(rows, cols, letters)
+    print(rows)
+    print(cols)
+    print(board_letters)
     found_paths_by_word = find_paths_by_word(board_letters, rows, cols)
 
     return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
