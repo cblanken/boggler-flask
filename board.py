@@ -28,17 +28,11 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Remove whitespace
     letters = [letter.strip() for letter in letters]
 
-    # Replace blanks
-    letters = list(map(lambda x: "_" if len(x) == 0 else x, letters))
-
     # Limit blocks to max of 2 letters
     letters = list(map(lambda x: x[:2] if len(x) >= 2 else x, letters))
 
     # Lowercase
     letters = [x.lower() for x in letters]
-
-    # Fill letters to fit board size
-    letters.extend("_" * (rows * cols - len(letters)))
 
     board_letters = []
     for row in range(0,rows):
