@@ -8,7 +8,7 @@ from flask import (
 
 bp = Blueprint('board', __name__, url_prefix='/board')
 
-def parse_board_params(rows, cols, letters):
+def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default size of board is 4x4
     try:
         rows = int(rows)
@@ -45,19 +45,30 @@ def parse_board_params(rows, cols, letters):
         offset = row * cols
         board_letters.append(letters[offset:offset+cols])
 
-    return (board_letters, rows, cols)
+    # Default dictionary
+    dictionary_dir = url_for("static", filename=f"wordlists")
+    dictionary_path = os.path.join(dictionary_dir, dictionary)
+    print("dict dir", dictionary_dir, os.path.exists(dictionary_dir) )
+    print("dict path", dictionary_path, os.path.exists(dictionary_path) )
+    if not os.path.exists(dictionary_path) or dictionary is None:
+        # dictionary_path = os.path.join(dictionary_dir, "scrabble_2019")
+        dictionary_path = "static/wordlists/scrabble_2019"
 
-def find_paths_by_word(board_letters, rows, cols):
+    # Default maximum word length
+    try:
+        max_len = int(max_len)
+    except ValueError:
+        max_len = 16
+
+    return (board_letters, rows, cols, dictionary_path, max_len)
+
+def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
     from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 
-    max_depth = request.args.get("max_depth")
-    if max_depth is None:
-        max_depth = 14
-    else:
-        max_depth = int(max_depth)
+    boggle_board = BoggleBoard(board_letters, max_len)
+    
+    boggle_tree = build_full_boggle_tree(boggle_board, dictionary_path)
 
-    boggle_board = BoggleBoard(board_letters, max_depth)
-    boggle_tree = build_full_boggle_tree(boggle_board, 'static/wordlists/scrabble_2019')
     paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
     return paths_by_word
 
@@ -81,14 +92,19 @@ def board():
 
 @bp.route('/api', methods=['GET'])
 def api():
-    # TODO: add DB
+    args = request.args
+    rows = request.args.get("rows")
+    cols = request.args.get("cols")
+    letters = request.args.get("letters")
+    dictionary = request.args.get("dictionary")
+    max_len = request.args.get("max_len")
+    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
     is_db = False
     if is_db:
-        # Read from db
+        # TODO: Read from db
         pass
     else:
-        (board_letters, rows, cols) = parse_board_params()
-        word_data = find_paths_by_word(board_letters, rows, cols)
+        word_data = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
         word_data = [{
             'word': word,
             'len': len(word),
@@ -99,7 +115,13 @@ def api():
         } for word, path in word_data]
         return {
             'words': word_data,
-            'total': len(word_data)
+            'total': len(word_data),
+            'max_len': max_len,
+            'dictionary': os.path.basename(os.path.normpath(dictionary_path)),
+            'size': {
+                'rows': rows,
+                'cols': cols,
+            }
         }
 
 @bp.route('/solve', methods=['GET'])
