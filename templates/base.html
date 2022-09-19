@@ -50,13 +50,10 @@
                 <a class="nav-link" href="/">Home</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Solved Boards</a>
+                <a class="nav-link" href="{{ url_for('history') }}">Solved Boards</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Stats</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                <a class="nav-link" href="{{ url_for('stats') }}">Stats</a>
             </li>
           </ul>
         </div>

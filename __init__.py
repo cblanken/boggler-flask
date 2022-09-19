@@ -20,8 +20,12 @@ def create_app():
     def index():
         return redirect('board')
 
-    @app.route('/solved')
-    def solved():
-        return render_template('solved.html')
+    @app.route('/history')
+    def history():
+        return render_template('solve_history.html')
+    
+    @app.route('/stats')
+    def stats():
+        return render_template('solve_stats.html')
 
     return app
