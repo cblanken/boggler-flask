@@ -46,20 +46,18 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         board_letters.append(letters[offset:offset+cols])
 
     # Default dictionary
-    dictionary_dir = url_for("static", filename=f"wordlists")
-    dictionary_path = os.path.join(dictionary_dir, dictionary)
-    print("dict dir", dictionary_dir, os.path.exists(dictionary_dir) )
-    print("dict path", dictionary_path, os.path.exists(dictionary_path) )
+    dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
+    print("dictionary_path", dictionary_path)
     if not os.path.exists(dictionary_path) or dictionary is None:
-        # dictionary_path = os.path.join(dictionary_dir, "scrabble_2019")
-        dictionary_path = "static/wordlists/scrabble_2019"
+        dictionary_path = url_for("static", filename=f"wordlists/scrabble_2019").strip(os.sep)
 
     # Default maximum word length
     try:
         max_len = int(max_len)
-    except ValueError:
+    except:
         max_len = 16
 
+    print("dictionary_path FINAL", dictionary_path)
     return (board_letters, rows, cols, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
@@ -78,16 +76,28 @@ def board():
         print(request.form)
 
     if request.method == "GET":
-        rows = cols = 4
-        board_letters = " " * rows * cols
+        args = request.args
+        if args.get("rows") or args.get("cols") or args.get("letters"):
+            rows = request.args.get("rows")
+            cols = request.args.get("cols")
+            letters = request.args.get("letters")
+        else:
+            rows = cols = 4
+            letters = " " * rows * cols
+
+        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters)
         return render_template('solver.html', board_letters=board_letters, rows=rows, cols=cols)
     elif request.method == "POST":
         rows = cols = request.form["sizeSelect"]
         letters = request.form["letters"]
+        dictionary = request.form["dictionarySelect"]
+        max_len = request.form["maxLengthSelect"]
 
         session["rows"] = rows
         session["cols"] = cols
         session["letters"] = letters
+        session["dictionary"] = dictionary
+        session["max_len"] = max_len
         return redirect(url_for("board.solve"))
 
 @bp.route('/api', methods=['GET'])
@@ -126,22 +136,21 @@ def api():
 
 @bp.route('/solve', methods=['GET'])
 def solve():
-    if request.method == "GET":
-        print("GET")
-        args = request.args
-        if args.get("rows") or args.get("cols") or args.get("letters"):
-            rows = request.args.get("rows")
-            cols = request.args.get("cols")
-            letters = request.args.get("letters")
-        else:
-            rows = session.get("rows")
-            cols = session.get("cols")
-            letters = session.get("letters")
+    args = request.args
+    if args.get("rows") or args.get("cols") or args.get("letters"):
+        rows = request.args.get("rows")
+        cols = request.args.get("cols")
+        letters = request.args.get("letters")
+        dictionary = request.args.get("dictionary")
+        max_len = request.args.get("max_len")
+    else:
+        rows = session.get("rows")
+        cols = session.get("cols")
+        letters = session.get("letters")
+        dictionary = session.get("dictionary")
+        max_len = session.get("max_len")
 
-    (board_letters, rows, cols) = parse_board_params(rows, cols, letters)
-    print(rows)
-    print(cols)
-    print(board_letters)
-    found_paths_by_word = find_paths_by_word(board_letters, rows, cols)
+    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
+    found_paths_by_word = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
 
     return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
