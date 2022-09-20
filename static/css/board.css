@@ -50,7 +50,7 @@
     border-radius: var(--cell-gap);
 
     font-size: var(--letter-size);
-    background-color: #eeebe5f7
+    background-color: #eeebe5f7;
 }
 
 .board-cell input {
@@ -70,12 +70,13 @@
     color: black;
 }
 
-.board-cell input::placeholder {
-    font-family: 'DM Sans', Arial, sans-serif;
+.board-cell-input {
+    text-transform: capitalize;
 }
 
-.board-cell input::selection {
+.board-cell-input:focus {
     background-color: var(--cell-bg-color);
+    outline: none;
 }
 
 .cell-highlight-first-letter {
@@ -86,7 +87,7 @@
     background-color: var(--cell-bg-color);
 }
 
-.board-cell:hover {
+.board-cell-input:hover {
     background-color: var(--cell-bg-color);
     box-shadow: 1px 1px 5px #555 outset;
 } 
