@@ -21,9 +21,9 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
 
     # Default empty board
     if letters is None:
-        letters = "_" 
-
-    letters = letters.split(',')
+        letters = []
+    else:
+        letters = letters.split(',')
 
     # Remove whitespace
     letters = [letter.strip() for letter in letters]
