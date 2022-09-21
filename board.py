@@ -10,10 +10,14 @@ bp = Blueprint('board', __name__, url_prefix='/board')
 
 def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default size of board is 4x4
+
+    # Default row count
     try:
         rows = int(rows)
     except:
         rows = 4
+
+    # Default column count
     try:
         cols = int(cols)
     except:
@@ -21,15 +25,15 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
 
     # Default empty board
     if letters is None:
-        letters = []
+        letters = [""] * rows * cols
     else:
         letters = letters.split(',')
 
-    # Remove whitespace
-    letters = [letter.strip() for letter in letters]
-
     # Limit blocks to max of 2 letters
     letters = list(map(lambda x: x[:2] if len(x) >= 2 else x, letters))
+
+    # Remove whitespace
+    letters = [letter.strip() for letter in letters]
 
     # Lowercase
     letters = [x.lower() for x in letters]
@@ -41,7 +45,6 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
 
     # Default dictionary
     dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
-    print("dictionary_path", dictionary_path)
     if not os.path.exists(dictionary_path) or dictionary is None:
         dictionary_path = url_for("static", filename=f"wordlists/scrabble_2019").strip(os.sep)
 
@@ -51,7 +54,11 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     except:
         max_len = 16
 
-    print("dictionary_path FINAL", dictionary_path)
+    print(rows)
+    print(cols)
+    print(board_letters)
+    print(dictionary)
+    print(max_len)
     return (board_letters, rows, cols, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
@@ -70,16 +77,8 @@ def board():
         print(request.form)
 
     if request.method == "GET":
-        args = request.args
-        if args.get("rows") or args.get("cols") or args.get("letters"):
-            rows = request.args.get("rows")
-            cols = request.args.get("cols")
-            letters = request.args.get("letters")
-        else:
-            rows = cols = 4
-            letters = " " * rows * cols
-
-        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters)
+        rows = cols = 4
+        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, None)
         return render_template('solver.html', board_letters=board_letters, rows=rows, cols=cols)
     elif request.method == "POST":
         rows = cols = request.form["sizeSelect"]
@@ -144,7 +143,10 @@ def solve():
         dictionary = session.get("dictionary")
         max_len = session.get("max_len")
 
+
     (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
+
+    # Replace empty strings
     found_paths_by_word = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
 
     return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
