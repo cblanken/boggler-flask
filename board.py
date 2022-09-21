@@ -10,24 +10,21 @@ bp = Blueprint('board', __name__, url_prefix='/board')
 
 def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default size of board is 4x4
-
-    # Default row count
-    try:
+    try: # Default row count
         rows = int(rows)
     except:
         rows = 4
-
-    # Default column count
-    try:
+    try: # Default column count
         cols = int(cols)
     except:
         cols = 4
 
-    # Default empty board
+    # Default empty board and listify letters
     if letters is None:
-        letters = [""] * rows * cols
+        letters = []
     else:
         letters = letters.split(',')
+        letters.extend((rows * cols - len(letters)) * [""])
 
     # Limit blocks to max of 2 letters
     letters = list(map(lambda x: x[:2] if len(x) >= 2 else x, letters))
@@ -38,9 +35,11 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Lowercase
     letters = [x.lower() for x in letters]
 
+    # 2D listify letters
     board_letters = []
     for row in range(0,rows):
         offset = row * cols
+        print("ARRAY lets: ", letters[offset:offset+cols])
         board_letters.append(letters[offset:offset+cols])
 
     # Default dictionary
@@ -54,11 +53,6 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     except:
         max_len = 16
 
-    print(rows)
-    print(cols)
-    print(board_letters)
-    print(dictionary)
-    print(max_len)
     return (board_letters, rows, cols, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
