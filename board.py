@@ -45,7 +45,7 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
     if not os.path.exists(dictionary_path) or dictionary is None:
         print(f"ERROR: unable to find wordlist directory: {dictionary_path}")
-        dictionary_path = url_for("static", filename=f"wordlists/scrabble_2019").strip(os.sep)
+        dictionary_path = url_for("static", filename=f"wordlists/wordnik_2021_07_29").strip(os.sep)
         print(f"ERROR: defaulting to {dictionary_path}")
 
     # Default maximum word length
