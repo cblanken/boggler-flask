@@ -83,12 +83,16 @@
     background-color: var(--cell-bg-color);
 }
 
-.board-cell:not(.cell-highlight-first-letter):hover {
+.cell-highlight-filter {
+    background-color: #E64949
+}
+
+.board-cell:not(.cell-highlight-first-letter):not(.cell-highlight-filter):hover {
     background-color: var(--cell-bg-color);
     box-shadow: 1px 1px 5px #555 outset;
 } 
 
-.cell-highlight-first-letter {
+.cell-highlight-first-letter:not(.cell-highlight-filter) {
     background-color: var(--cell-bg-color-dark);
 }
 

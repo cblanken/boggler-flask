@@ -2,6 +2,12 @@ let $table = $("#word-table");
 let board_cells = document.querySelectorAll(".board-cell");
 let path_buttons = document.querySelectorAll("#test-table tr .path-cell button")
 
+function unhighlight_board_filter() {
+    cells = document.querySelectorAll("#board [data-pos]")
+    cells.forEach(cell => {
+        cell.classList.remove("cell-highlight-filter")
+    })
+}
 function unhighlight_board() {
     cells = document.querySelectorAll("#board [data-pos]")
     cells.forEach(cell => {
@@ -91,6 +97,7 @@ function remove_arrows(arrows) {
     }
 }
 
+// Parse path from string in table
 function get_path_from_string(path_string) {
     let open_braces = [];
     let close_braces = [];
@@ -113,11 +120,7 @@ function get_path_from_string(path_string) {
 }
 
 // Add table filter board click events
-window.operateEvents = {
-    'click .path-cell': function (e, value, row, index) {
-        console.log(value)
-    }
-}
+window.operateEvents = {}
 
 let remove_filter_btn = document.querySelector("#remove-filter-btn")
 remove_filter_btn.addEventListener("click", _ => {
@@ -128,6 +131,7 @@ remove_filter_btn.addEventListener("click", _ => {
             }
         });
         remove_filter_btn.style.display = "none"
+        unhighlight_board_filter()
         unhighlight_board()
         remove_arrows(active_arrows)
         active_arrows = []
@@ -143,10 +147,11 @@ board_cells.forEach( cell => {
                 return row.path.includes(`${pos[0]}, ${pos[1]}`)
             }
         });
+        unhighlight_board_filter()
         unhighlight_board()
         remove_arrows(active_arrows)
         active_arrows = []
-        cell.classList.toggle("cell-highlight")
+        cell.classList.add("cell-highlight-filter")
         remove_filter_btn.style.display = "block"
     })
 })
