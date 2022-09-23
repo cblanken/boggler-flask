@@ -3,7 +3,7 @@
     <div class="d-flex flex-row flex-wrap">
         <div class="m-2">
             <label for="sizeSelect" class="form-label">Size</label>
-            <select name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
+            <select id="sizeSelect" name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
                 <option value="3">3</option>
                 <option value="4" selected>4</option>
                 <option value="5">5</option>
@@ -17,9 +17,13 @@
         <div class="m-2">
             <label for="dictionarySelect" class="form-label">Dictionary</label>
             <select name="dictionarySelect" class="form-select" aria-label="A list of valid words used to solve the board">
-                <option value="scrabble_2019" selected>Scrabble 2019</option>
-                <option value="WordNet">Hunspell</option>
-                <option value="WordNet">WordNet</option>
+                <option value="na_english" selected>NA English</option>
+                <option value="sowpods">SOWPODS 2006 (European English)</option>
+                <option value="twl06">Scrabble Tournament Word List 2006</option>
+                <option value="scrabble_2019">Scrabble 2019</option>
+                <option value="wordnet">WordNet</option>
+                <option value="webster-unabridged">Webster Unabridged (1913) - Project Gutenberg</option>
+                <option value="dwyl">dwyl</option>
             </select>
         </div>
         <div class="m-2">

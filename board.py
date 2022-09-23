@@ -39,13 +39,14 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     board_letters = []
     for row in range(0,rows):
         offset = row * cols
-        print("ARRAY lets: ", letters[offset:offset+cols])
         board_letters.append(letters[offset:offset+cols])
 
     # Default dictionary
     dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
     if not os.path.exists(dictionary_path) or dictionary is None:
+        print(f"ERROR: unable to find wordlist directory: {dictionary_path}")
         dictionary_path = url_for("static", filename=f"wordlists/scrabble_2019").strip(os.sep)
+        print(f"ERROR: defaulting to {dictionary_path}")
 
     # Default maximum word length
     try:
