@@ -79,18 +79,18 @@
     outline: none;
 }
 
-.cell-highlight-first-letter {
-    background-color: var(--cell-bg-color-dark);
-}
-
 .cell-highlight {
     background-color: var(--cell-bg-color);
 }
 
-.board-cell-input:hover {
+.board-cell:not(.cell-highlight-first-letter):hover {
     background-color: var(--cell-bg-color);
     box-shadow: 1px 1px 5px #555 outset;
 } 
+
+.cell-highlight-first-letter {
+    background-color: var(--cell-bg-color-dark);
+}
 
 #remove-filter-btn {
     margin-top: 4px;
