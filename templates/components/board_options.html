@@ -1,6 +1,6 @@
 <form id="board-options" method="POST">
     <input hidden type="text" id="lettersInput" name="letters">
-    <div class="d-flex flex-row flex-wrap">
+    <div class="d-flex flex-row align-items-end flex-sm-wrap">
         <div class="m-2">
             <label for="sizeSelect" class="form-label">Size</label>
             <select id="sizeSelect" name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
@@ -49,6 +49,12 @@
                 <option value="19">19</option>
                 <option value="20">20</option>
             </select>
+        </div>
+        <div class="m-2">
+            <button id="randomBoardBtn" type="button" class="btn btn-primary p-2">
+                <i class="bi bi-shuffle mx-2"></i>
+                <span class="">Random</span>
+            </button>
         </div>
     </div>
 </form>

@@ -48,6 +48,7 @@
     border: 3px solid #BD7100;
     border-style: inset;
     border-radius: var(--cell-gap);
+    border-collapse: collapse;
 
     font-size: var(--letter-size);
     background-color: #eeebe5f7;
