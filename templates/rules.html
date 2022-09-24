@@ -1,49 +1,174 @@
-<div class="w-50 m-4 p-4">
-    <h2 class="display-4 mt-4">The Game</h1>
-    <p>The game of <a href="https://en.wikipedia.org/wiki/Boggle">Boggle</a> is a classic word game played on a square board with a number of dice. Each die has a letter on each face. The dice are rolled each round to produce a random board.</p>
+<div class="accordion w-50 mx-4 p-2">
+    <div class="accordion-item">
+        <h2 id="headingTheGame" class="accordion-header">
+            <button class="accordion-button fs-1 display-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTheGame" aria-expanded="true" aria-conrols="collapseTheGame">
+                The Game
+            </button>
+        </h2>
+        <div id="collapseTheGame" class="accordion-collapse collapse show" data-bs-target="#collapseTheGame" aria-labelledby="headingTheGame" aria-expanded="true" aria-controls="collapseTheGame">
+            <p class="accordion-body">The game of <a href="https://en.wikipedia.org/wiki/Boggle">Boggle</a> is a classic word game played on a square board with a number of dice. Each die has a letter on each face. The dice are rolled each round to produce a random board.</p>
+        </div>
+        </h2>
+    </div>
 
-    <h2 class="display-6 mt-4">How To Play</h2>
-    <p>The game is begun by deciding the final score needed to the win the game. This is entirely up to the players. A common goal is 50-100 points.</p>
-    <p>Once winning score is decided, all the dice are rolled and the timer is started to begin a round. The exact allotted time depends on the variant of the game being played but is usually between 3-5 minutes, though you are welcome to adjust the time for variety</p>
-    <p>After the board is rolled, the timer is set and the players must write down each word they find on the board. Words can be made of any adjacent dice (even diagonal), but a die cannot be repeated in a single word.</p>
+    <div class="accordion-item">
+        <h2 id="headingHowToPlay" class="accordion-header">
+            <button class="accordion-button fs-1 display-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHowToPlay" aria-expanded="true" aria-conrols="collapseHowToPlay">
+                How To Play
+            </button>
+        </h2>
+        <div id="collapseHowToPlay" class="accordion-collapse collapse show" data-bs-target="#collapseHowToPlay" aria-labelledby="headingHowToPlay" aria-expanded="true" aria-controls="collapseHowToPlay">
+            <div class="accordion-body">
+                <p>The game is begun by deciding the final score needed to the win the game. This is entirely up to the players. A common goal is 50-100 points.</p>
+                <p>Once a winning score is decided, all the dice are rolled and the round begins when the timer starts. The exact allotted time depends on the variant of the game being played, but it is usually between 3-5 minutes, though the time can also be adjusted according to the player's preference.</p>
+                <p>After the board is rolled, the timer is set and the players must write down each word they find on the board. Words can be made of any adjacent dice (even diagonal), but a die cannot be repeated in a single word. Keep in mind that the dictionary to be used for allowed words should also be decided before the game begins.</p>
 
-    <p>After time is up, the players will all compare notes on which words were found. If two or more players found the same word (even if the path for the found word is different) all players mark that word off their lists. Any surviving words in a player's list are summed up according to the point table below to calculate the player's score for each round.</p>
+                <p>After time is up, the players will all compare notes on which words were found. If two or more players found the same word (even if the path for the found word is different) all players mark that word off their lists. Any surviving words in a player's list are summed up according to the point table below to calculate the player's score for each round.</p>
+            </div>
+        </div>
+        </h2>
+    </div>
 
-    <p>Each word is assigned a point value according to it's length.</p>
-    <table class="table border border-secondary w-50 text-center">
-        <thead class="table-primary fw-bold">
-            <td>Word Length</td>
-            <td>Points</td>
-        </thead>
-        <tbody>
-            <tr>
-                <td>3,4</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>5</td>
-            </tr>
-            <tr>
-                <td>8+</td>
-                <td>11</td>
-            </tr>
-        </tbody>
-    </table>
-    <p>Note that these point values are for the standard (4x4) size boggle board. Please refer to the official instructions for point values for the 5x5 and 6x6 boards.</p>
+    <div class="accordion-item">
+        <h2 id="headingScoring" class="accordion-header">
+            <button class="accordion-button collapsed fs-1 display-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScoring" aria-expanded="true" aria-conrols="collapseScoring">
+                Scoring
+            </button>
+        </h2>
+        <div id="collapseScoring" class="accordion-collapse collapse" data-bs-target="#collapseScoring" aria-labelledby="headingScoring" aria-expanded="true" aria-controls="collapseScoring">
+            <div class="accordion-body">
+                <p>Each word is assigned a point value according to it's length.</p>
+                <div class="d-flex flex-row">
+                    <table class="mx-2 table border border-secondary text-center">
+                        <thead class="table-secondary fw-bold align-middle">
+                            <tr class="table-primary">
+                                <td colspan="2">4x4</td>
+                            </tr>
+                            <tr>
+                                <td>Word Length</td>
+                                <td>Points</td>
+                            </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                            <tr>
+                                <td>3,4</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>8+</td>
+                                <td>11</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-    <h3 class="display-6 mt-4">Official Gameplay Instructions</h3>
-    <ul>
-        <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/boggle.pdf">Class Boggle (4x4)</a></li>
-        <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/bigboggle.pdf">Big Boggle (5x5)</a></li>
-        <li><a class="text-decoration-none" href="https://www.winning-moves.com/images/SuperBigBoggleRules.pdf">Super Big Boggle (6x6)</a></li>
-    </ul>
+                    <table class="mx-2 table border border-secondary text-center">
+                        <thead class="table-secondary fw-bold align-middle">
+                            <tr class="table-primary">
+                                <td colspan="2">5x5</td>
+                            </tr>
+                            <tr>
+                                <td>Word Length</td>
+                                <td>Points</td>
+                            </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                            <tr>
+                                <td>4</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>8+</td>
+                                <td>11</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="mx-2 table border border-secondary text-center">
+                        <thead class="table-secondary fw-bold align-middle">
+                            <tr class="table-primary">
+                                <td colspan="2">6x6</td>
+                            </tr>
+                            <tr>
+                                <td>Word Length</td>
+                                <td>Points</td>
+                            </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                            <tr>
+                                <td>4</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>11</td>
+                            </tr>
+                            <tr>
+                                <td>9+</td>
+                                <td>2 / letter</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    </h2>
+                </div>
+            </div>
+
+
+    </div>
+
+    <div class="accordion-item">
+        <h2 id="headingOfficialGameplay" class="accordion-header">
+            <button class="accordion-button collapsed fs-1 display-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOfficialGameplay" aria-expanded="true" aria-conrols="collapseOfficialGameplay">
+                Official Gameplay Instructions
+            </button>
+        </h2>
+        <div id="collapseOfficialGameplay" class="accordion-collapse collapse" data-bs-target="#collapseOfficialGameplay" aria-labelledby="headingOfficialGameplay" aria-expanded="true" aria-controls="collapseOfficialGameplay">
+            <div class="accordion-body">
+                <ul>
+                    <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/boggle.pdf">(4x4) Boggle (Classic)</a></li>
+                    <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/Boggle_(1997).pdf">(4x4) Boggle (New)</a></li>
+                    <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/BoggleDeluxe.PDF">(5x5) Boggle Deluxe</a></li>
+                    <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/BoggleMaster.PDF">(5x5) Boggle Master</a></li>
+                    <li><a class="text-decoration-none" href="https://www.hasbro.com/common/instruct/bigboggle.pdf">(5x5) Big Boggle</a></li>
+                    <li><a class="text-decoration-none" href="https://www.winning-moves.com/images/SuperBigBoggleRules.pdf">(6x6) Super Big Boggle</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
