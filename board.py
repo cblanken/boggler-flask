@@ -2,6 +2,11 @@ import functools
 import operator
 import os
 
+MIN_BOARD_SIZE = 2
+MAX_BOARD_SIZE = 10
+MIN_WORD_LEN = 3
+MAX_WORD_LEN = 20
+
 from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for
 )
@@ -12,10 +17,14 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default size of board is 4x4
     try: # Default row count
         rows = int(rows)
+        rows = min(rows, MAX_BOARD_SIZE)
+        rows = max(rows, MIN_BOARD_SIZE)
     except:
         rows = 4
     try: # Default column count
         cols = int(cols)
+        cols = min(cols, MAX_BOARD_SIZE)
+        cols = max(cols, MIN_BOARD_SIZE)
     except:
         cols = 4
 
@@ -51,6 +60,8 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default maximum word length
     try:
         max_len = int(max_len)
+        max_len = min(max_len, MAX_WORD_LEN)
+        max_len = max(max_len, MIN_WORD_LEN)
     except:
         max_len = 16
 
