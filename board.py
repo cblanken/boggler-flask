@@ -165,6 +165,28 @@ def api_solve():
             }
         }
 
+@bp.route('/api/solve/table', methods=['GET'])
+def api_solve_words():
+    args = request.args
+    rows = request.args.get("rows")
+    cols = request.args.get("cols")
+    letters = request.args.get("letters")
+    dictionary = request.args.get("dictionary")
+    max_len = request.args.get("max_len")
+    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
+    is_db = False
+    if is_db:
+        # TODO: Read from db
+        pass
+    else:
+        word_data = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
+        word_data = [{
+            'word': word,
+            'len': len(word),
+            'path': str(path),
+        } for word, path in word_data]
+        return word_data
+
 @bp.route('/solve', methods=['GET'])
 def solve():
     args = request.args
