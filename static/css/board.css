@@ -16,8 +16,8 @@
 #board {
     font-family: 'DM Sans', Arial, sans-serif;
     font-weight: bolder;
-    min-width: 300px;
-    max-width: 750px;
+    min-width: calc(max(35vh, 300px));
+    max-width: calc(min(70vh, 1200px));
 }
 
 .grid {
