@@ -1,11 +1,24 @@
 import functools
 import operator
 import os
+from random import choices
+from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
+from boggler.board_randomizer import read_dice_file, get_random_board
+import importlib.resources as ILR
 
 MIN_BOARD_SIZE = 2
 MAX_BOARD_SIZE = 10
 MIN_WORD_LEN = 3
 MAX_WORD_LEN = 20
+
+# Initialize DICE for random board generation
+DICE = {}
+with ILR.path("boggler.dice", "4x4_classic.csv") as f:
+    DICE["classic"] = read_dice_file(f)
+with ILR.path("boggler.dice", "4x4_new.csv") as f:
+    DICE["new"] = read_dice_file(f)
+with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
+    DICE["super"] = read_dice_file(f)
 
 from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for
@@ -53,9 +66,8 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default dictionary
     dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
     if not os.path.exists(dictionary_path) or dictionary is None:
-        print(f"ERROR: unable to find wordlist directory: {dictionary_path}")
         dictionary_path = url_for("static", filename=f"wordlists/wordnik_2021_07_29").strip(os.sep)
-        print(f"ERROR: defaulting to {dictionary_path}")
+        print(f"Defaulting to {dictionary_path}")
 
     # Default maximum word length
     try:
@@ -68,7 +80,6 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     return (board_letters, rows, cols, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
-    from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 
     boggle_board = BoggleBoard(board_letters, max_len)
     
@@ -99,8 +110,29 @@ def board():
         session["max_len"] = max_len
         return redirect(url_for("board.solve"))
 
-@bp.route('/api', methods=['GET'])
-def api():
+@bp.route('/api/random', methods=['GET'])
+def api_random():
+    # Default letter distribution for board sizes without 
+    alphabet = ["a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "c", "c", "c", "d", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f", "g", "g", "g", "h", "h", "h", "i", "i", "i", "i", "i", "i", "i", "j", "k", "k", "l", "l", "l", "l", "l", "m", "m", "m", "n", "n", "n", "n", "n", "o", "o", "o", "o", "o", "o", "p", "p", "p", "qu", "r", "r", "r", "r", "s", "s", "s", "s", "s", "t", "t", "t", "t", "t", "u", "u", "u", "u", "v", "v", "w", "w", "x", "y", "y", "y", "z"]
+    try:
+        size = int(request.args.get("size"))
+    except:
+        size = 4
+    
+    dice_type = request.args.get("dice_type")
+    if dice_type in DICE:
+        return {
+            "board": get_random_board(DICE[dice_type]),
+            "dice_type": dice_type
+        }
+    else:
+        return {
+            "board": [choices(alphabet, k=size) for x in range(0, size)],
+            "dice_type": "random",
+        }
+
+@bp.route('/api/solve', methods=['GET'])
+def api_solve():
     args = request.args
     rows = request.args.get("rows")
     cols = request.args.get("cols")
