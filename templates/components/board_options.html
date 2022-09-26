@@ -1,7 +1,7 @@
 <form id="board-options" method="POST">
     <input hidden type="text" id="lettersInput" name="letters">
-    <div class="d-flex flex-row align-items-end flex-sm-wrap">
-        <div class="m-2">
+    <div class="d-flex flex-row align-items-center flex-sm-wrap mx-2">
+        <div>
             <label for="sizeSelect" class="form-label">Size</label>
             <select id="sizeSelect" name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
                 <option value="3">3</option>
@@ -50,11 +50,22 @@
                 <option value="20">20</option>
             </select>
         </div>
-        <div class="m-2">
-            <button id="randomBoardBtn" type="button" class="btn btn-primary p-2" title="Randomize board letters">
-                <i class="bi bi-shuffle mx-2"></i>
-                <span class="">Random</span>
-            </button>
+        <div class="d-flex flex-row align-items-center">
+            <label for="diceSelect" class="form-label d-none">Dice</label>
+            <div>
+                <select id="diceSelect" name="diceSelect" class="form-select" aria-label="The dice to be used for the board randomizer">
+                    <option selected value="classic">(4x4) Classic Boggle</option>
+                    <option value="new">(4x4) New Boggle</option>
+                    <option disabled value="big">(5x5) Big Boggle</option>
+                    <option value="super">(6x6) Super Big Boggle</option>
+                </select>
+            </div>
+            <div class="m-2">
+                <button id="randomBoardBtn" type="button" class="btn btn-primary p-2" title="Randomize board letters">
+                    <i class="bi bi-shuffle mx-2"></i>
+                    <span class="">Random</span>
+                </button>
+            </div>
         </div>
     </div>
 </form>

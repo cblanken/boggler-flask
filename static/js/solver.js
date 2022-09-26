@@ -41,18 +41,26 @@ sizeSelect.addEventListener("change", e => {
     }
 })
 
+async function get_random_board(dice_type, size) {
+    const response = await fetch(`api/random?dice_type=${dice_type}&size=${size}`, {
+        method: "GET",
+        headers: {"Content-type": "application/json;charset=UTF-8"}
+    })
+    let json = await response.json()
+    return json
+}
+
 // Randomize board button
 let randomBoardBtn = document.getElementById("randomBoardBtn")
+let randomDiceSelect = document.getElementById("diceSelect")
 randomBoardBtn.addEventListener("click", e => {
-    // TODO: pull random dice from board_randomizer.py
-    // alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','qu','r','s','t','u','v','w','x','y','z']
-    // alphabet with matching 4x4 dice distribution
-    alphabet = ["a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "c", "c", "c", "d", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f", "g", "g", "g", "h", "h", "h", "i", "i", "i", "i", "i", "i", "i", "j", "k", "k", "l", "l", "l", "l", "l", "m", "m", "m", "n", "n", "n", "n", "n", "o", "o", "o", "o", "o", "o", "p", "p", "p", "qu", "r", "r", "r", "r", "s", "s", "s", "s", "s", "t", "t", "t", "t", "t", "u", "u", "u", "u", "v", "v", "w", "w", "x", "y", "y", "y", "z"]
-    for (let row = 0; row < sizeSelect.value; row++) {
-        for (let col = 0; col < sizeSelect.value; col++) {
-            let index = parseInt(Math.random() * alphabet.length) % alphabet.length
-            letter_input = document.querySelector(`.board-cell[data-pos='${row},${col}']`)
-            letter_input.firstElementChild.value = alphabet[index]
+    get_random_board(randomDiceSelect.value, sizeSelect.value)
+    .then(json => {
+        for (let row = 0; row < sizeSelect.value; row++) {
+            for (let col = 0; col < sizeSelect.value; col++) {
+                letter_input = document.querySelector(`.board-cell[data-pos='${row},${col}']`)
+                letter_input.firstElementChild.value = json.board[row][col]
+            }
         }
-    }
+    })
 })

@@ -120,7 +120,7 @@ def api_random():
         size = 4
     
     dice_type = request.args.get("dice_type")
-    if dice_type in DICE:
+    if dice_type in DICE and size * size == len(DICE[dice_type]):
         return {
             "board": get_random_board(DICE[dice_type]),
             "dice_type": dice_type
