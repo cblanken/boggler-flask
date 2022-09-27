@@ -23,9 +23,5 @@ def create_app():
     @app.route('/history')
     def history():
         return render_template('solve_history.html')
-    
-    @app.route('/stats')
-    def stats():
-        return render_template('solve_stats.html')
 
     return app
