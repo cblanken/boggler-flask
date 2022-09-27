@@ -6,3 +6,7 @@
 .navbar-nav > li {
     padding: 0 0.25rem;
 }
+
+.btn-success, .btn-success:hover, .btn-success:active, .btn-success:visited {
+    background-color: rgba(20, 167, 79, 0.815) !important;
+}

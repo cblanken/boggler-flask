@@ -7,9 +7,7 @@
 {% endblock %}
 
 {% block page_content %}
-    <div class="pt-3 mt-5 mx-2 d-flex flex-wrap flex-md-wrap flex-lg-nowrap justify-content-center">
-        <div>{% include 'components/board.html' %}</div>
-        <div class="flex-grow-1 m-2">{% include 'components/words_table.html' %}</div>
-    </div>
+<div>
+    {% include 'components/solved_board.html' %}
 </div>
 {% endblock %}

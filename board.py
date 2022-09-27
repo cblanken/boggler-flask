@@ -209,4 +209,4 @@ def solve():
     # Replace empty strings
     found_paths_by_word = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
 
-    return render_template('solved.html', board_letters=board_letters, rows=rows, cols=cols, found_words=found_paths_by_word)
+    return render_template('solved.html', letters=letters, board_letters=board_letters, rows=rows, cols=cols, dictionary=dictionary, max_len=max_len, found_words=found_paths_by_word)

@@ -174,3 +174,27 @@ $table.bootstrapTable({
         active_arrows = []
     }
 })
+
+// Share board link button
+let copyUrlBtn = document.getElementById("copyBoardUrlBtn")
+let copyUrlBtnIcon = document.getElementById("copyBoardUrlBtnIcon")
+let copyUrlBtnText = document.getElementById("copyBoardUrlBtnText")
+copyUrlBtn.addEventListener("click", e => {
+    copyUrlBtn.classList.remove("btn-primary")
+    copyUrlBtn.classList.add("btn-success")
+    copyUrlBtnIcon.classList.remove("bi-clipboard")
+    copyUrlBtnIcon.classList.add("bi-clipboard-check")
+    let btnText = copyUrlBtnText.textContent
+    copyUrlBtnText.textContent = "Copied!"
+
+    setTimeout(_ => {
+        copyUrlBtn.classList.add("btn-primary")
+        copyUrlBtn.classList.remove("btn-success")
+        copyUrlBtnIcon.classList.add("bi-clipboard")
+        copyUrlBtnIcon.classList.remove("bi-clipboard-check")
+        copyUrlBtnText.textContent = btnText
+    }, 1500)
+
+    console.log(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")))
+    navigator.clipboard.writeText(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")))
+})

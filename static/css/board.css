@@ -20,6 +20,11 @@
     max-width: calc(min(70vh, 1200px));
 }
 
+.board-dimensions {
+    min-width: calc(max(35vh, 300px));
+    max-width: calc(min(70vh, 1200px));
+}
+
 .grid {
     display: grid;
     gap: var(--cell-gap);
