@@ -13,12 +13,23 @@ MAX_WORD_LEN = 20
 
 # Initialize DICE for random board generation
 DICE = {}
-with ILR.path("boggler.dice", "4x4_classic.csv") as f:
-    DICE["classic"] = read_dice_file(f)
-with ILR.path("boggler.dice", "4x4_new.csv") as f:
-    DICE["new"] = read_dice_file(f)
-with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
-    DICE["super"] = read_dice_file(f)
+try:
+    with ILR.path("boggler.dice", "4x4_classic.csv") as f:
+        DICE["classic"] = read_dice_file(f)
+except:
+    print("Unable to load '4x4_classic.csv' DICE file")
+
+try:
+    with ILR.path("boggler.dice", "4x4_new.csv") as f:
+        DICE["new"] = read_dice_file(f)
+except:
+    print("Unable to load '4x4_new.csv' DICE file")
+
+try:
+    with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
+        DICE["super"] = read_dice_file(f)
+except:
+    print("Unable to load '6x6_super_big.csv' DICE file")
 
 from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for

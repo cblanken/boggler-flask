@@ -5,8 +5,8 @@ def create_app():
     # TODO: handle session key with env vars
     app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
 
-    from . import board
-    app.register_blueprint(board.bp)
+    from board import bp
+    app.register_blueprint(bp)
 
     @app.errorhandler(404)
     def page_not_found(e):
