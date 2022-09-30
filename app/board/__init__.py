@@ -35,7 +35,7 @@ from flask import (
     Blueprint, Flask, g, redirect, render_template, request, session, url_for
 )
 
-bp = Blueprint('board', __name__, url_prefix='/board')
+bp = Blueprint('board', __name__, url_prefix='/board', static_folder='static')
 
 def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     # Default size of board is 4x4
@@ -75,9 +75,9 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         board_letters.append(letters[offset:offset+cols])
 
     # Default dictionary
-    dictionary_path = url_for("static", filename=f"wordlists/{dictionary}").strip(os.sep)
+    dictionary_path = f"wordlists/{dictionary}"
     if not os.path.exists(dictionary_path) or dictionary is None:
-        dictionary_path = url_for("static", filename=f"wordlists/wordnik_2021_07_29").strip(os.sep)
+        dictionary_path = "wordlists/wordnik_2021_07_29"
         print(f"Defaulting to {dictionary_path}")
 
     # Default maximum word length
