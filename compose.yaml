@@ -1,0 +1,16 @@
+services:
+  boggler:
+    container_name: boggler-flask
+    image: boggler-flask
+    build: .
+    ports:
+      - "5001:5000"
+    restart: always
+
+  nginx:
+    image: "nginx:stable-alpine"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./cfg/nginx.conf:/etc/nginx/nginx.conf
+    restart: always
