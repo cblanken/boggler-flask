@@ -1,10 +1,13 @@
+"""Blueprint for handling all Boggle Board data and solving
+"""
 import functools
 import operator
 import os
 from random import choices
+import importlib.resources as ILR
+from flask import Blueprint, Flask, g, redirect, render_template, request, session, url_for
 from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 from boggler.board_randomizer import read_dice_file, get_random_board
-import importlib.resources as ILR
 
 MIN_BOARD_SIZE = 2
 MAX_BOARD_SIZE = 10
@@ -16,40 +19,42 @@ DICE = {}
 try:
     with ILR.path("boggler.dice", "4x4_classic.csv") as f:
         DICE["classic"] = read_dice_file(f)
-except:
+except FileNotFoundError:
     print("Unable to load '4x4_classic.csv' DICE file")
 
 try:
     with ILR.path("boggler.dice", "4x4_new.csv") as f:
         DICE["new"] = read_dice_file(f)
-except:
+except FileNotFoundError:
     print("Unable to load '4x4_new.csv' DICE file")
 
 try:
     with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
         DICE["super"] = read_dice_file(f)
-except:
+except FileNotFoundError:
     print("Unable to load '6x6_super_big.csv' DICE file")
 
-from flask import (
-    Blueprint, Flask, g, redirect, render_template, request, session, url_for
-)
 
 bp = Blueprint('board', __name__, url_prefix='/board', static_folder='static')
 
 def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
+    """Returns tuple of parsed parameters defining a Board
+
+    Returns
+        (board_letters, rows, cols, dictionary_path, max_len)
+    """
     # Default size of board is 4x4
     try: # Default row count
         rows = int(rows)
         rows = min(rows, MAX_BOARD_SIZE)
         rows = max(rows, MIN_BOARD_SIZE)
-    except:
+    except (TypeError, ValueError):
         rows = 4
     try: # Default column count
         cols = int(cols)
         cols = min(cols, MAX_BOARD_SIZE)
         cols = max(cols, MIN_BOARD_SIZE)
-    except:
+    except (TypeError, ValueError):
         cols = 4
 
     # Default empty board and listify letters
@@ -85,28 +90,29 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         max_len = int(max_len)
         max_len = min(max_len, MAX_WORD_LEN)
         max_len = max(max_len, MIN_WORD_LEN)
-    except:
+    except (TypeError, ValueError):
         max_len = 16
 
     return (board_letters, rows, cols, dictionary_path, max_len)
 
-def find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len):
-
+def find_paths_by_word(board_letters, dictionary_path, max_len):
+    """Return list of paths by word
+    """
     boggle_board = BoggleBoard(board_letters, max_len)
-    
     boggle_tree = build_full_boggle_tree(boggle_board, dictionary_path)
-
     paths_by_word = functools.reduce(operator.iconcat, [x.word_paths for x in boggle_tree.values()], [])
     return paths_by_word
 
 @bp.route('/', methods=['GET', 'POST'])
 def board():
+    """Default board route
+    """
     if request.form:
         print(request.form)
 
     if request.method == "GET":
         rows = cols = 4
-        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, None)
+        (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
         return render_template('solver.html', board_letters=board_letters, rows=rows, cols=cols)
     elif request.method == "POST":
         rows = cols = request.form["sizeSelect"]
@@ -123,13 +129,20 @@ def board():
 
 @bp.route('/api/random', methods=['GET'])
 def api_random():
-    # Default letter distribution for board sizes without 
-    alphabet = ["a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "c", "c", "c", "d", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f", "g", "g", "g", "h", "h", "h", "i", "i", "i", "i", "i", "i", "i", "j", "k", "k", "l", "l", "l", "l", "l", "m", "m", "m", "n", "n", "n", "n", "n", "o", "o", "o", "o", "o", "o", "p", "p", "p", "qu", "r", "r", "r", "r", "s", "s", "s", "s", "s", "t", "t", "t", "t", "t", "u", "u", "u", "u", "v", "v", "w", "w", "x", "y", "y", "y", "z"]
+    """API endpoing to get a random board 
+    """
+    # Default letter distribution for board sizes without dice
+    alphabet = ["a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "c", "c", "c",
+        "d", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f",
+        "g", "g", "g", "h", "h", "h", "i", "i", "i", "i", "i", "i", "i", "j", "k", "k",
+        "l", "l", "l", "l", "l", "m", "m", "m", "n", "n", "n", "n", "n", "o", "o", "o",
+        "o", "o", "o", "p", "p", "p", "qu", "r", "r", "r", "r", "s", "s", "s", "s", "s",
+        "t", "t", "t", "t", "t", "u", "u", "u", "u", "v", "v", "w", "w", "x", "y", "y", "y", "z"]
     try:
         size = int(request.args.get("size"))
-    except:
+    except (TypeError, ):
         size = 4
-    
+
     dice_type = request.args.get("dice_type")
     if dice_type in DICE and size * size == len(DICE[dice_type]):
         return {
@@ -144,7 +157,10 @@ def api_random():
 
 @bp.route('/api/solve', methods=['GET'])
 def api_solve():
-    args = request.args
+    """API endpoint for solving boards with the provided GET parameters
+
+    Returns JSON containing board state and found words
+    """
     rows = request.args.get("rows")
     cols = request.args.get("cols")
     letters = request.args.get("letters")
@@ -156,7 +172,7 @@ def api_solve():
         # TODO: Read from db
         pass
     else:
-        word_data = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
+        word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
         word_data = [{
             'word': word,
             'len': len(word),
@@ -178,6 +194,10 @@ def api_solve():
 
 @bp.route('/api/solve/table', methods=['GET'])
 def api_solve_words():
+    """API endpoint for data displayed in solved board table
+
+    Returns only displayed table data (word, len, path) for a given board
+    """
     args = request.args
     rows = request.args.get("rows")
     cols = request.args.get("cols")
@@ -190,7 +210,7 @@ def api_solve_words():
         # TODO: Read from db
         pass
     else:
-        word_data = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
+        word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
         word_data = [{
             'word': word,
             'len': len(word),
@@ -200,6 +220,10 @@ def api_solve_words():
 
 @bp.route('/solve', methods=['GET'])
 def solve():
+    """Endpoint for solving board
+
+    Returns the solved board page
+    """
     args = request.args
     if args.get("rows") or args.get("cols") or args.get("letters"):
         rows = request.args.get("rows")
@@ -214,10 +238,17 @@ def solve():
         dictionary = session.get("dictionary")
         max_len = session.get("max_len")
 
-
     (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
 
     # Replace empty strings
-    found_paths_by_word = find_paths_by_word(board_letters, rows, cols, dictionary_path, max_len)
+    found_paths_by_word = find_paths_by_word(board_letters, dictionary_path, max_len)
 
-    return render_template('solved.html', letters=letters, board_letters=board_letters, rows=rows, cols=cols, dictionary=dictionary, max_len=max_len, found_words=found_paths_by_word)
+    return render_template('solved.html',
+        letters=letters,
+        board_letters=board_letters,
+        rows=rows,
+        cols=cols,
+        dictionary=dictionary,
+        max_len=max_len,
+        found_words=found_paths_by_word
+    )

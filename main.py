@@ -1,5 +1,7 @@
-from app import create_app
+"""Entrypoint module for starting app and loading configurations
+"""
 from werkzeug.middleware.proxy_fix import ProxyFix
+from app import create_app
 
 app = create_app()
 app.wsgi_app = ProxyFix(

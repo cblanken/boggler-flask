@@ -1,19 +1,23 @@
+"""Main app module
+"""
 from flask import Flask, request, render_template, redirect
+from .board import bp
 
 def create_app():
+    """Return base Flask app object
+    """
     app = Flask(__name__)
     # TODO: handle session key with env vars
     app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
 
-    from .board import bp
     app.register_blueprint(bp)
 
     @app.errorhandler(404)
-    def page_not_found(e):
+    def page_not_found(_):
         return render_template('errors/404.html'), 404
 
     @app.errorhandler(500)
-    def internal_server_error(e):
+    def internal_server_error(_):
         return render_template('errors/500.html'), 500
 
     @app.route('/', methods=['GET', 'POST'])
