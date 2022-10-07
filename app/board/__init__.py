@@ -227,6 +227,25 @@ def api_solve_words():
         } for word, path in word_data]
         return word_data
 
+@bp.route('/solve/task', methods=["POST"])
+def task_submit():
+    """Endpoint to submit board solving tasks
+    """
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
+        print("FORM DATA:", request.json)
+        json = request.json
+        (board_letters, _rows, _cols, dictionary_path, max_len) = parse_board_params(
+            json["rows"], json["cols"], json["letters"], json["dictionary"], json["max_len"]
+        )
+
+        task = find_paths_by_word_async.apply_async(args=[board_letters, dictionary_path, max_len])
+        return {"task_id": url_for("board.task_status", task_id=task.id)}
+    else:
+        print("INVALID Content-Type. Please try again.")
+        return {"status:": f"INVALID Content-Type: {content_type}"}
+
+
 @bp.route('/solve', methods=['GET'])
 def solve():
     """Endpoint for solving board
@@ -249,15 +268,48 @@ def solve():
 
     (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
 
-    result = find_paths_by_word_async.apply_async(args=[board_letters, dictionary_path, max_len])
-    found_paths_by_word = result.get()
+    task = find_paths_by_word_async.apply_async(args=[board_letters, dictionary_path, max_len])
+    # found_paths_by_word = task.get()
 
-    return render_template('solved.html',
-        letters=letters,
-        board_letters=board_letters,
-        rows=rows,
-        cols=cols,
-        dictionary=dictionary,
-        max_len=max_len,
-        found_words=found_paths_by_word
-    )
+    # return render_template('solved.html',
+    #     letters=letters,
+    #     board_letters=board_letters,
+    #     rows=rows,
+    #     cols=cols,
+    #     dictionary=dictionary,
+    #     max_len=max_len,
+    #     found_words=found_paths_by_word
+    # )
+    # return (
+    #     {
+    #         "Location": url_for("board.task_status", task_id=task.id),
+    #     },
+    #     202
+    # )
+    # return redirect(url_for("board.task_status", task_id=task.id))
+
+
+@bp.route('/solve/task/status/<task_id>')
+def task_status(task_id):
+    """Endpoint for board solve statuses by task ID
+    """
+    task = find_paths_by_word_async.AsyncResult(task_id)
+    if task.status == "FAILURE":
+        response = {
+            "status": task.status,
+            "info": str(task.info),
+        }
+    elif task.status != "SUCCESS":
+        # Task is only STARTED, PENDING or RETRYing
+        response = {
+            "status": task.status,
+            "data": task.result,
+        }
+    else:
+        # SUCCESS!
+        response = {
+            "status": task.status,
+            "data": task.result,
+        }
+
+    return response
