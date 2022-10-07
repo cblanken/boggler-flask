@@ -1,21 +1,25 @@
-<div class="pt-3 mt-5 mx-2 d-flex flex-wrap flex-md-wrap flex-lg-nowrap justify-content-center">
-    <div class="board-dimensions">
-        <div class="btn-group m-2" role="board-controls" aria-label="Board Controls">
-            <button id="copyBoardUrlBtn"
-                class="btn btn-primary"
-                data-url="{{ url_for('board.solve') }}?letters={{letters}}&rows={{rows}}&cols={{cols}}&dictionary={{dictionary}}&max_len={{max_len}}">
-                <i id="copyBoardUrlBtnIcon" class="bi bi-clipboard"></i>
-                <span id="copyBoardUrlBtnText" class="ms-1">Share</span>
+<div class="container">
+    <!-- TODO fix regression with Bootstrap causing path arrows to render initial anchor in 
+    wrong position, only resets after window resize -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="btn-group m-2" role="board-controls" aria-label="Board Controls">
+                <button id="copyBoardUrlBtn"
+                    class="btn btn-primary"
+                    data-url="{{ url_for('board.solve') }}?letters={{letters}}&rows={{rows}}&cols={{cols}}&dictionary={{dictionary}}&max_len={{max_len}}">
+                    <i id="copyBoardUrlBtnIcon" class="bi bi-clipboard"></i>
+                    <span id="copyBoardUrlBtnText" class="ms-1">Share</span>
+                </button>
+            </div>
+            {% include 'components/board.html' %}
+            <button id="remove-filter-btn"
+                    type="button"
+                    title="Remove word filter"
+                    class="btn btn-secondary">
+                    <i class="bi-funnel"></i>
+                    <span>x</span>
             </button>
         </div>
-        {% include 'components/board.html' %}
-        <button id="remove-filter-btn"
-                type="button"
-                title="Remove word filter"
-                class="btn btn-secondary">
-                <i class="bi-funnel"></i>
-                <span>x</span>
-        </button>
+        <div class="col-lg-6">{% include 'components/words_table.html' %}</div>
     </div>
-    <div class="flex-grow-1 m-2">{% include 'components/words_table.html' %}</div>
 </div>
