@@ -1,7 +1,6 @@
 """Main app module
 """
 from flask import Flask, request, render_template, redirect
-from .board import bp
 
 def create_app():
     """Return base Flask app object
@@ -9,8 +8,6 @@ def create_app():
     app = Flask(__name__)
     # TODO: handle session key with env vars
     app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
-
-    app.register_blueprint(bp)
 
     @app.errorhandler(404)
     def page_not_found(_):

@@ -5,9 +5,12 @@ import operator
 import os
 from random import choices
 import importlib.resources as ILR
-from flask import Blueprint, Flask, g, redirect, render_template, request, session, url_for
+from flask import (
+    Blueprint, Flask, g, redirect, render_template, request, session, url_for
+)
 from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 from boggler.board_randomizer import read_dice_file, get_random_board
+from celery_worker import cel
 
 MIN_BOARD_SIZE = 2
 MAX_BOARD_SIZE = 10
@@ -94,6 +97,12 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         max_len = 16
 
     return (board_letters, rows, cols, dictionary_path, max_len)
+
+@cel.task()
+def find_paths_by_word_async(board_letters, dictionary_path, max_len):
+    """Celery Task for asynchronously finding words in board
+    """
+    return find_paths_by_word(board_letters, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, dictionary_path, max_len):
     """Return list of paths by word
@@ -240,8 +249,8 @@ def solve():
 
     (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
 
-    # Replace empty strings
-    found_paths_by_word = find_paths_by_word(board_letters, dictionary_path, max_len)
+    result = find_paths_by_word_async.apply_async(args=[board_letters, dictionary_path, max_len])
+    found_paths_by_word = result.get()
 
     return render_template('solved.html',
         letters=letters,
