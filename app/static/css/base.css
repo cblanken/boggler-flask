@@ -1,3 +1,9 @@
 body {
-    background-color: rgb(244, 244, 244);
+    background-color: #ededed;
+}
+
+body::before {
+    display: block;
+    content: "";
+    height: 60px;
 }
