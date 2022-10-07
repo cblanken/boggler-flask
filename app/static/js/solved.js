@@ -101,10 +101,10 @@ function remove_arrows(arrows) {
 function get_path_from_string(path_string) {
     let open_braces = [];
     let close_braces = [];
-    for (var i=0; i < path_string.length; i++) {
-        if (path_string[i] == "(") {
+    for (var i=1; i < path_string.length - 1; i++) {
+        if (path_string[i] == "[" || path_string[i] == "(") {
             open_braces.push(i);
-        } else if (path_string[i] == ")") {
+        } else if (path_string[i] == "]" || path_string[i] == ")") {
             close_braces.push(i);
         }
     }
