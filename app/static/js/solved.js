@@ -29,7 +29,9 @@ function toggle_path_highlight(path) {
 }
 
 function draw_path_connections(path) {
-    let arrows = [];;
+    let arrows = [];
+    let cells = document.querySelectorAll(".board-cell");
+    const arrow_scale = 1 / ((cells[cells.length-1].getAttribute("data-pos")[0] + cells[cells.length-1].getAttribute("data-pos")[2]) / 2)
     let arrow_params = {
         path: "straight",
         color: "#09008980",
@@ -37,14 +39,15 @@ function draw_path_connections(path) {
             animation: true,
             gap: 8,
         },
-        size: 6,
+        // size: 6,
+        size: Math.ceil(50 * arrow_scale) + 3,
     }
 
     for (i=1; i < path.length; i++) {
         cell1 = path[i-1];
         cell2 = path[i];
-        c1 = document.querySelector(`#board [data-pos=\"${cell1[0]},${cell1[1]}\"]`);
-        c2 = document.querySelector(`#board [data-pos=\"${cell2[0]},${cell2[1]}\"]`);
+        c1 = document.querySelector(`#board [data-pos=\"${cell1[0]},${cell1[1]}\"] input`);
+        c2 = document.querySelector(`#board [data-pos=\"${cell2[0]},${cell2[1]}\"] input`);
 
         if (cell1[0] === cell2[0] ||
             cell1[1] === cell2[1] 
