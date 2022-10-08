@@ -198,6 +198,5 @@ copyUrlBtn.addEventListener("click", e => {
         copyUrlBtnText.textContent = btnText;
     }, 1500);
 
-    console.log(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")));
     navigator.clipboard.writeText(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")));
 });

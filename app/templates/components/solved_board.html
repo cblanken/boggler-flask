@@ -6,7 +6,7 @@
             <div class="btn-group m-2" role="board-controls" aria-label="Board Controls">
                 <button id="copyBoardUrlBtn"
                     class="btn btn-primary"
-                    data-url="{{ url_for('board.solve') }}?letters={{letters}}&rows={{rows}}&cols={{cols}}&dictionary={{dictionary}}&max_len={{max_len}}">
+                    data-url="{{ request.path }}">
                     <i id="copyBoardUrlBtnIcon" class="bi bi-clipboard"></i>
                     <span id="copyBoardUrlBtnText" class="ms-1">Share</span>
                 </button>
