@@ -299,7 +299,11 @@ def solve():
 def solved(task_id):
     """Endpoints for solved boards by task ID
     """
-    data = get(f"http://localhost:5000/board/solve/task/data/{task_id}").json()
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+    data = get(f"http://localhost:5000/board/solve/task/data/{task_id}", headers=headers, timeout=2.0).json()
     return render_template('solved.html',
         letters=data["letters"],
         board_letters=data["board_letters"],
@@ -339,15 +343,11 @@ def task_data(task_id):
     """Endpoint for board solve data
     """
     task = find_paths_by_word_async.AsyncResult(task_id)
-    if task.status == "FAILURE":
-        response = {
-            "status": task.status,
-            "info": str(task.info),
-        }
-    elif task.status != "SUCCESS":
+    if task.status != "SUCCESS":
         # Task is only STARTED, PENDING or RETRYing
         response = {
             "status": task.status,
+            "info": str(task.info),
         }
     else:
         # SUCCESS!

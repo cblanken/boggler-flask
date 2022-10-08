@@ -1,4 +1,7 @@
 services:
+  redis:
+    image: "redis:7.0-alpine"
+    restart: always
   nginx:
     image: "nginx:stable-alpine"
     ports:
