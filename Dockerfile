@@ -11,6 +11,7 @@ WORKDIR /home/boggler
 COPY requirements requirements
 COPY wordlists wordlists
 COPY app app
+COPY celery_worker celery_worker
 COPY main.py boot.sh ./
 
 # Setup virtualenv
