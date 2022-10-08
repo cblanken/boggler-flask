@@ -42,18 +42,21 @@ function toggle_board_controls() {
 }
 
 // Check update status of solve board task
-async function update_solve_progress(url) {
+async function update_solve_progress(url, task_id) {
     const response = await fetch(url);
     const json = await response.json();
     
+    console.log("task_id")
     if (json["status"] == "SUCCESS") {
-        console.log(json["data"])
         toggle_board_controls()
+        console.log("JSON", json);
+        window.location = `/board/solved/${task_id}`;
         return;
     }
-
+    console.log(json)
+    // Poll for completed solve task
     setTimeout(function() {
-        update_solve_progress(url);
+        update_solve_progress(url, task_id);
     }, 250)
 }
 
@@ -77,8 +80,9 @@ async function start_board_solve_task(rows, cols, letters, dictionary, max_len) 
     }
     fetch("solve/task", options).then(async response => {
         response.json().then(json => {
+            console.log(json["status_url"])
             console.log(json["task_id"])
-            update_solve_progress(json["task_id"])
+            update_solve_progress(json["status_url"], json["task_id"])
         })
     })
 }
