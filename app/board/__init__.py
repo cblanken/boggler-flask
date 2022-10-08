@@ -243,7 +243,6 @@ def task_submit():
     """
     content_type = request.headers.get("Content-Type")
     if content_type == "application/json":
-        print("FORM DATA:", request.json)
         json = request.json
         (board_letters, _rows, _cols, dictionary_path, max_len) = parse_board_params(
             json["rows"], json["cols"], json["letters"], json["dictionary"], json["max_len"]
@@ -301,7 +300,6 @@ def solved(task_id):
     """Endpoints for solved boards by task ID
     """
     data = get(f"http://localhost:5000/board/solve/task/data/{task_id}").json()
-    print("DTATA:", data)
     return render_template('solved.html',
         letters=data["letters"],
         board_letters=data["board_letters"],
