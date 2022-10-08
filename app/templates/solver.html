@@ -10,19 +10,21 @@
     <div class="row justify-content-center">
         <div class="col">
             <div class="row">{% include 'components/board_options.html' %}</div>
-            <div class="row g-3">
+            <div class="row">
                 {% include 'components/board.html' %}
+            </div>
+            <div class="row">
                 <button id="solve-board-btn"
                     type="submit"
                     title="Solve board"
-                    class="btn btn-primary btn-lg w-101 m-2 align-items-center">
+                    class="btn btn-primary btn-lg g-2">
                     <div id="solve-btn-txt">
                         <i class="align-middle bi-download"></i>
-                        <span class="align-middle ms-3">Solve</span>
+                        <span class="align-middle ms-2">Solve</span>
                     </div>
                     <div hidden id="solving-spinner" class="align-middle">
                         <div class="align-middle spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
-                        <span class="align-middle ms-3">Solving...</span>
+                        <span class="align-middle ms-2">Solving...</span>
                     </div>
                 </button>
             </div>
