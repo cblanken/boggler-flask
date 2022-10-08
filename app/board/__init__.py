@@ -10,6 +10,7 @@ from flask import (
 )
 from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 from boggler.board_randomizer import read_dice_file, get_random_board
+from requests import get
 from celery_worker import cel
 
 MIN_BOARD_SIZE = 2
@@ -97,12 +98,6 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         max_len = 16
 
     return (board_letters, rows, cols, dictionary_path, max_len)
-
-@cel.task()
-def find_paths_by_word_async(board_letters, dictionary_path, max_len):
-    """Celery Task for asynchronously finding words in board
-    """
-    return find_paths_by_word(board_letters, dictionary_path, max_len)
 
 def find_paths_by_word(board_letters, dictionary_path, max_len):
     """Return list of paths by word
@@ -227,6 +222,44 @@ def api_solve_words():
         } for word, path in word_data]
         return word_data
 
+@cel.task()
+def find_paths_by_word_async(rows, cols, letters, board_letters, dictionary_path, max_len):
+    """Celery Task for asynchronously finding words in board
+    """
+    found_words = find_paths_by_word(board_letters, dictionary_path, max_len)
+    return [
+        rows,
+        cols,
+        letters,
+        board_letters,
+        dictionary_path,
+        max_len,
+        found_words
+    ]
+
+@bp.route('/solve/task', methods=["POST"])
+def task_submit():
+    """Endpoint to submit board solving tasks
+    """
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
+        json = request.json
+        (board_letters, _rows, _cols, dictionary_path, max_len) = parse_board_params(
+            json["rows"], json["cols"], json["letters"], json["dictionary"], json["max_len"]
+        )
+
+        task = find_paths_by_word_async.apply_async(args=[
+            json["rows"], json["cols"], json["letters"], board_letters, dictionary_path, max_len
+        ])
+        return {
+            "status_url": url_for("board.task_status", task_id=task.id),
+            "task_id": task.id,
+        }
+    else:
+        print("INVALID Content-Type. Please try again.")
+        return {"status:": f"INVALID Content-Type: {content_type}"}
+
+
 @bp.route('/solve', methods=['GET'])
 def solve():
     """Endpoint for solving board
@@ -249,8 +282,8 @@ def solve():
 
     (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
 
-    result = find_paths_by_word_async.apply_async(args=[board_letters, dictionary_path, max_len])
-    found_paths_by_word = result.get()
+    task = find_paths_by_word_async.apply_async(args=[rows, cols, letters, board_letters, dictionary_path, max_len])
+    found_paths_by_word = task.get()
 
     return render_template('solved.html',
         letters=letters,
@@ -261,3 +294,71 @@ def solve():
         max_len=max_len,
         found_words=found_paths_by_word
     )
+
+@bp.route('/solved/<task_id>', methods=['GET'])
+def solved(task_id):
+    """Endpoints for solved boards by task ID
+    """
+    data = get(f"http://localhost:5000/board/solve/task/data/{task_id}").json()
+    return render_template('solved.html',
+        letters=data["letters"],
+        board_letters=data["board_letters"],
+        rows=int(data["rows"]),
+        cols=int(data["cols"]),
+        dictionary=data["dictionary_path"],
+        max_len=data["max_len"],
+        found_words=data["found_words"],
+    )
+    
+
+@bp.route('/solve/task/status/<task_id>')
+def task_status(task_id):
+    """Endpoint for board solve statuses by task ID
+    """
+    task = find_paths_by_word_async.AsyncResult(task_id)
+    if task.status == "FAILURE":
+        response = {
+            "status": task.status,
+            "info": str(task.info),
+        }
+    elif task.status != "SUCCESS":
+        # Task is only STARTED, PENDING or RETRYing
+        response = {
+            "status": task.status,
+        }
+    else:
+        # SUCCESS!
+        response = {
+            "status": task.status,
+        }
+
+    return response
+
+@bp.route('/solve/task/data/<task_id>')
+def task_data(task_id):
+    """Endpoint for board solve data
+    """
+    task = find_paths_by_word_async.AsyncResult(task_id)
+    if task.status == "FAILURE":
+        response = {
+            "status": task.status,
+            "info": str(task.info),
+        }
+    elif task.status != "SUCCESS":
+        # Task is only STARTED, PENDING or RETRYing
+        response = {
+            "status": task.status,
+        }
+    else:
+        # SUCCESS!
+        response = {
+            "rows": task.result[0],
+            "cols": task.result[1],
+            "letters": task.result[2],
+            "board_letters": task.result[3],
+            "dictionary_path": task.result[4],
+            "max_len": task.result[5],
+            "found_words": task.result[6],
+        }
+    
+    return response
