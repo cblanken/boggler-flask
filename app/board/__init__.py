@@ -307,7 +307,12 @@ def task_data(task_id):
     """Endpoint for board solve data
     """
     task = find_paths_by_word_async.AsyncResult(task_id)
-    if task.status != "SUCCESS":
+    if task.status == "FAILURE":
+        response = {
+            "status": task.status,
+            "info": str(task.info),
+        }
+    elif task.status != "SUCCESS":
         # Task is only STARTED, PENDING or RETRYing
         response = {
             "status": task.status,
