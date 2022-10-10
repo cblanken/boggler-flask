@@ -3,6 +3,7 @@
     --letter-size: calc(1.5rem + 2.0vw);
     --cell-bg-color: #ddcfff;
     --cell-bg-color-dark: #9f76ff;
+    --cell-bg-color-filter: rgba(230, 73, 73, 0.9);
     --cell-gap: min(calc(5px + 1vw), 15px);
 }
 
@@ -42,9 +43,8 @@
     aspect-ratio: 1 / 1;
 
     border: 3px solid #BD7100;
-    border-style: inset;
     border-radius: var(--cell-gap);
-    border-collapse: collapse;
+    border-width: 0;
 
     font-size: var(--letter-size);
     background-color: #eeebe5f7;
@@ -52,18 +52,20 @@
 
 .board-cell input {
     font-family: inherit;
-    padding: 0;
     cursor: pointer;
     color: rgb(74, 74, 74);
+
     border-radius: var(--cell-gap);
+    border: 3px solid #BD7100;
+    border-style: inset;
+
     text-align: center;
-    border: none;
     width: 100%;
     height: 100%;
 }
 
 .board-cell input:focus {
-    border-width: 0;
+    /* border-width: 0; */
     color: black;
 }
 
@@ -71,7 +73,7 @@
     text-transform: capitalize;
 }
 
-.board-cell-input:focus {
+.board-cell-input:focus:not(".cell-highlight-filter") {
     background-color: var(--cell-bg-color);
     outline: none;
 }
@@ -81,7 +83,8 @@
 }
 
 .cell-highlight-filter {
-    background-color: #E64949
+    outline: none;
+    background-color: var(--cell-bg-color-filter);
 }
 
 .board-cell:not(.cell-highlight-first-letter):not(.cell-highlight-filter):hover {
@@ -100,7 +103,8 @@
     font-weight: bolder;
     font-size: 1.5rem;
     display: none;
-    background-color: rgb(230, 73, 73);
+    background-color: var(--cell-bg-color-filter);
+
     border-color: white;
 }
 

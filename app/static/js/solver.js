@@ -1,7 +1,7 @@
 // Enable all letter inputs
 let letter_inputs = document.querySelectorAll(".board-cell-input");
 letter_inputs.forEach(x => {
-    x.removeAttribute("disabled");
+    x.removeAttribute("readonly");
 });
 
 let lettersInput = document.getElementById("lettersInput");

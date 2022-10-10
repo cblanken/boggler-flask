@@ -1,16 +1,15 @@
 let $table = $("#word-table");
 let board_cells = document.querySelectorAll(".board-cell");
+let board_cells_inputs = document.querySelectorAll(".board-cell-input");
 let path_buttons = document.querySelectorAll("#test-table tr .path-cell button");
 
 function unhighlight_board_filter() {
-    cells = document.querySelectorAll("#board [data-pos]");
-    cells.forEach(cell => {
+    board_cells_inputs.forEach(cell => {
         cell.classList.remove("cell-highlight-filter");
     })
 }
 function unhighlight_board() {
-    cells = document.querySelectorAll("#board [data-pos]");
-    cells.forEach(cell => {
+    board_cells_inputs.forEach(cell => {
         cell.classList.remove("cell-highlight-first-letter");
         cell.classList.remove("cell-highlight");
     })
@@ -19,11 +18,11 @@ function unhighlight_board() {
 function toggle_path_highlight(path) {
     // Highlight first letter in word
     let cell = path[0];
-    let c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"]`);
+    let c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"] input`);
     // Highlight remainder
     c.classList.toggle("cell-highlight-first-letter");
     path.slice(1,).forEach(cell => {
-        c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"]`);
+        c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"] input`);
         c.classList.toggle("cell-highlight");
     })
 }
@@ -39,7 +38,6 @@ function draw_path_connections(path) {
             animation: true,
             gap: 8,
         },
-        // size: 6,
         size: Math.ceil(50 * arrow_scale) + 3,
     }
 
@@ -154,7 +152,7 @@ board_cells.forEach( cell => {
         unhighlight_board();
         remove_arrows(active_arrows);
         active_arrows = [];
-        cell.classList.add("cell-highlight-filter");
+        cell.firstElementChild.classList.add("cell-highlight-filter");
         remove_filter_btn.style.display = "block";
     })
 });

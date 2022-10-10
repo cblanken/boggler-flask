@@ -4,7 +4,7 @@
             {% for col in range(0, cols) %}
             <div class="board-cell" data-pos="{{row}},{{col}}">
                 <input 
-                    disabled
+                    readonly="true"
                     class="board-cell-input"
                     type="text"
                     minlength="1" maxlength="2"
