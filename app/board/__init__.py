@@ -259,42 +259,6 @@ def task_submit():
         print("INVALID Content-Type. Please try again.")
         return {"status:": f"INVALID Content-Type: {content_type}"}
 
-
-@bp.route('/solve', methods=['GET'])
-def solve():
-    """Endpoint for solving board
-
-    Returns the solved board page
-    """
-    args = request.args
-    if args.get("rows") or args.get("cols") or args.get("letters"):
-        rows = request.args.get("rows")
-        cols = request.args.get("cols")
-        letters = request.args.get("letters")
-        dictionary = request.args.get("dictionary")
-        max_len = request.args.get("max_len")
-    else:
-        rows = session.get("rows")
-        cols = session.get("cols")
-        letters = session.get("letters")
-        dictionary = session.get("dictionary")
-        max_len = session.get("max_len")
-
-    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(rows, cols, letters, dictionary, max_len)
-
-    task = find_paths_by_word_async.apply_async(args=[rows, cols, letters, board_letters, dictionary_path, max_len])
-    found_paths_by_word = task.get()
-
-    return render_template('solved.html',
-        letters=letters,
-        board_letters=board_letters,
-        rows=rows,
-        cols=cols,
-        dictionary=dictionary,
-        max_len=max_len,
-        found_words=found_paths_by_word
-    )
-
 @bp.route('/solved/<task_id>', methods=['GET'])
 def solved(task_id):
     """Endpoints for solved boards by task ID
