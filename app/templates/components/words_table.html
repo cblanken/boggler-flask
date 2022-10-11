@@ -33,7 +33,7 @@
         data-pagination-loop="false"
         data-single-select="true"
         data-click-to-select="true">
-        <thead class="table-dark">
+        <thead class="table-dark rounded">
             <tr>
                 <th scope="col" class="text-center" data-field="state" data-checkbox="true" data-width="20"></th>
                 <th scope="col" class="text-center" data-field="word" data-sortable="true" data-width="10" data-width-unit="rem">Word</th>
@@ -41,7 +41,7 @@
                 <th scope="col" class="text-center" data-field="path" data-sortable="true" data-events="operateEvents">Path</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-light">
         {% for word, path in found_words %}
             {% if word|length > 2 %}
             <tr class="user-select-none">
