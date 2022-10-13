@@ -1,5 +1,14 @@
+:root {
+    --board-border-color: rgba(203, 142, 10, 1);
+    --board-border-color-dark: rgba(189, 113, 0);
+    --cell-bg-color: rgba(221, 207, 255);
+    --cell-bg-color-dark: rgba(159, 118, 255, 0.8);
+    --cell-bg-color-filter: rgba(230, 73, 73, 0.9);
+    --background-color: rgba(237, 237, 237);
+}
+
 body {
-    background-color: #ededed;
+    background-color: var(--background-color);
 }
 
 body::before {

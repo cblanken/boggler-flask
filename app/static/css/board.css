@@ -1,9 +1,6 @@
 :root {
     --board-width: 100%;
     --letter-size: calc(1.5rem + 2.0vw);
-    --cell-bg-color: #ddcfff;
-    --cell-bg-color-dark: #9f76ffd0;
-    --cell-bg-color-filter: rgba(230, 73, 73, 0.9);
     --cell-gap: min(calc(5px + 1vw), 15px);
 }
 
@@ -23,8 +20,8 @@
     display: grid;
     gap: var(--cell-gap);
     padding: var(--cell-gap);
-    border: 3px solid #CB8E0A;
-    background-color: #CB8E0A;
+    border: 3px solid var(--board-border-color);
+    background-color: var(--board-border-color);
     border-radius: calc(1.5 * var(--cell-gap));
     border-style: outset;
 }
@@ -42,7 +39,7 @@
     width: 100%;
     aspect-ratio: 1 / 1;
 
-    border: 3px solid #BD7100;
+    border: 3px solid var(--board-border-color-dark);
     border-radius: var(--cell-gap);
     border-width: 0;
 
@@ -56,7 +53,7 @@
     color: rgb(74, 74, 74);
 
     border-radius: var(--cell-gap);
-    border: 3px solid #BD7100;
+    border: 3px solid var(--board-border-color-dark);
     border-style: inset;
 
     text-align: center;
