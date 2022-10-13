@@ -10,9 +10,9 @@ you notice any bugs while exploring the app. Thanks!
 
 ## Usage
 1. Submit the board
-    - Fill out the board on the home page by click on a cell and entering the
+    - Fill out the board on the home page by clicking on a cell and entering the
 corresponding letter in your boggle board.  
-    - The `TAB` key can also be used to navigate between cells.
+    - The <kbd>TAB</kbd> key can used to move to the next cell and <kbd>SHIFT + TAB</kbd> navigates to the previous cell.
     - Once the board is filled, click the `Solve` button at the bottom of the board.
     ![boggle1](https://user-images.githubusercontent.com/19908880/195197478-8ebd4a0f-7094-491d-974a-8f202ded5678.png)
 2. Board and Table Interaction
