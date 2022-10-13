@@ -1,75 +1,70 @@
 <form id="board-options" method="POST">
     <input hidden type="text" id="lettersInput" name="letters">
-    <div class="d-flex flex-column align-items-center mx-2">
-        <div class="d-flex flex-row align-items-center">
-            <div>
-                <label for="sizeSelect" class="form-label">Size</label>
-                <select id="sizeSelect" name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
-                    <option value="3">3</option>
-                    <option value="4" selected>4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
-            </div>
-            <div class="m-2">
-                <label for="dictionarySelect" class="form-label">Dictionary</label>
-                <select id="dictionarySelect" name="dictionarySelect" class="form-select" aria-label="A list of valid words used to solve the board">
-                    <option value="wordnik_2021_07_29" selected>Wordnik (2021/07/29)</option>
-                    <option value="na_english">NA English</option>
-                    <option value="sowpods">SOWPODS 2006 (European English)</option>
-                    <option value="twl06">Scrabble Tournament Word List 2006</option>
-                    <option value="scrabble_2019">Scrabble 2019</option>
-                    <option value="dwyl">dwyl</option>
-                    <option disabled value="wordnet">WordNet</option>
-                    <option disabled value="webster-unabridged">Webster Unabridged (1913) - Project Gutenberg</option>
-                </select>
-            </div>
-            <div class="m-2">
-                <label for="maxLengthSelect" class="form-label text-nowrap">Max Word Length</label>
-                <select id="maxLengthSelect" name="maxLengthSelect" class="form-select" aria-label="The maximum length of words to solve for">
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                    <option value="15">15</option>
-                    <option value="16" selected>16</option>
-                    <option value="17">17</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
+
+    <div class="col p-4 bg-dark text-light rounded-3">
+        <div class="row mb-2">
+            <label for="sizeSelect" class="form-label col-4 text-end m-auto">Size</label>
+            <select id="sizeSelect" name="sizeSelect" class="form-select col" aria-label="The dimensions of the board">
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
         </div>
-        <div id="randomBoardGroup" class="d-flex flex-row">
-            <div class="d-flex flex-row align-items-center">
-                <label for="diceSelect" class="form-label d-none">Dice</label>
-                <div>
-                    <select id="diceSelect" name="diceSelect" class="form-select" aria-label="The dice to be used for the board randomizer">
-                        <option value="classic">(4x4) Classic Boggle</option>
-                        <option selected value="new">(4x4) New Boggle</option>
-                        <option disabled value="big">(5x5) Big Boggle</option>
-                        <option value="super">(6x6) Super Big Boggle</option>
-                    </select>
-                </div>
-                <div class="m-2">
-                    <button id="randomBoardBtn" type="button" class="btn btn-primary p-2" title="Randomize board letters">
-                        <i class="bi bi-shuffle mx-2"></i>
-                        <span class="">Randomize</span>
-                    </button>
-                </div>
+        <div class="row mb-2">
+            <label for="dictionarySelect" class="form-label col-4 text-end m-auto">Dictionary</label>
+            <select id="dictionarySelect" name="dictionarySelect" class="form-select col" aria-label="A list of valid words used to solve the board">
+                <option value="wordnik_2021_07_29" selected>Wordnik (2021/07/29)</option>
+                <option value="na_english">NA English</option>
+                <option value="sowpods">SOWPODS 2006 (European English)</option>
+                <option value="twl06">Scrabble Tournament Word List 2006</option>
+                <option value="scrabble_2019">Scrabble 2019</option>
+                <option value="dwyl">dwyl</option>
+                <option disabled value="wordnet">WordNet</option>
+                <option disabled value="webster-unabridged">Webster Unabridged (1913) - Project Gutenberg</option>
+            </select>
+        </div>
+        <div class="row mb-2">
+            <label for="maxLengthSelect" class="form-label text-nowrap col-4 text-end m-auto">Max Word Length</label>
+            <select id="maxLengthSelect" name="maxLengthSelect" class="form-select col" aria-label="The maximum length of words to solve for">
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16" selected>16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+        <div id="randomBoardGroup" class="row">
+            <label for="diceSelect" class="form-label col-4 text-end m-auto">Dice</label>
+            <div class="col p-0">
+                <select id="diceSelect" name="diceSelect" class="form-select" aria-label="The dice to be used for the board randomizer">
+                    <option value="classic">(4x4) Classic Boggle</option>
+                    <option selected value="new">(4x4) New Boggle</option>
+                    <option disabled value="big">(5x5) Big Boggle</option>
+                    <option value="super">(6x6) Super Big Boggle</option>
+                </select>
             </div>
+            <button id="randomBoardBtn" type="button" class="btn btn-primary col-4 ms-2 ms-2" title="Randomize board letters">
+                <i class="bi bi-shuffle mx-1"></i>
+                <span class="d-md-none d-lg-inline">Randomize</span>
+            </button>
         </div>
     </div>
 </form>

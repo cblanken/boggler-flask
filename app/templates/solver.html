@@ -7,12 +7,11 @@
 
 {% block page_content %}
 <div class="container">
-    <div class="row justify-content-center m-1">
-        <div class="col">
-            <div class="row">{% include 'components/board_options.html' %}</div>
-            <div class="row">
+    <div class="row m-2">
+        <section class="col-lg-6 mb-3">
+            <section class="row">
                 {% include 'components/board.html' %}
-            </div>
+            </section>
             <div class="row">
                 <button id="solve-board-btn"
                     type="submit"
@@ -28,9 +27,12 @@
                     </div>
                 </button>
             </div>
-        </div class="col-lg-4">
-            {% include 'rules.html' %}
-        </div>
+        </section>
+
+        <section class="col-lg-6 px-lg-2 p-sm-0">
+            <div class="mb-2">{% include 'components/board_options.html' %}</div>
+            <div>{% include 'rules.html' %}</div>
+        </section>
     </div>
 </div>
 {% endblock %}
