@@ -2,3 +2,12 @@
     font-family: 'Kanit', 'Helvetica', sans-serif;
     background-color: var(--board-border-color);
 }
+
+#board-options {
+    font-family: 'Figtree', Arial, sans-serif;
+}
+
+#board-options select {
+    background-color: var(--cell-bg-color);
+    font-weight: bold;
+}
