@@ -1,3 +1,8 @@
+// Page load reset controls
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("board-options").reset();
+})
+
 // Enable all letter inputs
 let letter_inputs = document.querySelectorAll(".board-cell-input");
 letter_inputs.forEach(x => {
@@ -30,7 +35,6 @@ randomBoardBtn.addEventListener("click", e => {
         }
     });
 });
-
 
 // Solving board loading animation and control toggle
 function toggle_board_controls() {
