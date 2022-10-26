@@ -5,6 +5,7 @@
     --cell-bg-color-dark: rgba(159, 118, 255, 0.8);
     --cell-bg-color-filter: rgba(230, 73, 73, 0.9);
     --background-color: rgba(237, 237, 237);
+    --title-color: rgb(16, 139, 129);
 }
 
 body {
@@ -15,4 +16,17 @@ body::before {
     display: block;
     content: "";
     height: 56px;
+}
+
+#title-B {
+}
+
+#title-Boggler {
+    color: var(--title-color);
+    font-weight: bolder;
+    font-size: 1.5rem;
+    padding: 0;
+    letter-spacing: 2px;
+    text-decoration: solid underline 3px;
+    margin-left: 10px;
 }
