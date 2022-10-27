@@ -1,0 +1,19 @@
+/* Hide checkbox column */
+#table-wrapper th.bs-checkbox,
+#table-wrapper td.bs-checkbox {
+    display: none;
+}
+
+#table-wrapper td input[type=checkbox] {
+    display: none;
+}
+
+#table-wrapper td {
+    /* padding: 0.25rem 0; */
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+#table-wrapper tr.selected {
+    background-color: var(--cell-bg-color);
+}
