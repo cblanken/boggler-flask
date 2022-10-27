@@ -1,9 +1,9 @@
 <form id="board-options" method="POST">
     <input hidden type="text" id="lettersInput" name="letters">
     <h2 class="m-0 rounded-top text-center py-2 fs-3">Boggle Solver</h2>
-    <div class="col p-4 bg-dark text-light rounded-bottom">
-        <div class="row mb-2">
-            <label for="sizeSelect" class="form-label col-4 text-end m-auto">Size</label>
+    <div class="col p-2 bg-dark text-light rounded-bottom">
+        <div class="row m-2">
+            <label for="sizeSelect" class="form-label col-md-4 text-end m-auto">Size</label>
             <select id="sizeSelect" name="sizeSelect" class="form-select col" aria-label="The dimensions of the board">
                 <option value="3">3</option>
                 <option value="4" selected>4</option>
@@ -15,8 +15,8 @@
                 <option value="10">10</option>
             </select>
         </div>
-        <div class="row mb-2">
-            <label for="dictionarySelect" class="form-label col-4 text-end m-auto">Dictionary</label>
+        <div class="row m-2">
+            <label for="dictionarySelect" class="form-label col-md-4 text-end m-auto">Dictionary</label>
             <select id="dictionarySelect" name="dictionarySelect" class="form-select col" aria-label="A list of valid words used to solve the board">
                 <option value="wordnik_2021_07_29" selected>Wordnik (2021/07/29)</option>
                 <option value="na_english">NA English</option>
@@ -28,8 +28,8 @@
                 <option disabled value="webster-unabridged">Webster Unabridged (1913) - Project Gutenberg</option>
             </select>
         </div>
-        <div class="row mb-2">
-            <label for="maxLengthSelect" class="form-label text-nowrap col-4 text-end m-auto">Max Word Length</label>
+        <div class="row m-2">
+            <label for="maxLengthSelect" class="form-label text-nowrap col-md-4 text-end m-auto">Max Word Length</label>
             <select id="maxLengthSelect" name="maxLengthSelect" class="form-select col" aria-label="The maximum length of words to solve for">
                 <option value="3">3</option>
                 <option value="4">4</option>
@@ -51,19 +51,19 @@
                 <option value="20">20</option>
             </select>
         </div>
-        <div id="randomBoardGroup" class="row">
-            <label for="diceSelect" class="form-label col-4 text-end m-auto">Dice</label>
+        <div id="randomBoardGroup" class="row m-2">
+            <label for="diceSelect" class="form-label col-md-4 text-end m-auto">Dice</label>
             <div class="col p-0">
-                <select id="diceSelect" name="diceSelect" class="form-select" aria-label="The dice to be used for the board randomizer">
+                <select id="diceSelect" name="diceSelect" class="col form-select" aria-label="The dice to be used for the board randomizer">
                     <option value="classic">(4x4) Classic Boggle</option>
                     <option selected value="new">(4x4) New Boggle</option>
                     <option disabled value="big">(5x5) Big Boggle</option>
                     <option value="super">(6x6) Super Big Boggle</option>
                 </select>
             </div>
-            <button id="randomBoardBtn" type="button" class="btn btn-primary col-4 ms-2 ms-2" title="Randomize board letters">
+            <button id="randomBoardBtn" type="button" class="btn btn-primary col-12 mt-3" title="Randomize board letters">
                 <i class="bi bi-shuffle mx-1"></i>
-                <span class="d-md-none d-lg-inline">Randomize</span>
+                <span class="d-none d-sm-inline">Randomize</span>
             </button>
         </div>
     </div>
