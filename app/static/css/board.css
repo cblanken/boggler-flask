@@ -38,12 +38,7 @@
     align-items: center;
     width: 100%;
     aspect-ratio: 1 / 1;
-
-    border: 3px solid var(--board-border-color-dark);
     border-radius: var(--cell-gap);
-    border-width: 0;
-
-    font-size: var(--letter-size);
     background-color: #eeebe5f7;
 }
 
