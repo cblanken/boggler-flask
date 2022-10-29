@@ -198,3 +198,26 @@ copyUrlBtn.addEventListener("click", e => {
 
     navigator.clipboard.writeText(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")));
 });
+
+// Scroll-to-top popup button
+let board_height = document.getElementById("board").getBoundingClientRect().height;
+let scrollToTopBtn = document.getElementById("scroll-to-top-btn");
+let ticking = false;
+
+scrollToTopBtn.addEventListener("click", (e) => {
+    window.scrollTo(0, 0);
+});
+
+document.addEventListener("scroll", (e) => {
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            if (document.documentElement.scrollTop > board_height) {
+                scrollToTopBtn.style["display"] = "block";
+            } else {
+                scrollToTopBtn.style["display"] = "none";
+            }
+            ticking = false;
+        })
+    }
+     ticking = true;
+});
