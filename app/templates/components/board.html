@@ -9,7 +9,8 @@
                     class="board-cell-input"
                     type="text"
                     minlength="1" maxlength="2"
-                    value={{ board_letters[row][col] }}>
+                    value="{{ board_letters[row][col] }}">
+                <div class="heatmap-count"></div>
             </div>
             {% endfor %}
         </div>

@@ -233,37 +233,59 @@ async function get_board_data(board_id) {
 }
 
 let heatMapBtn = document.getElementById("heatMapCheckBox");
-heatMapBtn.addEventListener("click", (e) => {
+heatMapBtn.addEventListener("change", (e) => {
     const board_id = window.location.href.split("/").pop()
     get_board_data(board_id)
     .then(json => {
         let rows = json["rows"];
         let cols = json["cols"];
-        
+        console.log(json["found_words"].length)
         // Calculate how many times each letter is used for a given board
         let cell_counts = new Array(cols);
+        let cell_colors = new Array(cols);
         for (let i = 0; i < cell_counts.length; i++) {
             cell_counts[i] = new Array(rows);
+            cell_colors[i] = new Array(rows);
             cell_counts[i].fill(0);
+            cell_colors[i].fill(0);
         }
         let words = json["found_words"];
         words.forEach((word) => {
-            // console.log(word)
-            for (cell_pos of word[1]) {
-                // console.log(cell_pos)
-                cell_counts[cell_pos[0]][cell_pos[1]] += 1;;
-            }
+            let path = word[1];
+            path.forEach((cell_pos) => {
+                cell_counts[cell_pos[0]][cell_pos[1]] += 1;
+                cell_colors[cell_pos[0]][cell_pos[1]] += 1;
+                if (cell_pos[0] === 2 && cell_pos[1] === 2) {
+                    console.log("2,2: ", word, cell_counts[cell_pos[0]][cell_pos[1]])
+                }
+            })
         })
         console.log(cell_counts)
         
         let max = Math.max(...cell_counts.flat());
-        let cell_colors = [...cell_counts];
-        for (row in cell_counts) {
-            for (col in row) {
-                // Scale count for RGB
-                cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 255);
+        for (let row = 0; row < cell_counts.length; row++) {
+            for (let col = 0; col < cell_counts[row].length; col++) {
+                // Scale count for HSL hue value
+                cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 120);
             }
         }
         console.log(cell_colors)
+
+        let heatmap_counts = document.querySelectorAll(".heatmap-count");
+        heatmap_counts.forEach((count) => {
+            let parent = count.parentElement;
+            let cell = parent.querySelector(".board-cell-input");
+            let pos = parent.getAttribute("data-pos").split(',').map(x => parseInt(x))
+            count.textContent = cell_counts[pos[0]][pos[1]];
+            let count_display = window.getComputedStyle(count).display;
+            // let bg_color = window.getComputedStyle(cell, null).backgroundColor;
+            if (count_display == "none") {
+                count.style["display"] = "block";
+                cell.style["background-color"] = `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`
+            } else {
+                count.style["display"] = "none";
+                cell.style["background-color"] = "white"
+            }
+        })
     });
 })
