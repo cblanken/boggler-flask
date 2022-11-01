@@ -221,3 +221,49 @@ document.addEventListener("scroll", (e) => {
     }
      ticking = true;
 });
+
+// Board heatmap
+async function get_board_data(board_id) {
+    const response = await fetch(`task/data/${board_id}`, {
+        method: "GET",
+        headers: {"Content-type": "application/json;charset=UTF-8"}
+    });
+    let json = await response.json();
+    return json;
+}
+
+let heatMapBtn = document.getElementById("heatMapCheckBox");
+heatMapBtn.addEventListener("click", (e) => {
+    const board_id = window.location.href.split("/").pop()
+    get_board_data(board_id)
+    .then(json => {
+        let rows = json["rows"];
+        let cols = json["cols"];
+        
+        // Calculate how many times each letter is used for a given board
+        let cell_counts = new Array(cols);
+        for (let i = 0; i < cell_counts.length; i++) {
+            cell_counts[i] = new Array(rows);
+            cell_counts[i].fill(0);
+        }
+        let words = json["found_words"];
+        words.forEach((word) => {
+            // console.log(word)
+            for (cell_pos of word[1]) {
+                // console.log(cell_pos)
+                cell_counts[cell_pos[0]][cell_pos[1]] += 1;;
+            }
+        })
+        console.log(cell_counts)
+        
+        let max = Math.max(...cell_counts.flat());
+        let cell_colors = [...cell_counts];
+        for (row in cell_counts) {
+            for (col in row) {
+                // Scale count for RGB
+                cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 255);
+            }
+        }
+        console.log(cell_colors)
+    });
+})
