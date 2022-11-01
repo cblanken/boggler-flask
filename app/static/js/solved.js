@@ -232,9 +232,10 @@ async function get_board_data(board_id) {
     return json;
 }
 
-let heatMapBtn = document.getElementById("heatMapCheckBox");
-heatMapBtn.addEventListener("change", (e) => {
-    const board_id = window.location.href.split("/").pop()
+let heatMapBtn = document.getElementById("heatMapBtn");
+heatMapBtn.addEventListener("click", (e) => {
+    heatMapCheckBox.checked = !heatMapCheckBox.checked;
+    const board_id = window.location.href.split("/").pop();
     get_board_data(board_id)
     .then(json => {
         let rows = json["rows"];
