@@ -260,7 +260,6 @@ heatMapBtn.addEventListener("change", (e) => {
                 }
             })
         })
-        console.log(cell_counts)
         
         let max = Math.max(...cell_counts.flat());
         for (let row = 0; row < cell_counts.length; row++) {
@@ -269,7 +268,6 @@ heatMapBtn.addEventListener("change", (e) => {
                 cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 120);
             }
         }
-        console.log(cell_colors)
 
         let heatmap_counts = document.querySelectorAll(".heatmap-count");
         heatmap_counts.forEach((count) => {
@@ -277,14 +275,14 @@ heatMapBtn.addEventListener("change", (e) => {
             let cell = parent.querySelector(".board-cell-input");
             let pos = parent.getAttribute("data-pos").split(',').map(x => parseInt(x))
             count.textContent = cell_counts[pos[0]][pos[1]];
-            let count_display = window.getComputedStyle(count).display;
-            // let bg_color = window.getComputedStyle(cell, null).backgroundColor;
-            if (count_display == "none") {
-                count.style["display"] = "block";
-                cell.style["background-color"] = `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`
+            let count_style = window.getComputedStyle(count);
+            let cell_style = window.getComputedStyle(cell);
+            if (count_style.display == "none") {
+                count.style.setProperty("display", "block", count_style.getPropertyPriority("display"));
+                cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`, cell_style.getPropertyPriority("background-color"));
             } else {
-                count.style["display"] = "none";
-                cell.style["background-color"] = "white"
+                count.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
+                cell.style.removeProperty("background-color");
             }
         })
     });
