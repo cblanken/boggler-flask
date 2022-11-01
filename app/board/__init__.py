@@ -277,7 +277,7 @@ def solved(task_id):
         max_len=data["max_len"],
         found_words=data["found_words"],
     )
-    
+
 
 @bp.route('/solved/task/status/<task_id>')
 def task_status(task_id):
@@ -321,8 +321,8 @@ def task_data(task_id):
     else:
         # SUCCESS!
         response = {
-            "rows": task.result[0],
-            "cols": task.result[1],
+            "rows": int(task.result[0]),
+            "cols": int(task.result[1]),
             "letters": task.result[2],
             "board_letters": task.result[3],
             "dictionary_path": task.result[4],
