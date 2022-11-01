@@ -267,7 +267,7 @@ def solved(task_id):
     headers = {
         "Content-Type": "application/json",
     }
-    data = get(f"http://localhost:5000/board/solve/task/data/{task_id}", headers=headers, timeout=2.0).json()
+    data = get(f"http://localhost:5000/board/solved/task/data/{task_id}", headers=headers, timeout=2.0).json()
     return render_template('solved.html',
         letters=data["letters"],
         board_letters=data["board_letters"],
@@ -279,7 +279,7 @@ def solved(task_id):
     )
     
 
-@bp.route('/solve/task/status/<task_id>')
+@bp.route('/solved/task/status/<task_id>')
 def task_status(task_id):
     """Endpoint for board solve statuses by task ID
     """
@@ -302,7 +302,7 @@ def task_status(task_id):
 
     return response
 
-@bp.route('/solve/task/data/<task_id>')
+@bp.route('/solved/task/data/<task_id>')
 def task_data(task_id):
     """Endpoint for board solve data
     """
