@@ -232,15 +232,12 @@ async function get_board_data(board_id) {
     return json;
 }
 
-let heatMapBtn = document.getElementById("heatMapBtn");
-heatMapBtn.addEventListener("click", (e) => {
-    heatMapCheckBox.checked = !heatMapCheckBox.checked;
+function toggle_heatmap() {
     const board_id = window.location.href.split("/").pop();
     get_board_data(board_id)
     .then(json => {
         let rows = json["rows"];
         let cols = json["cols"];
-        console.log(json["found_words"].length)
         // Calculate how many times each letter is used for a given board
         let cell_counts = new Array(cols);
         let cell_colors = new Array(cols);
@@ -256,9 +253,6 @@ heatMapBtn.addEventListener("click", (e) => {
             path.forEach((cell_pos) => {
                 cell_counts[cell_pos[0]][cell_pos[1]] += 1;
                 cell_colors[cell_pos[0]][cell_pos[1]] += 1;
-                if (cell_pos[0] === 2 && cell_pos[1] === 2) {
-                    console.log("2,2: ", word, cell_counts[cell_pos[0]][cell_pos[1]])
-                }
             })
         })
         
@@ -287,4 +281,15 @@ heatMapBtn.addEventListener("click", (e) => {
             }
         })
     });
+}
+
+let heatMapBtn = document.getElementById("heatMapBtn");
+heatMapBtn.addEventListener("click", (e) => {
+    toggle_heatmap();
+    heatMapCheckBox.checked = !heatMapCheckBox.checked;
 })
+
+if (heatMapCheckBox.checked) {
+    // Disply heatmap on load if already enabled
+    toggle_heatmap();
+}
