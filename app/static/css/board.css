@@ -65,11 +65,6 @@
     text-transform: capitalize;
 }
 
-.board-cell-input:focus:not(".cell-highlight-filter") {
-    background-color: var(--cell-bg-color);
-    outline: none;
-}
-
 .heatmap-count {
     position: absolute;
     right: 10px;
@@ -85,6 +80,7 @@
 
 .cell-highlight-filter {
     outline: none;
+    border: 3px groove blue;
     background-color: var(--cell-bg-color-filter);
 }
 
