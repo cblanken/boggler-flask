@@ -196,7 +196,7 @@ copyUrlBtn.addEventListener("click", e => {
         copyUrlBtnText.textContent = btnText;
     }, 1500);
 
-    navigator.clipboard.writeText(encodeURI(window.location.origin + copyUrlBtn.getAttribute("data-url")));
+    navigator.clipboard.writeText(encodeURI(window.location.href));
 });
 
 // Scroll-to-top popup button
@@ -221,3 +221,75 @@ document.addEventListener("scroll", (e) => {
     }
      ticking = true;
 });
+
+// Board heatmap
+async function get_board_data(board_id) {
+    const response = await fetch(`task/data/${board_id}`, {
+        method: "GET",
+        headers: {"Content-type": "application/json;charset=UTF-8"}
+    });
+    let json = await response.json();
+    return json;
+}
+
+function toggle_heatmap() {
+    const board_id = window.location.href.split("/").pop();
+    get_board_data(board_id)
+    .then(json => {
+        let rows = json["rows"];
+        let cols = json["cols"];
+        // Calculate how many times each letter is used for a given board
+        let cell_counts = new Array(cols);
+        let cell_colors = new Array(cols);
+        for (let i = 0; i < cell_counts.length; i++) {
+            cell_counts[i] = new Array(rows);
+            cell_colors[i] = new Array(rows);
+            cell_counts[i].fill(0);
+            cell_colors[i].fill(0);
+        }
+        let words = json["found_words"];
+        words.forEach((word) => {
+            let path = word[1];
+            path.forEach((cell_pos) => {
+                cell_counts[cell_pos[0]][cell_pos[1]] += 1;
+                cell_colors[cell_pos[0]][cell_pos[1]] += 1;
+            })
+        })
+        
+        let max = Math.max(...cell_counts.flat());
+        for (let row = 0; row < cell_counts.length; row++) {
+            for (let col = 0; col < cell_counts[row].length; col++) {
+                // Scale count for HSL hue value
+                cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 120);
+            }
+        }
+
+        let heatmap_counts = document.querySelectorAll(".heatmap-count");
+        heatmap_counts.forEach((count) => {
+            let parent = count.parentElement;
+            let cell = parent.querySelector(".board-cell-input");
+            let pos = parent.getAttribute("data-pos").split(',').map(x => parseInt(x))
+            count.textContent = cell_counts[pos[0]][pos[1]];
+            let count_style = window.getComputedStyle(count);
+            let cell_style = window.getComputedStyle(cell);
+            if (count_style.display == "none") {
+                count.style.setProperty("display", "block", count_style.getPropertyPriority("display"));
+                cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`, cell_style.getPropertyPriority("background-color"));
+            } else {
+                count.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
+                cell.style.removeProperty("background-color");
+            }
+        })
+    });
+}
+
+let heatMapBtn = document.getElementById("heatMapBtn");
+heatMapBtn.addEventListener("click", (e) => {
+    toggle_heatmap();
+    heatMapCheckBox.checked = !heatMapCheckBox.checked;
+})
+
+if (heatMapCheckBox.checked) {
+    // Disply heatmap on load if already enabled
+    toggle_heatmap();
+}

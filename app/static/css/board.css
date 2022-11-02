@@ -34,6 +34,7 @@
 }
 
 .board-cell {
+    position: relative;
     display: flex;
     align-items: center;
     width: 100%;
@@ -64,9 +65,13 @@
     text-transform: capitalize;
 }
 
-.board-cell-input:focus:not(".cell-highlight-filter") {
-    background-color: var(--cell-bg-color);
-    outline: none;
+.heatmap-count {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-size: 0.8rem;
+    color: white;
+    display: none;
 }
 
 .cell-highlight {
@@ -75,6 +80,7 @@
 
 .cell-highlight-filter {
     outline: none;
+    border: 3px groove blue;
     background-color: var(--cell-bg-color-filter);
 }
 
