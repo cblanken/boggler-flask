@@ -115,3 +115,33 @@
 #remove-filter-btn i {
     position: relative;
 }
+
+@media (max-width: 767.98px) {
+    .board-in-picture {
+        position: fixed;
+        z-index: 15;
+        top: 8vh;
+        right: 2vw;
+        width: 55vw;
+        background: rgba(255, 222, 199, 0.705);
+        border-radius: calc(1.5 * var(--cell-gap));
+        padding: 10px;
+    }
+
+    .board-in-picture input {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .board-in-picture {
+        position: fixed;
+        z-index: 15;
+        top: 8vh;
+        left: 2vw;
+        width: 48vw;
+        background: rgba(255, 222, 199, 0.705);
+        border-radius: calc(1.5 * var(--cell-gap));
+        padding: 10px;
+    }
+}

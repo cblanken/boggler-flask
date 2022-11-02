@@ -199,27 +199,29 @@ copyUrlBtn.addEventListener("click", e => {
     navigator.clipboard.writeText(encodeURI(window.location.href));
 });
 
-// Scroll-to-top popup button
+// Scroll-to-top popup button and board-in-picture
 let board_height = document.getElementById("board").getBoundingClientRect().height;
 let scrollToTopBtn = document.getElementById("scroll-to-top-btn");
-let ticking = false;
-
+let boardAndFilterBtn = document.getElementById("board-and-filter-btn");
 scrollToTopBtn.addEventListener("click", (e) => {
     window.scrollTo(0, 0);
 });
 
+let timeout = false;
 document.addEventListener("scroll", (e) => {
-    if (!ticking) {
+    if (!timeout) {
         window.requestAnimationFrame(() => {
             if (document.documentElement.scrollTop > board_height) {
                 scrollToTopBtn.style["display"] = "block";
+                boardAndFilterBtn.classList.add("board-in-picture");
             } else {
                 scrollToTopBtn.style["display"] = "none";
+                boardAndFilterBtn.classList.remove("board-in-picture");
             }
-            ticking = false;
+            timeout = false;
         })
     }
-     ticking = true;
+    timeout = true;
 });
 
 // Board heatmap
