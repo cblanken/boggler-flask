@@ -1,6 +1,9 @@
 """Main app module
 """
 from flask import Flask, request, render_template, redirect
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 def create_app():
     """Return base Flask app object
@@ -8,6 +11,12 @@ def create_app():
     app = Flask(__name__)
     # TODO: handle session key with env vars
     app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
+
+    # TODO: Add configuration layers for DB, 
+    app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:password@localhost:5555/boggler?connect_timeout=10"
+
+    db.init_app(app)
 
     @app.errorhandler(404)
     def page_not_found(_):
