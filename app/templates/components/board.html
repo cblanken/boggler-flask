@@ -1,9 +1,9 @@
-<div id="board" style="gap: {{ 40 / rows }}px" class="grid disable-select" spellcheck="false">
+<div id="board" style="font-size: {{ 10 / rows }}rem; gap: {{ 40 / rows }}px" class="grid disable-select" spellcheck="false">
     {% for row in range(0, rows) %}
         <div style="gap: {{ 40 / cols }}px" class="board-row">
             {% for col in range(0, cols) %}
             <!-- Sorry for the inline style. It was this or JS -->
-            <div style="font-size: {{ 16 / rows }}rem" class="board-cell" data-pos="{{row}},{{col}}">
+            <div class="board-cell" data-pos="{{row}},{{col}}">
                 <input 
                     readonly="true"
                     class="board-cell-input"
