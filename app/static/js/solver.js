@@ -117,7 +117,7 @@ sizeSelect.addEventListener("change", e => {
             cell_div = document.createElement("div");
             cell_div.setAttribute("class", "board-cell");
             cell_div.setAttribute("data-pos", `${r},${c}`);
-            let letter_size = 80 / sizeSelect.value / 5;
+            let letter_size = 10 / sizeSelect.value;
             cell_div.style["font-size"] = `${letter_size}rem`;
             cell_div.style["board-radius"] = "1px";
             input = document.createElement("input");
