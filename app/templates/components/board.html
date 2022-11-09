@@ -6,6 +6,9 @@
     const BASE_LETTER_SIZE = getComputedStyle(root).getPropertyValue("--letter-size");
     let DEFAULT_LETTER_SIZE = `calc(${BASE_LETTER_SIZE} * 4 / ${board_size}`;
 
+    const BASE_LETTER_SIZE_MOBILE = getComputedStyle(root).getPropertyValue("--letter-size-mobile");
+    let DEFAULT_LETTER_SIZE_MOBILE = `calc(${BASE_LETTER_SIZE_MOBILE} * 4 / ${board_size}`;
+
     const BASE_GAP_SIZE = getComputedStyle(root).getPropertyValue("--cell-gap");
     let DEFAULT_GAP_SIZE = `calc(${BASE_GAP_SIZE} * 4 / ${board_size})`;
 

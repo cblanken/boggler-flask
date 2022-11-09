@@ -211,13 +211,14 @@ let boardAndFilterBtn = document.getElementById("board-and-filter-btn");
 let timeout = false;
 const reset_letter_size = () => {
     root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE);
+    root.style.setProperty("--letter-size-mobile", DEFAULT_LETTER_SIZE_MOBILE);
 }
 
 document.addEventListener("scroll", (e) => {
     if (!timeout) {
         window.requestAnimationFrame(() => {
             if (root.scrollTop > board_height) {
-                root.style.setProperty("--letter-size", `${DEFAULT_LETTER_SIZE} / 1.5`);
+                root.style.setProperty("--letter-size-mobile", `${DEFAULT_LETTER_SIZE} / 2.5`);
                 scrollToTopBtn.style["display"] = "block";
                 boardAndFilterBtn.classList.add("board-in-picture");
             } else {

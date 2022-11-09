@@ -148,13 +148,6 @@
         top: 8vh;
         left: 2vw;
         width: 48vw;
-        background: rgba(255, 222, 199, 0.705);
-        border-radius: calc(1.5 * var(--cell-gap));
         padding: 10px;
-    }
-
-    .board-cell-input {
-        font-size: var(--letter-size);
-        border-radius: var(--cell-gap);
     }
 }
