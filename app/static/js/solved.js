@@ -199,22 +199,29 @@ copyUrlBtn.addEventListener("click", e => {
     navigator.clipboard.writeText(encodeURI(window.location.href));
 });
 
-// Scroll-to-top popup button and board-in-picture
-let board_height = document.getElementById("board").getBoundingClientRect().height;
+// Scroll-to-top popup button
 let scrollToTopBtn = document.getElementById("scroll-to-top-btn");
-let boardAndFilterBtn = document.getElementById("board-and-filter-btn");
 scrollToTopBtn.addEventListener("click", (e) => {
     window.scrollTo(0, 0);
 });
 
+// Scroll board-in-picture
+let board_height = document.getElementById("board").getBoundingClientRect().height;
+let boardAndFilterBtn = document.getElementById("board-and-filter-btn");
 let timeout = false;
+const reset_letter_size = () => {
+    root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE);
+}
+
 document.addEventListener("scroll", (e) => {
     if (!timeout) {
         window.requestAnimationFrame(() => {
-            if (document.documentElement.scrollTop > board_height) {
+            if (root.scrollTop > board_height) {
+                root.style.setProperty("--letter-size", `${DEFAULT_LETTER_SIZE} / 1.5`);
                 scrollToTopBtn.style["display"] = "block";
                 boardAndFilterBtn.classList.add("board-in-picture");
             } else {
+                reset_letter_size();
                 scrollToTopBtn.style["display"] = "none";
                 boardAndFilterBtn.classList.remove("board-in-picture");
             }

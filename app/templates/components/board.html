@@ -1,8 +1,22 @@
-<div id="board" style="font-size: {{ 10 / rows }}rem; gap: {{ 40 / rows }}px" class="grid disable-select" spellcheck="false">
+{# TODO: refactor this inline script to separate file #}
+<script>
+    let board_size = "{{ rows }}"
+    const root = document.documentElement;
+
+    const BASE_LETTER_SIZE = getComputedStyle(root).getPropertyValue("--letter-size");
+    let DEFAULT_LETTER_SIZE = `calc(${BASE_LETTER_SIZE} * 4 / ${board_size}`;
+
+    const BASE_GAP_SIZE = getComputedStyle(root).getPropertyValue("--cell-gap");
+    let DEFAULT_GAP_SIZE = `calc(${BASE_GAP_SIZE} * 4 / ${board_size})`;
+
+    root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE)
+    root.style.setProperty("--cell-gap", DEFAULT_GAP_SIZE)
+</script>
+
+<div id="board" class="grid disable-select" spellcheck="false">
     {% for row in range(0, rows) %}
-        <div style="gap: {{ 40 / cols }}px" class="board-row">
+        <div class="board-row">
             {% for col in range(0, cols) %}
-            <!-- Sorry for the inline style. It was this or JS -->
             <div class="board-cell" data-pos="{{row}},{{col}}">
                 <input 
                     readonly="true"

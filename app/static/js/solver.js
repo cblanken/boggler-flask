@@ -106,19 +106,18 @@ sizeSelect.addEventListener("change", e => {
     // Delete old board
     board = document.getElementById("board");
     board.textContent = "";
-    let gap_scale = 40;
-    board.style["gap"] = `${gap_scale / sizeSelect.value}px`
+    DEFAULT_LETTER_SIZE = `calc(${BASE_LETTER_SIZE} * 4 / ${sizeSelect.value}`;
+    DEFAULT_GAP_SIZE = `calc(${BASE_GAP_SIZE} * 4 / ${sizeSelect.value})`;
+    root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE)
+    root.style.setProperty("--cell-gap", DEFAULT_GAP_SIZE)
     // Generate HTML for resized board
     for (r = 0; r < sizeSelect.value; r++) {
         row_div = document.createElement("div");
         row_div.setAttribute("class", "board-row");
-        row_div.style["gap"] = `${gap_scale / sizeSelect.value}px`
         for (c = 0; c < sizeSelect.value; c++) {
             cell_div = document.createElement("div");
             cell_div.setAttribute("class", "board-cell");
             cell_div.setAttribute("data-pos", `${r},${c}`);
-            let letter_size = 10 / sizeSelect.value;
-            cell_div.style["font-size"] = `${letter_size}rem`;
             cell_div.style["board-radius"] = "1px";
             input = document.createElement("input");
             input.setAttribute("class", "board-cell-input");
