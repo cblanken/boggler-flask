@@ -18,14 +18,16 @@
                     </div>
                 </button>
             </div>
-            {% include 'components/board.html' %}
-            <button id="remove-filter-btn"
-                    type="button"
-                    title="Remove word filter"
-                    class="btn btn-secondary">
-                    <i class="bi-funnel"></i>
-                    <span>x</span>
-            </button>
+            <div id="board-and-filter-btn">
+                {% include 'components/board.html' %}
+                <button id="remove-filter-btn"
+                        type="button"
+                        title="Remove word filter"
+                        class="btn btn-secondary">
+                        <i class="bi-funnel"></i>
+                        <span>x</span>
+                </button>
+            </div>
         </div>
         <div class="col-lg-6">{% include 'components/words_table.html' %}</div>
     </div>
