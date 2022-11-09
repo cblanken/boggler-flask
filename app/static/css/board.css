@@ -1,7 +1,13 @@
 :root {
     --board-width: 100%;
-    --letter-size: calc(1.5rem + 2.0vw);
+    --board-size: 4;
+    --letter-size: calc(240px/var(--board-size));
+    --letter-size-mobile: calc(var(--letter-size) / 1.5);
     --cell-gap: min(calc(5px + 1vw), 15px);
+}
+
+.leader-line {
+    z-index: 99;
 }
 
 .disable-select {
@@ -45,6 +51,7 @@
 
 .board-cell-input {
     font-family: inherit;
+    font-size: var(--letter-size);
     cursor: pointer;
     color: rgb(74, 74, 74);
 
@@ -67,9 +74,6 @@
 
 .heatmap-count {
     position: absolute;
-    right: 10px;
-    top: 5px;
-    font-size: 0.8rem;
     color: white;
     display: none;
 }
@@ -122,8 +126,7 @@
         z-index: 15;
         top: 8vh;
         right: 2vw;
-        width: 55vw;
-        background: rgba(255, 222, 199, 0.705);
+        width: 70vw;
         border-radius: calc(1.5 * var(--cell-gap));
         padding: 10px;
     }
@@ -133,9 +136,19 @@
         gap: 0.25rem !important;
     }
 
-    .board-in-picture input {
-        font-size: 0.4em;
-        border-radius: 0.4rem;
+    .board-cell-input {
+        font-size: var(--letter-size-mobile);
+        border-radius: var(--cell-gap);
+    }
+
+    .heatmap-count {
+        font-size: calc(var(--letter-size-mobile) / 1.25);
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: var(--cell-gap);
+        justify-content: center;
+        align-items: center;
     }
 }
 
@@ -146,8 +159,12 @@
         top: 8vh;
         left: 2vw;
         width: 48vw;
-        background: rgba(255, 222, 199, 0.705);
-        border-radius: calc(1.5 * var(--cell-gap));
         padding: 10px;
+    }
+
+    .heatmap-count {
+        font-size: calc(var(--letter-size) / 2);
+        right: 8%;
+        top: 5%;
     }
 }
