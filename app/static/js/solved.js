@@ -274,19 +274,20 @@ function toggle_heatmap() {
             }
         }
 
-        let heatmap_counts = document.querySelectorAll(".heatmap-count");
+        let heatmap_counts = document.querySelectorAll(".heatmap-count > div");
         heatmap_counts.forEach((count) => {
-            let parent = count.parentElement;
+            let heatmap_container = count.parentElement;
+            let parent = heatmap_container.parentElement;
             let cell = parent.querySelector(".board-cell-input");
             let pos = parent.getAttribute("data-pos").split(',').map(x => parseInt(x))
             count.textContent = cell_counts[pos[0]][pos[1]];
-            let count_style = window.getComputedStyle(count);
+            let count_style = window.getComputedStyle(heatmap_container);
             let cell_style = window.getComputedStyle(cell);
             if (count_style.display == "none") {
-                count.style.setProperty("display", "block", count_style.getPropertyPriority("display"));
+                heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
                 cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`, cell_style.getPropertyPriority("background-color"));
             } else {
-                count.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
+                heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
                 cell.style.removeProperty("background-color");
             }
         })

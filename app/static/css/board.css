@@ -70,9 +70,6 @@
 
 .heatmap-count {
     position: absolute;
-    right: 10px;
-    top: 5px;
-    font-size: 0.8rem;
     color: white;
     display: none;
 }
@@ -139,6 +136,16 @@
         font-size: var(--letter-size-mobile);
         border-radius: var(--cell-gap);
     }
+
+    .heatmap-count {
+        font-size: calc(var(--letter-size-mobile) / 1.25);
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: var(--cell-gap);
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 @media (min-width: 768px) {
@@ -149,5 +156,11 @@
         left: 2vw;
         width: 48vw;
         padding: 10px;
+    }
+
+    .heatmap-count {
+        font-size: calc(var(--letter-size) / 2);
+        right: 8%;
+        top: 5%;
     }
 }
