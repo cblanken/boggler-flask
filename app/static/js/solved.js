@@ -223,6 +223,12 @@ document.addEventListener("scroll", (e) => {
                 root.style.setProperty("--letter-size-mobile", `${DEFAULT_LETTER_SIZE} / 2.5`);
                 scrollToTopBtn.style["display"] = "block";
                 boardAndFilterBtn.classList.add("board-in-picture");
+
+                // Currently removing arrows on scroll for mobile 
+                // to prevent unachored arrows
+                // TODO: adapt leader lines for scroll
+                remove_arrows(active_arrows);
+                active_arrows = [];
             } else {
                 reset_letter_size();
                 scrollToTopBtn.style["display"] = "none";
