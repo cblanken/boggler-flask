@@ -6,6 +6,10 @@
     --cell-gap: min(calc(5px + 1vw), 15px);
 }
 
+.leader-line {
+    z-index: 99;
+}
+
 .disable-select {
     -webkit-user-select: none;
     -moz-user-select: none;
