@@ -1,17 +1,11 @@
 """App instance for celery worker
 """
 from celery import Celery
-from app import create_app
-def create_celery():
-    """Configure Celery object for async tasks
-    """
-    cel = Celery("boggler-celery",
-        broker="redis://redis:6379/0",
-        backend="redis://redis:6379/0",
-        include="app.board"
-    )
+from flask import Flask
+from config import config
 
-    return cel
-
-app = create_app()
-cel = create_celery()
+app = Flask(__name__)
+cfg = config["celery"]
+app.config.from_object(cfg)
+cfg.init_app(app)
+cel = cfg.create_celery()
