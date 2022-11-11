@@ -12,6 +12,7 @@ COPY requirements requirements
 COPY wordlists wordlists
 COPY app app
 COPY celery_worker celery_worker
+COPY config config
 COPY main.py boot.sh ./
 
 # Setup virtualenv
