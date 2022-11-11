@@ -1,6 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from . import db
 
-db = SQLAlchemy()
 class Dictionary(db.Model):
     __tablename__ = "dictionaries"
     id = db.Column(db.Integer, primary_key=True)
