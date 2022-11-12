@@ -30,7 +30,9 @@ function toggle_path_highlight(path) {
 function draw_path_connections(path) {
     let arrows = [];
     let cells = document.querySelectorAll(".board-cell");
-    const arrow_scale = 1 / ((cells[cells.length-1].getAttribute("data-pos")[0] + cells[cells.length-1].getAttribute("data-pos")[2]) / 2)
+    let cell_input = document.querySelector(".board-cell-input");
+    let font_size = getComputedStyle(cell_input).getPropertyValue("font-size").slice(0,-2);
+    const arrow_scale = 1/7;
     let arrow_params = {
         path: "straight",
         color: "#09008980",
@@ -38,14 +40,14 @@ function draw_path_connections(path) {
             animation: true,
             gap: 8,
         },
-        size: Math.ceil(50 * arrow_scale) + 3,
+        size: font_size * arrow_scale,
     }
 
     for (i=1; i < path.length; i++) {
-        cell1 = path[i-1];
-        cell2 = path[i];
-        c1 = document.querySelector(`#board [data-pos=\"${cell1[0]},${cell1[1]}\"] input`);
-        c2 = document.querySelector(`#board [data-pos=\"${cell2[0]},${cell2[1]}\"] input`);
+        let cell1 = path[i-1];
+        let cell2 = path[i];
+        let c1 = document.querySelector(`#board [data-pos=\"${cell1[0]},${cell1[1]}\"] input`);
+        let c2 = document.querySelector(`#board [data-pos=\"${cell2[0]},${cell2[1]}\"] input`);
 
         if (cell1[0] === cell2[0] ||
             cell1[1] === cell2[1] 
@@ -200,26 +202,42 @@ copyUrlBtn.addEventListener("click", e => {
 });
 
 // Scroll-to-top popup button
-let board_height = document.getElementById("board").getBoundingClientRect().height;
 let scrollToTopBtn = document.getElementById("scroll-to-top-btn");
-let ticking = false;
-
 scrollToTopBtn.addEventListener("click", (e) => {
     window.scrollTo(0, 0);
 });
 
+// Scroll board-in-picture
+let board_height = document.getElementById("board").getBoundingClientRect().height;
+let boardAndFilterBtn = document.getElementById("board-and-filter-btn");
+let timeout = false;
+const reset_letter_size = () => {
+    root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE);
+    root.style.setProperty("--letter-size-mobile", DEFAULT_LETTER_SIZE_MOBILE);
+}
+
 document.addEventListener("scroll", (e) => {
-    if (!ticking) {
+    if (!timeout) {
         window.requestAnimationFrame(() => {
-            if (document.documentElement.scrollTop > board_height) {
+            if (root.scrollTop > board_height) {
+                root.style.setProperty("--letter-size-mobile", `${DEFAULT_LETTER_SIZE} / 2.5`);
                 scrollToTopBtn.style["display"] = "block";
+                boardAndFilterBtn.classList.add("board-in-picture");
+
+                // Currently removing arrows on scroll for mobile 
+                // to prevent unachored arrows
+                // TODO: adapt leader lines for scroll
+                remove_arrows(active_arrows);
+                active_arrows = [];
             } else {
+                reset_letter_size();
                 scrollToTopBtn.style["display"] = "none";
+                boardAndFilterBtn.classList.remove("board-in-picture");
             }
-            ticking = false;
+            timeout = false;
         })
     }
-     ticking = true;
+    timeout = true;
 });
 
 // Board heatmap
@@ -264,19 +282,20 @@ function toggle_heatmap() {
             }
         }
 
-        let heatmap_counts = document.querySelectorAll(".heatmap-count");
+        let heatmap_counts = document.querySelectorAll(".heatmap-count > div");
         heatmap_counts.forEach((count) => {
-            let parent = count.parentElement;
+            let heatmap_container = count.parentElement;
+            let parent = heatmap_container.parentElement;
             let cell = parent.querySelector(".board-cell-input");
             let pos = parent.getAttribute("data-pos").split(',').map(x => parseInt(x))
             count.textContent = cell_counts[pos[0]][pos[1]];
-            let count_style = window.getComputedStyle(count);
+            let count_style = window.getComputedStyle(heatmap_container);
             let cell_style = window.getComputedStyle(cell);
             if (count_style.display == "none") {
-                count.style.setProperty("display", "block", count_style.getPropertyPriority("display"));
+                heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
                 cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`, cell_style.getPropertyPriority("background-color"));
             } else {
-                count.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
+                heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
                 cell.style.removeProperty("background-color");
             }
         })

@@ -2,19 +2,16 @@
 """
 from flask import Flask, request, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
+from config import config
 
 db = SQLAlchemy()
 
-def create_app():
+def create_app(config_name):
     """Return base Flask app object
     """
     app = Flask(__name__)
-    # TODO: handle session key with env vars
-    app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
-
-    # TODO: Add configuration layers for DB, 
-    app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:password@localhost:5555/boggler?connect_timeout=10"
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
     db.init_app(app)
 
