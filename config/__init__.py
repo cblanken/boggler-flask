@@ -32,8 +32,8 @@ class ProductionConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATION = False
     DB_HOST = os.environ.get("PROD_DB_HOST") or "localhost"
     DB_PORT = os.environ.get("PROD_DB_PORT") or "5555"
-    DB_USER = os.environ.get("PROD_DB_USER") or input("Provide a database username to continue: ")
-    DB_PASS = os.environ.get("PROD_DB_PASS") or input("Provide a database password to continue: ")
+    DB_USER = os.environ.get("PROD_DB_USER") or "postgres"
+    DB_PASS = os.environ.get("PROD_DB_PASS") or "password"
     SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/boggler?connect_timeout=10"
 
     @classmethod
