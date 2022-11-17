@@ -17,7 +17,7 @@ services:
   boggler:
     container_name: boggler-flask
     env_file:
-      - cfg/boggler.env
+      - cfg/docker.env
     image: boggler-flask
     build: .
     restart: always
