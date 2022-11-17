@@ -1,13 +1,19 @@
 """Main app module
 """
 from flask import Flask, request, render_template, redirect
+from flask_sqlalchemy import SQLAlchemy
+from config import config
 
-def create_app():
+db = SQLAlchemy()
+
+def create_app(config_name):
     """Return base Flask app object
     """
     app = Flask(__name__)
-    # TODO: handle session key with env vars
-    app.secret_key = "THIS_IS_A_TEST_KEY_REMOVE_ME!"
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    db.init_app(app)
 
     @app.errorhandler(404)
     def page_not_found(_):
