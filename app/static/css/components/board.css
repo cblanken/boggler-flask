@@ -53,7 +53,8 @@
     font-family: inherit;
     font-size: var(--letter-size);
     cursor: pointer;
-    color: rgb(74, 74, 74);
+    color: var(--fg-color-2);
+    background-color: var(--bg-color-1);
 
     border-radius: var(--cell-gap);
     border: 3px solid var(--primary-color-accent);
