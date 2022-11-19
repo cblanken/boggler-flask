@@ -1,7 +1,10 @@
-:root {
+html {
+    --light: rgb(227, 227, 227);
+    --dark: rgb(33, 37, 41);
+
     /* LIGHT MODE */
-    --bg-color: rgb(33, 37, 41);
-    --fg-color: rgba(221, 207, 255);
+    --fg-color: var(--dark);
+    --bg-color: var(--light);
     --title-color: rgb(16, 139, 129);
     --primary-color: hsl(41, 90.6%, 41.8%);
     --primary-color-accent: hsl(41, 90.6%, 31.8%);
@@ -12,6 +15,24 @@
 }
 
 /* DARK MODE */
-[data-theme="dark"] {
+html[data-theme="dark"] {
+    --fg-color: var(--light);
+    --bg-color: var(--dark);
+    --title-color: rgb(16, 139, 129);
+    --primary-color: hsl(41, 90.6%, 41.8%);
+    --primary-color-accent: hsl(41, 90.6%, 31.8%);
+    --secondary-color: hsl(258, 100%, 90.6%);
+    --secondary-color-accent: hsl(258, 60%, 72%);
+    --success-color: rgba(20, 167, 79, 0.815);
+    --filter-color: rgba(230, 73, 73, 0.9);
+}
 
+header {
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--fg-color);
 }
