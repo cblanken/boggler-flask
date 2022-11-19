@@ -1,20 +1,5 @@
-body {
-    background-color: var(--background-color);
-    font-family: Kanit, Helvetica, sans-serif;
-}
-
 body::before {
     display: block;
     content: "";
     height: 56px;
-}
-
-#title-Boggler {
-    color: var(--title-color);
-    font-weight: bold;
-    font-size: 1.5rem;
-    padding: 0;
-    letter-spacing: 2px;
-    text-decoration: solid underline 3px;
-    margin-left: 10px;
 }

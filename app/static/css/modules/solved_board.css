@@ -1,8 +1,8 @@
 #scroll-to-top-btn {
     width: 100%;
     margin-top: 10px;
-    background: var(--board-border-color);
-    border: 2px outset var(--board-border-color-dark);
+    background: var(--primary-color);
+    border: 2px outset var(--primary-color-accent);
     position: sticky;
     z-index: 10;
     bottom: 0;

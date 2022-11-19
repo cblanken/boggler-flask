@@ -8,5 +8,5 @@
 }
 
 .btn-success, .btn-success:hover, .btn-success:active, .btn-success:visited {
-    background-color: rgba(20, 167, 79, 0.815) !important;
+    background-color: var(--success-color) !important;
 }

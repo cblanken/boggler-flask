@@ -14,5 +14,5 @@
 }
 
 #table-wrapper tr.selected {
-    background-color: var(--cell-bg-color);
+    background-color: var(--secondary-color);
 }
