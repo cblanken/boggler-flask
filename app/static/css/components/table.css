@@ -1,3 +1,9 @@
+#table-wrapper thead {
+    /* color: var(--fg-color-1);
+    background-color: var(--bg-color-1); */
+    border-color: var(--fg-color-1);
+}
+
 /* Hide checkbox column */
 #table-wrapper th.bs-checkbox,
 #table-wrapper td.bs-checkbox {
@@ -11,8 +17,10 @@
 #table-wrapper td {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
+    color: var(--fg-color-1);
+    background-color: var(--bg-color-1);
 }
 
 #table-wrapper tr.selected {
-    background-color: var(--cell-bg-color);
+    background-color: var(--secondary-color);
 }

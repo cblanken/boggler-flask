@@ -1,0 +1,42 @@
+html {
+    --light: rgb(227, 227, 227);
+    --dark: rgb(33, 37, 41);
+
+    /* LIGHT MODE */
+    --fg-color-1: var(--dark);
+    --fg-color-2: rgb(74, 74, 74);
+    --bg-color-1: rgb(242, 242, 242);
+    --bg-color-2: rgb(201, 201, 201);
+    --title-color: rgb(16, 139, 129);
+    --primary-color: hsl(41, 90.6%, 41.8%);
+    --primary-color-accent: hsl(41, 90.6%, 31.8%);
+    --secondary-color: hsl(258, 100%, 90.6%);
+    --secondary-color-accent: hsl(258, 60%, 72%);
+    --success-color: rgba(20, 167, 79, 0.815);
+    --filter-color: rgba(230, 73, 73, 0.9);
+}
+
+/* DARK MODE */
+html[data-theme="dark"] {
+    --fg-color-1: var(--light);
+    --fg-color-2: rgb(201, 201, 201);
+    --bg-color-1: var(--dark);
+    --bg-color-2: rgb(74, 74, 74);
+    --title-color: rgb(16, 139, 129);
+    --primary-color: hsl(41, 90.6%, 41.8%);
+    --primary-color-accent: hsl(41, 90.6%, 31.8%);
+    --secondary-color: hsl(258, 100%, 65%);
+    --secondary-color-accent: hsl(258, 60%, 40%);
+    --success-color: rgba(20, 167, 79, 0.815);
+    --filter-color: rgba(230, 73, 73, 0.9);
+}
+
+header {
+    background-color: var(--dark);
+    color: var(--light);
+}
+
+body {
+    background-color: var(--bg-color-1);
+    color: var(--fg-color-1);
+}

@@ -1,6 +1,6 @@
 #board-options > h2 {
     font-family: 'Kanit', 'Helvetica', sans-serif;
-    background-color: var(--board-border-color);
+    background-color: var(--primary-color);
 }
 
 #board-options {
@@ -8,6 +8,6 @@
 }
 
 #board-options select {
-    background-color: var(--cell-bg-color);
+    background-color: var(--secondary-color);
     font-weight: bold;
 }

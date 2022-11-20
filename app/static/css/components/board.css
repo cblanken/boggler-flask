@@ -26,8 +26,8 @@
     display: grid;
     gap: var(--cell-gap);
     padding: var(--cell-gap);
-    border: 3px solid var(--board-border-color);
-    background-color: var(--board-border-color);
+    border: 3px solid var(--primary-color);
+    background-color: var(--primary-color);
     border-radius: calc(1.5 * var(--cell-gap));
     border-style: outset;
 }
@@ -53,10 +53,11 @@
     font-family: inherit;
     font-size: var(--letter-size);
     cursor: pointer;
-    color: rgb(74, 74, 74);
+    color: var(--fg-color-2);
+    background-color: var(--bg-color-1);
 
     border-radius: var(--cell-gap);
-    border: 3px solid var(--board-border-color-dark);
+    border: 3px solid var(--primary-color-accent);
     border-style: inset;
 
     text-align: center;
@@ -79,22 +80,22 @@
 }
 
 .cell-highlight {
-    background-color: var(--cell-bg-color);
+    background-color: var(--secondary-color);
 }
 
 .cell-highlight-filter {
     outline: none;
     border: 3px groove blue;
-    background-color: var(--cell-bg-color-filter);
+    background-color: var(--filter-color);
 }
 
 .board-cell-input:not(.cell-highlight-first-letter):not(.cell-highlight-filter):hover {
-    background-color: var(--cell-bg-color);
+    background-color: var(--secondary-color);
     box-shadow: 1px 1px 5px #555 outset;
 } 
 
 .cell-highlight-first-letter:not(.cell-highlight-filter) {
-    background-color: var(--cell-bg-color-dark);
+    background-color: var(--secondary-color-accent);
 }
 
 #remove-filter-btn {
@@ -104,7 +105,7 @@
     font-weight: bolder;
     font-size: 1.5rem;
     display: none;
-    background-color: var(--cell-bg-color-filter);
+    background-color: var(--filter-color);
     border-width: 0;
 }
 
