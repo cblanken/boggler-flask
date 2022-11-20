@@ -13,12 +13,12 @@
 
 .accordion-item,
 .accordion-button.collapsed {
-    background-color: var(--bg-color-1);
+    background-color: var(--bg-color-2);
     color: var(--fg-color-1);
     border-color: var(--fg-color-1);
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: var(--fg-color-1);
+    background-color: var(--bg-color-1);
     color: var(--title-color);
 }
