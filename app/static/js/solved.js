@@ -291,9 +291,12 @@ function toggle_heatmap() {
             count.textContent = cell_counts[pos[0]][pos[1]];
             let count_style = window.getComputedStyle(heatmap_container);
             let cell_style = window.getComputedStyle(cell);
+            let theme = document.documentElement.getAttribute("data-theme");
+            let lightness = getComputedStyle(document.documentElement).getPropertyValue("--heatmap-lightness")
             if (count_style.display == "none") {
                 heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
-                cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, 50%)`, cell_style.getPropertyPriority("background-color"));
+                console.log(theme, lightness);
+                cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, ${lightness})`, cell_style.getPropertyPriority("background-color"));
             } else {
                 heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
                 cell.style.removeProperty("background-color");
