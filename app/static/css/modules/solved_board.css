@@ -1,10 +1,22 @@
 #scroll-to-top-btn {
-    width: 100%;
-    margin-top: 10px;
-    background: var(--primary-color);
-    border: 2px outset var(--primary-color-accent);
+    display: flex;
+    justify-content: end;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--secondary-color);
+    border: 2px outset var(--secondary-color-accent);
     position: sticky;
     z-index: 10;
-    bottom: 0;
+    bottom: 16px;
+    left: calc(100% - 3.5rem - 16px);
     display: none;
+    border-radius: 50%;
+    border-width: 2px;
+}
+
+#scroll-to-top-btn svg {
+    display: block;
+    margin: auto;
+    stroke: var(--fg-color-1);
+    stroke-width: 3px;
 }
