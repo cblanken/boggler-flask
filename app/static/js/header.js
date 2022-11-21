@@ -3,7 +3,6 @@ let theme_toggle_slider = document.querySelector("#theme-switch .toggle-slider")
 let theme_toggle_checkbox = document.querySelector("#theme-switch input[type='checkbox']");
 theme_toggle.addEventListener("click", e => {
     theme_toggle_checkbox.checked = !theme_toggle_checkbox.checked;
-    console.log(theme_toggle_slider)
     if (theme_toggle_checkbox.checked) {
         document.documentElement.setAttribute("data-theme", "dark");
         theme_toggle_slider.classList.add("toggle-slider-anim-dark")
@@ -13,6 +12,7 @@ theme_toggle.addEventListener("click", e => {
         theme_toggle_slider.classList.add("toggle-slider-anim-light")
         change_theme("toggle-slider-anim-dark");
     }
+    save_theme();
 }, false);
 
 function debounce(func, timeout = 250) {
@@ -28,4 +28,19 @@ function change_theme(anim_class) {
         theme_toggle_slider.classList.add(anim_class);
     });
     theme_toggle_slider.classList.remove(anim_class);
+}
+
+function save_theme() {
+    let theme = document.documentElement.getAttribute("data-theme");
+    localStorage.setItem("theme", theme);
+}
+
+function get_theme_setting() {
+    return document.documentElement.getAttribute("data-theme") ?? localStorage.getItem("theme");
+}
+
+let theme = get_theme_setting();
+if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    theme_toggle_slider.classList.add("toggle-slider-anim-dark")
 }

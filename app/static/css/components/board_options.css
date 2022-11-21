@@ -1,13 +1,21 @@
+#board-options {
+    font-family: 'Figtree', Arial, sans-serif;
+    border: 4px solid var(--primary-color);
+    border-radius: 0.75em;
+}
+
 #board-options > h2 {
     font-family: 'Kanit', 'Helvetica', sans-serif;
     background-color: var(--primary-color);
 }
 
-#board-options {
-    font-family: 'Figtree', Arial, sans-serif;
+#board-options > div {
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
 }
 
 #board-options select {
-    background-color: var(--secondary-color);
+    background-color: var(--bg-color-1);
+    color: var(--fg-color-1);
     font-weight: bold;
 }
