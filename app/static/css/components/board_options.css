@@ -8,6 +8,7 @@
 }
 
 #board-options select {
-    background-color: var(--secondary-color);
+    background-color: var(--bg-color-1);
+    color: var(--fg-color-1);
     font-weight: bold;
 }
