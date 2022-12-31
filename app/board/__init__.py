@@ -3,6 +3,7 @@
 import functools
 import operator
 import os
+from math import sqrt
 from random import choices
 import importlib.resources as ILR
 from flask import (
@@ -31,6 +32,14 @@ try:
         DICE["new"] = read_dice_file(f)
 except FileNotFoundError:
     print("Unable to load '4x4_new.csv' DICE file")
+
+try:
+    with ILR.path("boggler.dice", "5x5_big.csv") as f:
+        DICE["big"] = read_dice_file(f)
+        for r in DICE["big"]:
+            print(r)
+except FileNotFoundError:
+    print("Unable to load '5x5_big.csv' DICE file")
 
 try:
     with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
@@ -136,19 +145,20 @@ def api_random():
     """API endpoing to get a random board 
     """
     # Default letter distribution for board sizes without dice
-    alphabet = ["a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "c", "c", "c",
-        "d", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "e", "e", "f", "f",
-        "g", "g", "g", "h", "h", "h", "i", "i", "i", "i", "i", "i", "i", "j", "k", "k",
-        "l", "l", "l", "l", "l", "m", "m", "m", "n", "n", "n", "n", "n", "o", "o", "o",
-        "o", "o", "o", "p", "p", "p", "qu", "r", "r", "r", "r", "s", "s", "s", "s", "s",
-        "t", "t", "t", "t", "t", "u", "u", "u", "u", "v", "v", "w", "w", "x", "y", "y", "y", "z"]
+    alphabet = ['a', 'a', 'a', 'a', 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c',
+        'd', 'd', 'd', 'd', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'e', 'f', 'f',
+        'g', 'g', 'g', 'h', 'h', 'h', 'i', 'i', 'i', 'i', 'i', 'i', 'i', 'j', 'k', 'k',
+        'l', 'l', 'l', 'l', 'l', 'm', 'm', 'm', 'n', 'n', 'n', 'n', 'n', 'o', 'o', 'o',
+        'o', 'o', 'o', 'p', 'p', 'p', 'qu', 'r', 'r', 'r', 'r', 's', 's', 's', 's', 's',
+        't', 't', 't', 't', 't', 'u', 'u', 'u', 'u', 'v', 'v', 'w', 'w', 'x', 'y', 'y',
+        'y', 'z']
     try:
         size = int(request.args.get("size"))
-    except (TypeError, ):
+    except TypeError:
         size = 4
 
     dice_type = request.args.get("dice_type")
-    if dice_type in DICE and size * size == len(DICE[dice_type]):
+    if dice_type in DICE and size == int(sqrt(len(DICE[dice_type]))):
         return {
             "board": get_random_board(DICE[dice_type]),
             "dice_type": dice_type
