@@ -22,3 +22,9 @@ corresponding letter in your boggle board.
   through that specific cell. The cell will be highlighted in red.
     - To remove the filter, click the button with the filter icon below the board.
     ![boggle3](https://user-images.githubusercontent.com/19908880/195198375-206ac6ff-0e1f-430d-88ca-8d81b9cf78d0.png)
+
+## Deployment
+### Renew HTTPs Certs
+- To renew Let's Encrypt cert, shutdown the app (`sudo docker compose down`), then run
+`sudo certbot --nginx renew`. Stop `nginx.service` with `sudo systemctl stop nginx.service`
+(it may be necessary to restart the host) then restart the app with `sudo docker compose up -d`.
