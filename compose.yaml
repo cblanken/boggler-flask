@@ -9,6 +9,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      # Must specify FLASK_CONFIG env var
       - ./cfg/${FLASK_CONFIG}_nginx.conf:/etc/nginx/nginx.conf
       - ./well-known:/well-known
       - /etc/letsencrypt:/letsencrypt

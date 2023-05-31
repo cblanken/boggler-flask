@@ -13,6 +13,7 @@ def get_secret():
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or get_secret()
+    SQLALCHEMY_TRACK_MODIFICATION = False
 
     @staticmethod
     def init_app(app):
@@ -20,7 +21,6 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_TRACK_MODIFICATION = False
     DB_HOST = os.environ.get("DEV_DB_HOST") or "localhost"
     DB_PORT = os.environ.get("DEV_DB_PORT") or "5555"
     DB_USER = os.environ.get("DEV_DB_USER") or "postgres"
@@ -29,7 +29,6 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_TRACK_MODIFICATION = False
     DB_HOST = os.environ.get("PROD_DB_HOST") or "localhost"
     DB_PORT = os.environ.get("PROD_DB_PORT") or "5555"
     DB_USER = os.environ.get("PROD_DB_USER") or "postgres"
