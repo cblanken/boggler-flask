@@ -2,7 +2,7 @@
 A [Flask](https://flask.palletsprojects.com) web app for solving the Boggle word game
 
 ## Live-demo
-It's still a work in progress, but a live demo can be found -> [here](https://boggler.cblankenbuehler.com)
+It's still a work in progress, but a live demo can be found -> [here](https://boggler.cblanken.dev)
 
 ## Issues
 Please feel free to submit an [issue](https://github.com/cblanken/boggler-flask/issues) if
