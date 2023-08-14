@@ -27,4 +27,4 @@ corresponding letter in your boggle board.
 ### Renew HTTPs Certs
 - To renew Let's Encrypt cert, shutdown the app (`sudo docker compose down`), then run
 `sudo certbot --nginx renew`. Stop `nginx.service` with `sudo systemctl stop nginx.service`
-(it may be necessary to restart the host) then restart the app with `sudo docker compose up -d`.
+(it may be necessary to restart the host) then restart the app with `sudo FLASK_CONFIG=production docker compose up -d`.
