@@ -23,6 +23,27 @@ corresponding letter in your boggle board.
     - To remove the filter, click the button with the filter icon below the board.
     ![boggle3](https://user-images.githubusercontent.com/19908880/195198375-206ac6ff-0e1f-430d-88ca-8d81b9cf78d0.png)
 
+## Development
+### With live reload
+A few services are required to run the full application. The easiest way to get up running
+is to follow these steps:
+1. Spin up the redis instance. You may want to run this without the `-d` to monitor the `redis` logs live for any errors.
+    ```console
+    $ docker-compose up redis -d
+    ```
+2. Run the startup script. This start the gunicorn server and the backend celery process for queuing multiple board solve tasks
+    ```console
+    $ ./boot.sh
+    ```
+Navigate to the app at `http://localhost:5000`
+
+### No live reload
+If you don't care about live reload you can run the fully containerized app with:
+```console
+$ sudo FLASK_CONFIG=development docker-compose up 
+```
+Then the app should be available at `http://localhost`
+
 ## Deployment
 ### Renew HTTPs Certs
 - To renew Let's Encrypt cert, shutdown the app (`sudo docker compose down`), then run
