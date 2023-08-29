@@ -20,3 +20,7 @@
     stroke: var(--fg-color-1);
     stroke-width: 3px;
 }
+
+#word-table td {
+    border: solid 1px var(--fg-color-2);
+}
