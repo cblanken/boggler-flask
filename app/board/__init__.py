@@ -126,7 +126,7 @@ def board():
     if request.method == "GET":
         rows = cols = 4
         (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
-        return render_template('solver.html', board_letters=board_letters, rows=rows, cols=cols)
+        return render_template('pages/solver.html', board_letters=board_letters, rows=rows, cols=cols)
     elif request.method == "POST":
         rows = cols = request.form["sizeSelect"]
         letters = request.form["letters"]
@@ -278,7 +278,7 @@ def solved(task_id):
         "Content-Type": "application/json",
     }
     data = get(f"http://localhost:5000/board/solved/task/data/{task_id}", headers=headers, timeout=2.0).json()
-    return render_template('solved.html',
+    return render_template('pages/solved.html',
         letters=data["letters"],
         board_letters=data["board_letters"],
         rows=int(data["rows"]),

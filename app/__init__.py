@@ -29,6 +29,6 @@ def create_app(config_name):
 
     @app.route('/history')
     def history():
-        return render_template('solve_history.html')
+        return render_template('pages/solve_history.html')
 
     return app
