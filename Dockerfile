@@ -8,7 +8,7 @@ USER boggler
 WORKDIR /home/boggler
 
 # Copy necessary files
-COPY requirements requirements
+COPY requirements.txt requirements.txt
 COPY wordlists wordlists
 COPY app app
 COPY celery_worker celery_worker
@@ -19,7 +19,7 @@ COPY main.py boot.sh ./
 RUN python -m venv venv
 
 # Install dependencies
-RUN venv/bin/pip install -r requirements/docker.txt
+RUN venv/bin/pip install -r requirements.txt
 
 # Runtime configs
 EXPOSE 5000
