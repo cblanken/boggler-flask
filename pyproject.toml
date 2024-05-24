@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "boggler-flask"
+version = "0.1.0"
+description = "Boggle solver Flask app"
+authors = ["Cameron Blankenbuehler <cameron.blankenbuehler@protonmail.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^3.0.3"
+flask-sqlalchemy = "^3.0"
+boggler = "^2.0.1"
+celery = "^5.2.7"
+certifi = "^2024.2.2"
+jinja2 = "^3.1.4"
+sqlalchemy = "^2.0.30"
+requests = "^2.32.2"
+psycopg2-binary = "^2.9.9"
+click = "^8.1.7"
+charset-normalizer = "^3.3.2"
+pytz = "^2024.1"
+pyparsing = "^3.1.2"
+kombu = "^5.3.7"
+idna = "^3.7"
+redis = "^5.0.4"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
