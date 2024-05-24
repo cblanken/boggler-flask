@@ -252,6 +252,8 @@ def task_submit():
     """Endpoint to submit board solving tasks
     """
     content_type = request.headers.get("Content-Type")
+    # TODO add error handling
+    # Block board sizes larger than 6x6
     if content_type == "application/json":
         json = request.json
         (board_letters, _rows, _cols, dictionary_path, max_len) = parse_board_params(
