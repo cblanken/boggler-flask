@@ -2,6 +2,9 @@ FROM python:3.10-alpine
 
 ENV FLASK_APP main.py
 
+# Setup virtualenv
+RUN pip install poetry
+
 # Setup non-root account
 RUN adduser -D boggler
 USER boggler
@@ -9,17 +12,16 @@ WORKDIR /home/boggler
 
 # Copy necessary files
 COPY requirements.txt requirements.txt
+COPY pyproject.toml pyproject.toml
+COPY poetry.lock poetry.lock
 COPY wordlists wordlists
 COPY app app
 COPY celery_worker celery_worker
 COPY config config
 COPY main.py boot.sh ./
 
-# Setup virtualenv
-RUN python -m venv venv
-
 # Install dependencies
-RUN venv/bin/pip install -r requirements.txt
+RUN poetry install
 
 # Runtime configs
 EXPOSE 5000

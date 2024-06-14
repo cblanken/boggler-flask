@@ -1,3 +1,3 @@
 #!/bin/sh
-celery -A celery_worker.cel worker -E -P threads &
-flask --app main --debug run
+poetry run celery -A celery_worker.cel worker -E -P threads &
+poetry run flask --app main --debug run
