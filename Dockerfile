@@ -16,7 +16,6 @@ COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
 COPY wordlists wordlists
 COPY app app
-COPY celery_worker celery_worker
 COPY config config
 COPY main.py boot.sh ./
 

@@ -240,7 +240,6 @@ document.addEventListener("scroll", (e) => {
     timeout = true;
 });
 
-// Board heatmap
 async function get_board_data(board_id) {
     const response = await fetch(`task/data/${board_id}`, {
         method: "GET",
@@ -250,6 +249,7 @@ async function get_board_data(board_id) {
     return json;
 }
 
+// Board heatmap
 function toggle_heatmap() {
     const board_id = window.location.href.split("/").pop();
     get_board_data(board_id)

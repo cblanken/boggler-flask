@@ -1,14 +1,17 @@
 """Config layer to apply configurations based on environment type"""
+
 import sys
 import os
 import secrets
 import string
-from celery import Celery
 from werkzeug.middleware.proxy_fix import ProxyFix
+
 
 def get_secret():
     """Generate random alphanumeric secret"""
-    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
+    return "".join(
+        secrets.choice(string.ascii_letters + string.digits) for _ in range(32)
+    )
 
 
 class Config:
@@ -19,6 +22,7 @@ class Config:
     def init_app(app):
         pass
 
+
 class DevelopmentConfig(Config):
     DEBUG = True
     DB_HOST = os.environ.get("DEV_DB_HOST") or "localhost"
@@ -26,6 +30,7 @@ class DevelopmentConfig(Config):
     DB_USER = os.environ.get("DEV_DB_USER") or "postgres"
     DB_PASS = os.environ.get("DEV_DB_PASS") or "password"
     SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/boggler?connect_timeout=10"
+
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -38,27 +43,17 @@ class ProductionConfig(Config):
     @classmethod
     def init_app(cls, app):
         if cls.DB_USER is None or cls.DB_PASS is None:
-            print("Incomplete configuration. A database username and password must be provided via the PROD_DB_USER and PROD_DB_PASS environment variables", file=sys.stderr)
+            print(
+                "Incomplete configuration. A database username and password must be provided via the PROD_DB_USER and PROD_DB_PASS environment variables",
+                file=sys.stderr,
+            )
             sys.exit()
 
         Config.init_app(app)
-        app.wsgi_app = ProxyFix(
-            app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-        )
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-class CeleryConfig(Config):
-    @staticmethod
-    def create_celery():
-        REDIS_HOST = os.environ.get("REDIS_HOST") or "redis"
-        REDIS_PORT = os.environ.get("REDIS_PORT") or "6379"
-        return Celery("boggler-celery",
-            broker=f"redis://{REDIS_HOST}:{REDIS_PORT}/0",
-            backend=f"redis://{REDIS_HOST}:{REDIS_PORT}/0",
-            include="app.board"
-        )
 
 config = {
-    "celery": CeleryConfig,
     "development": DevelopmentConfig,
     "production": ProductionConfig,
     "default": DevelopmentConfig,

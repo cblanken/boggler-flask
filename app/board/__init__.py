@@ -4,11 +4,9 @@
 import functools
 import operator
 import os
-from math import sqrt
-from random import choices
-import importlib.resources as ILR
 from flask import (
     Blueprint,
+    current_app,
     Flask,
     g,
     redirect,
@@ -17,43 +15,19 @@ from flask import (
     session,
     url_for,
 )
+
+Flask.url_defaults
+
+
 from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 from boggler.board_randomizer import read_dice_file, get_random_board
 from requests import get
-from celery_worker import cel
+import json
 
 MIN_BOARD_SIZE = 2
-MAX_BOARD_SIZE = 10
+MAX_BOARD_SIZE = 6
 MIN_WORD_LEN = 3
 MAX_WORD_LEN = 20
-
-# Initialize DICE for random board generation
-DICE = {}
-try:
-    with ILR.path("boggler.dice", "4x4_classic.csv") as f:
-        DICE["classic"] = read_dice_file(f)
-except FileNotFoundError:
-    print("Unable to load '4x4_classic.csv' DICE file")
-
-try:
-    with ILR.path("boggler.dice", "4x4_new.csv") as f:
-        DICE["new"] = read_dice_file(f)
-except FileNotFoundError:
-    print("Unable to load '4x4_new.csv' DICE file")
-
-try:
-    with ILR.path("boggler.dice", "5x5_big.csv") as f:
-        DICE["big"] = read_dice_file(f)
-        for r in DICE["big"]:
-            print(r)
-except FileNotFoundError:
-    print("Unable to load '5x5_big.csv' DICE file")
-
-try:
-    with ILR.path("boggler.dice", "6x6_super_big.csv") as f:
-        DICE["super"] = read_dice_file(f)
-except FileNotFoundError:
-    print("Unable to load '6x6_super_big.csv' DICE file")
 
 
 bp = Blueprint("board", __name__, url_prefix="/board", static_folder="static")
@@ -151,124 +125,8 @@ def board():
         session["letters"] = letters
         session["dictionary"] = dictionary
         session["max_len"] = max_len
-        return redirect(url_for("board.solve"))
-
-
-@bp.route("/api/random", methods=["GET"])
-def api_random():
-    """API endpoing to get a random board"""
-    # Default letter distribution for board sizes without dice
-    alphabet = [
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "b",
-        "b",
-        "b",
-        "c",
-        "c",
-        "c",
-        "d",
-        "d",
-        "d",
-        "d",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "e",
-        "f",
-        "f",
-        "g",
-        "g",
-        "g",
-        "h",
-        "h",
-        "h",
-        "i",
-        "i",
-        "i",
-        "i",
-        "i",
-        "i",
-        "i",
-        "j",
-        "k",
-        "k",
-        "l",
-        "l",
-        "l",
-        "l",
-        "l",
-        "m",
-        "m",
-        "m",
-        "n",
-        "n",
-        "n",
-        "n",
-        "n",
-        "o",
-        "o",
-        "o",
-        "o",
-        "o",
-        "o",
-        "p",
-        "p",
-        "p",
-        "qu",
-        "r",
-        "r",
-        "r",
-        "r",
-        "s",
-        "s",
-        "s",
-        "s",
-        "s",
-        "t",
-        "t",
-        "t",
-        "t",
-        "t",
-        "u",
-        "u",
-        "u",
-        "u",
-        "v",
-        "v",
-        "w",
-        "w",
-        "x",
-        "y",
-        "y",
-        "y",
-        "z",
-    ]
-    try:
-        size = int(request.args.get("size"))
-    except TypeError:
-        size = 4
-
-    dice_type = request.args.get("dice_type")
-    if dice_type in DICE and size == int(sqrt(len(DICE[dice_type]))):
-        return {"board": get_random_board(DICE[dice_type]), "dice_type": dice_type}
-    else:
-        return {
-            "board": [choices(alphabet, k=size) for x in range(0, size)],
-            "dice_type": "random",
-        }
+        # The redirect code of 307 is necessary to maintain the original request type of POST
+        return redirect(url_for("board.solve"), code=307)
 
 
 @bp.route("/api/solve", methods=["GET"])
@@ -291,23 +149,24 @@ def api_solve():
         pass
     else:
         word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
-        word_data = [
-            {
-                "word": word,
-                "len": len(word),
-                "path": [
-                    {
-                        "row": node[0],
-                        "col": node[1],
-                    }
-                    for node in path
-                ],
-            }
-            for word, path in word_data
-        ]
+        # word_data = [
+        #     {
+        #         "word": word,
+        #         "len": len(word),
+        #         "path": [
+        #             {
+        #                 "row": node[0],
+        #                 "col": node[1],
+        #             }
+        #             for node in path
+        #         ],
+        #     }
+        #     for word, path in word_data
+        # ]
         return {
             "words": word_data,
             "total": len(word_data),
+            "letters": board_letters,
             "max_len": max_len,
             "dictionary": os.path.basename(os.path.normpath(dictionary_path)),
             "size": {
@@ -349,123 +208,29 @@ def api_solve_words():
         return word_data
 
 
-@cel.task()
-def find_paths_by_word_async(
-    rows, cols, letters, board_letters, dictionary_path, max_len
-):
-    """Celery Task for asynchronously finding words in board"""
-    found_words = find_paths_by_word(board_letters, dictionary_path, max_len)
-    return [rows, cols, letters, board_letters, dictionary_path, max_len, found_words]
-
-
-@bp.route("/solve/task", methods=["POST"])
-def task_submit():
-    """Endpoint to submit board solving tasks"""
-    content_type = request.headers.get("Content-Type")
-    # TODO add error handling
-    # Block board sizes larger than 6x6
-    if content_type == "application/json":
-        json = request.json
-        (board_letters, _rows, _cols, dictionary_path, max_len) = parse_board_params(
-            json["rows"],
-            json["cols"],
-            json["letters"],
-            json["dictionary"],
-            json["max_len"],
-        )
-
-        task = find_paths_by_word_async.apply_async(
-            args=[
-                json["rows"],
-                json["cols"],
-                json["letters"],
-                board_letters,
-                dictionary_path,
-                max_len,
-            ]
-        )
-        return {
-            "status_url": url_for("board.task_status", task_id=task.id),
-            "task_id": task.id,
-        }
-    else:
-        print("INVALID Content-Type. Please try again.")
-        return {"status:": f"INVALID Content-Type: {content_type}"}
-
-
-@bp.route("/solved/<task_id>", methods=["GET"])
-def solved(task_id):
+@bp.route("/solve", methods=["POST"])
+def solve():
     """Endpoints for solved boards by task ID"""
 
+    params = request.form.to_dict()
     headers = {
         "Content-Type": "application/json",
     }
     data = get(
-        f"http://localhost:5000/board/solved/task/data/{task_id}",
+        request.host_url + url_for("board.api_solve"),
         headers=headers,
         timeout=2.0,
+        params=params,
     ).json()
+
+    # TODO: handle missing post data
+    breakpoint()
     return render_template(
         "pages/solved.html",
-        letters=data["letters"],
-        board_letters=data["board_letters"],
-        rows=int(data["rows"]),
-        cols=int(data["cols"]),
-        dictionary=data["dictionary_path"],
-        max_len=data["max_len"],
-        found_words=data["found_words"],
+        rows=data.get("size").get("rows"),
+        cols=data.get("size").get("cols"),
+        board_letters=data.get("letters"),
+        dictionary=data.get("dictionary_path"),
+        max_len=data.get("max_len"),
+        found_words=data.get("words"),
     )
-
-
-@bp.route("/solved/task/status/<task_id>")
-def task_status(task_id):
-    """Endpoint for board solve statuses by task ID"""
-    task = find_paths_by_word_async.AsyncResult(task_id)
-    if task.status == "FAILURE":
-        response = {
-            "status": task.status,
-            "info": str(task.info),
-        }
-    elif task.status != "SUCCESS":
-        # Task is only STARTED, PENDING or RETRYing
-        response = {
-            "status": task.status,
-        }
-    else:
-        # SUCCESS!
-        response = {
-            "status": task.status,
-        }
-
-    print(f"RESPONSE: {response}")
-    return response
-
-
-@bp.route("/solved/task/data/<task_id>")
-def task_data(task_id):
-    """Endpoint for board solve data"""
-    task = find_paths_by_word_async.AsyncResult(task_id)
-    if task.status == "FAILURE":
-        response = {
-            "status": task.status,
-            "info": str(task.info),
-        }
-    elif task.status != "SUCCESS":
-        # Task is only STARTED, PENDING or RETRYing
-        response = {
-            "status": task.status,
-            "info": str(task.info),
-        }
-    else:
-        # SUCCESS!
-        response = {
-            "rows": int(task.result[0]),
-            "cols": int(task.result[1]),
-            "letters": task.result[2],
-            "board_letters": task.result[3],
-            "dictionary_path": task.result[4],
-            "max_len": task.result[5],
-            "found_words": task.result[6],
-        }
-
-    return response

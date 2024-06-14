@@ -14,7 +14,7 @@ let solveBtn = document.getElementById("solve-board-btn");
 
 // Board randomization
 async function get_random_board(dice_type, size) {
-    const response = await fetch(`api/random?dice_type=${dice_type}&size=${size}`, {
+    const response = await fetch(`/api/random?dice_type=${dice_type}&size=${size}`, {
         method: "GET",
         headers: {"Content-type": "application/json;charset=UTF-8"}
     });
@@ -45,48 +45,67 @@ function toggle_board_controls() {
     solveBtn.toggleAttribute("disabled")
 }
 
-// Check update status of solve board task
-async function update_solve_progress(url, task_id) {
-    const response = await fetch(url);
-    const json = await response.json();
-    
-    if (json["status"] == "SUCCESS") {
-        toggle_board_controls()
-        window.location = `/board/solved/${task_id}`;
-        return;
-    }
-    // Poll for completed solve task
-    setTimeout(function() {
-        update_solve_progress(url, task_id);
-    }, 250)
-}
+// // Check update status of solve board task
+// async function update_solve_progress(url, task_id) {
+//     const response = await fetch(url);
+//     const json = await response.json();
+//     
+//     if (json["status"] == "SUCCESS") {
+//         toggle_board_controls()
+//         window.location = `/board/solved/${task_id}`;
+//         return;
+//     }
+//     // Poll for completed solve task
+//     setTimeout(function() {
+//         update_solve_progress(url, task_id);
+//     }, 250)
+// }
 
-// Solve board task start execution
-async function start_board_solve_task(rows, cols, letters, dictionary, max_len) {
-    toggle_board_controls()
-    let board_data = {
-        rows,
-        cols,
-        letters,
-        dictionary,
-        max_len,
-    }
-    
-    let options = {
-        method: "POST",
-        body: JSON.stringify(board_data),
-        headers: {
-            "Content-Type": "application/json"
-        },
-    }
-    fetch("solve/task", options).then(async response => {
-        response.json().then(json => {
-            update_solve_progress(json["status_url"], json["task_id"])
-        })
-    })
-}
 
-// Solve button
+// // Setup websocket
+// let url = new URL(window.origin)
+// url.protocol = "ws:"
+// url.pathname = "/solve"
+// let sock = new WebSocket(url);
+// sock.addEventListener("message", e => {
+//   console.log("MESSAGE RECEIVED")
+//   console.log(JSON.stringify(e.data))
+//   fetch("/board/solved", {
+//     method: "POST",
+//     redirect: "follow",
+//     headers: {
+//       "Content-type": "application/json"
+//     },
+//     // body: JSON.stringify(e.data)
+//     body: e.data
+//   }).then((res) => {
+//       console.log(res.json())
+//   });
+//   // Redirect to solved page
+//   //window.location = "/"
+// })
+
+// // Solve board task start execution
+// async function start_board_solve_task(rows, cols, letters, dictionary, max_len) {
+//     toggle_board_controls()
+//     let options = {
+//         method: "POST",
+//         body: JSON.stringify({
+//             rows,
+//             cols,
+//             letters,
+//             dictionary,
+//             max_len,
+//         }),
+//         headers: {
+//             "Content-Type": "application/json"
+//         },
+//     }
+//     console.log(options["body"]);
+//     sock.send(JSON.stringify({ rows, cols, letters, dictionary, max_len })) 
+// }
+
+// // Solve button
 solveBtn.addEventListener("click", x => {
     let letter_inputs = document.querySelectorAll(".board-cell-input");
     let letters = Array.from(letter_inputs).map(x => x.value).join(",");
@@ -94,10 +113,10 @@ solveBtn.addEventListener("click", x => {
 
     let rows, cols;
     rows = cols = document.getElementById("sizeSelect").value;
-    let dictionary = document.getElementById("dictionarySelect").value;
-    let max_len = document.getElementById("maxLengthSelect").value;
+    // let dictionary = document.getElementById("dictionarySelect").value;
+    // let max_len = document.getElementById("maxLengthSelect").value;
 
-    start_board_solve_task(rows, cols, letters, dictionary, max_len)
+    // start_board_solve_task(rows, cols, letters, dictionary, max_len)
 });
 
 // Board resizing
@@ -131,3 +150,4 @@ sizeSelect.addEventListener("change", e => {
         board.append(row_div);
     }
 });
+
