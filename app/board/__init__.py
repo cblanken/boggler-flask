@@ -149,20 +149,6 @@ def api_solve():
         pass
     else:
         word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
-        # word_data = [
-        #     {
-        #         "word": word,
-        #         "len": len(word),
-        #         "path": [
-        #             {
-        #                 "row": node[0],
-        #                 "col": node[1],
-        #             }
-        #             for node in path
-        #         ],
-        #     }
-        #     for word, path in word_data
-        # ]
         return {
             "words": word_data,
             "total": len(word_data),
