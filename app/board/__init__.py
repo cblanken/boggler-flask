@@ -219,12 +219,11 @@ def solve():
     data = get(
         request.host_url + url_for("board.api_solve"),
         headers=headers,
-        timeout=2.0,
+        timeout=15.0,
         params=params,
     ).json()
 
     # TODO: handle missing post data
-    breakpoint()
     return render_template(
         "pages/solved.html",
         rows=data.get("size").get("rows"),
