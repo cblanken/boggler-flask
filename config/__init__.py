@@ -16,7 +16,6 @@ def get_secret():
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or get_secret()
-    SQLALCHEMY_TRACK_MODIFICATION = False
 
     @staticmethod
     def init_app(app):
@@ -25,26 +24,18 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    DB_HOST = os.environ.get("DEV_DB_HOST") or "localhost"
-    DB_PORT = os.environ.get("DEV_DB_PORT") or "5555"
-    DB_USER = os.environ.get("DEV_DB_USER") or "postgres"
-    DB_PASS = os.environ.get("DEV_DB_PASS") or "password"
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/boggler?connect_timeout=10"
+    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/data/boggler.sqlite"
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    DB_HOST = os.environ.get("PROD_DB_HOST") or "localhost"
-    DB_PORT = os.environ.get("PROD_DB_PORT") or "5555"
-    DB_USER = os.environ.get("PROD_DB_USER") or "postgres"
-    DB_PASS = os.environ.get("PROD_DB_PASS") or "password"
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/boggler?connect_timeout=10"
+    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/data/boggler.sqlite"
 
     @classmethod
     def init_app(cls, app):
-        if cls.DB_USER is None or cls.DB_PASS is None:
+        if cls.SQLITE_DB is None:
             print(
-                "Incomplete configuration. A database username and password must be provided via the PROD_DB_USER and PROD_DB_PASS environment variables",
+                "Incomplete configuration. A sqlite database file must be provided via the SQLITE_DB variable.",
                 file=sys.stderr,
             )
             sys.exit()

@@ -4,11 +4,11 @@
 import functools
 import operator
 import os
+import sqlite3
 from flask import (
     Blueprint,
-    current_app,
     Flask,
-    g,
+    current_app,
     redirect,
     render_template,
     request,

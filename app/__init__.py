@@ -1,18 +1,16 @@
 """Main app module
 """
 
-from flask import Flask, request, render_template, redirect
+from flask import Flask, g, request, render_template, redirect
 from flask_sock import Sock
-from flask_sqlalchemy import SQLAlchemy
 from config import config
-from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
 from boggler.board_randomizer import read_dice_file, get_random_board
 import json
 from math import sqrt
 from random import choices
+import sqlite3
 import importlib.resources as ILR
 
-db = SQLAlchemy()
 sock = Sock()
 
 # Initialize DICE for random board generation
@@ -42,7 +40,21 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    db.init_app(app)
+    def get_db() -> sqlite3.Connection:
+        db = getattr(g, "_database", None)
+        if db is None:
+            print(app.config.get("SQLITE_DB"))
+            db = g._database = sqlite3.connect(app.config.get("SQLITE_DB"))
+
+        return db
+
+    app.get_db = get_db
+    
+    @app.teardown_appcontext
+    def close_db_connection(exception):
+        db = getattr(app, "_database", None)
+        if db is not None:
+            db.close()
 
     @app.errorhandler(404)
     def page_not_found(_):
