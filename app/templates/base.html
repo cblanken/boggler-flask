@@ -27,8 +27,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;500;600&display=swap" rel="stylesheet">
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/base/normalize.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/base/layout.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/base/colors.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/modules/header.css') }}">
     {% endblock %}
     {% block scripts %}
@@ -46,6 +45,7 @@
 </head>
 
 <body>
+{% include 'components/flash.html' %}
 {% block body %}
   {% block navbar %}
   <header class="fixed-top pe-4 d-flex flex-stretch justify-content-between align-items-center">

@@ -2,3 +2,4 @@
 venv
 dump.rdb
 __pycache__
+*.sqlite

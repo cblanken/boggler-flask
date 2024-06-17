@@ -1,28 +1,34 @@
 """Blueprint for handling all Boggle Board data and solving
 """
 
-import functools
-import operator
-import os
-import sqlite3
+from boggler.boggler_utils import (
+    BoggleBoard,
+    build_full_boggle_tree,
+    read_boggle_file,
+    WordNode,
+)
+from boggler.board_randomizer import read_dice_file, get_random_board
 from flask import (
     Blueprint,
     Flask,
     current_app,
+    flash,
     redirect,
     render_template,
     request,
     session,
     url_for,
 )
+import functools
+import json
+import operator
+import os
+from requests import get, post
+from requests.exceptions import JSONDecodeError
+import sqlite3
+from ..db import add_solved_board
 
 Flask.url_defaults
-
-
-from boggler.boggler_utils import BoggleBoard, build_full_boggle_tree, read_boggle_file
-from boggler.board_randomizer import read_dice_file, get_random_board
-from requests import get
-import json
 
 MIN_BOARD_SIZE = 2
 MAX_BOARD_SIZE = 6
@@ -92,7 +98,9 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
     return (board_letters, rows, cols, dictionary_path, max_len)
 
 
-def find_paths_by_word(board_letters, dictionary_path, max_len):
+def find_paths_by_word(
+    board_letters, dictionary_path, max_len
+) -> list[dict[str, WordNode]]:
     """Return list of paths by word"""
     boggle_board = BoggleBoard(board_letters, max_len)
     boggle_tree = build_full_boggle_tree(boggle_board, dictionary_path)
@@ -102,114 +110,100 @@ def find_paths_by_word(board_letters, dictionary_path, max_len):
     return paths_by_word
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/", methods=["GET"])
 def board():
     """Default board route"""
-    if request.form:
-        print(request.form)
-
     if request.method == "GET":
+        args = request.args
+        # breakpoint()
         rows = cols = 4
         (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
         return render_template(
             "pages/solver.html", board_letters=board_letters, rows=rows, cols=cols
         )
-    elif request.method == "POST":
-        rows = cols = request.form["sizeSelect"]
-        letters = request.form["letters"]
-        dictionary = request.form["dictionarySelect"]
-        max_len = request.form["maxLengthSelect"]
-
-        session["rows"] = rows
-        session["cols"] = cols
-        session["letters"] = letters
-        session["dictionary"] = dictionary
-        session["max_len"] = max_len
-        # The redirect code of 307 is necessary to maintain the original request type of POST
-        return redirect(url_for("board.solve"), code=307)
 
 
-@bp.route("/api/solve", methods=["GET"])
+@bp.route("/api/solve", methods=["POST"])
 def api_solve():
     """API endpoint for solving boards with the provided GET parameters
 
     Returns JSON containing board state and found words
     """
-    rows = request.args.get("rows")
-    cols = request.args.get("cols")
-    letters = request.args.get("letters")
-    dictionary = request.args.get("dictionary")
-    max_len = request.args.get("max_len")
-    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(
-        rows, cols, letters, dictionary, max_len
-    )
-    is_db = False
-    if is_db:
-        # TODO: Read from db
-        pass
+
+    data = request.json
+    if data is None:
+        return {}
+    elif request.method == "POST":
+        rows = cols = data.get("sizeSelect")
+        letters = data.get("letters")
+        dictionary = data.get("dictionarySelect")
+        max_len = data.get("maxLengthSelect")
+        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(
+            rows, cols, letters, dictionary, max_len
+        )
     else:
+        return redirect(url_for("board.board"))
+
+    try:
         word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
-        return {
-            "words": word_data,
-            "total": len(word_data),
-            "letters": board_letters,
-            "max_len": max_len,
-            "dictionary": os.path.basename(os.path.normpath(dictionary_path)),
-            "size": {
-                "rows": rows,
-                "cols": cols,
-            },
-        }
+    except Exception as e:
+        return "Badly formed board solve request", 400
+    data = {
+        "words": word_data,
+        "total": len(word_data),
+        "letters": board_letters,
+        "max_len": max_len,
+        "dictionary": os.path.basename(os.path.normpath(dictionary_path)),
+        "size": {
+            "rows": rows,
+            "cols": cols,
+        },
+    }
 
+    data["errors"] = []
 
-@bp.route("/api/solve/table", methods=["GET"])
-def api_solve_words():
-    """API endpoint for data displayed in solved board table
-
-    Returns only displayed table data (word, len, path) for a given board
-    """
-    args = request.args
-    rows = request.args.get("rows")
-    cols = request.args.get("cols")
-    letters = request.args.get("letters")
-    dictionary = request.args.get("dictionary")
-    max_len = request.args.get("max_len")
-    (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(
-        rows, cols, letters, dictionary, max_len
-    )
-    is_db = False
-    if is_db:
-        # TODO: Read from db
-        pass
-    else:
-        word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
-        word_data = [
-            {
-                "word": word,
-                "len": len(word),
-                "path": str(path),
-            }
-            for word, path in word_data
-        ]
-        return word_data
+    try:
+        conn = current_app.get_db()
+        add_solved_board(conn, rows, board_letters, dictionary, max_len, word_data)
+    except Exception as e:
+        data["errors"].append(
+            "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
+        )
+        raise
+    return data
 
 
 @bp.route("/solve", methods=["POST"])
 def solve():
     """Endpoints for solved boards by task ID"""
 
-    params = request.form.to_dict()
+    data = request.form.to_dict()
     headers = {
         "Content-Type": "application/json",
     }
-    data = get(
-        request.host_url + url_for("board.api_solve"),
-        headers=headers,
-        timeout=15.0,
-        params=params,
-    ).json()
+    try:
+        data = post(
+            request.host_url + url_for("board.api_solve"),
+            headers=headers,
+            timeout=10,
+            data=json.dumps(data),
+        ).json()
+    except JSONDecodeError as e:
+        print(
+            "Solve data could not be retrieved from the api endpoint due to a JSON Decoding error",
+            e,
+        )
+        flash("The board could not be solved due to a JSON decoding error.", "error")
+        return get(url=request.host_url + url_for("board.board"), params=data)
 
     # TODO: handle missing post data
+    for e in data.get("errors", []):
+        flash(e, "error")
+    flash("Board solved!", "message")
+    flash(
+        "Don't forget to checkout the word paths by clicking on words in the table.",
+        "message",
+    )
     return render_template(
         "pages/solved.html",
         rows=data.get("size").get("rows"),

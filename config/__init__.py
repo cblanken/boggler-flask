@@ -24,12 +24,14 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/data/boggler.sqlite"
+    INIT_DB = os.environ.get("INIT_DB")
+    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/db/boggler.sqlite"
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/data/boggler.sqlite"
+    INIT_DB = os.environ.get("INIT_DB")
+    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/db/boggler.sqlite"
 
     @classmethod
     def init_app(cls, app):

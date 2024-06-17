@@ -1,0 +1,17 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-container">
+    {% for category, message in messages %}
+        <div class="{{category}} flash-item">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<script>
+    document.querySelectorAll(".flash-item").forEach(i => {
+        i.addEventListener("click", e => {
+            i.setAttribute("hidden", true)
+        })
+    })
+</script>
