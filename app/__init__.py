@@ -10,6 +10,7 @@ import json
 from math import sqrt
 from pathlib import Path
 from random import choices
+from string import ascii_lowercase
 import sqlite3
 import importlib.resources as ILR
 from .db.load_dictionary import load_default_dictionaries
@@ -80,8 +81,14 @@ def create_app(config_name):
             db = get_db()
             app.__setattr__("dictionaries", {})
             dict_names = get_dict_names(db)
+
+            print("Loading dictionaries into memory...")
             for name in dict_names:
-                app.dictionaries[name] = get_words_by_dict(db, name)
+                print(f"> Loading dictionary: {name}")
+                app.dictionaries[name] = {}
+                for letter in ascii_lowercase:
+                    print(f"> Loading words with prefix: {letter}")
+                    app.dictionaries[name][letter] = get_words_by_dict(db, name, letter)
 
     load_dictionaries()
 
@@ -150,10 +157,13 @@ def create_app(config_name):
             print(f"RECEIVED DATA: {data}")
 
             # TODO: solve board
-            solve_data = json.loads(data.encode("utf-8"))
-            print(f"SOLVE DATA: {solve_data}")
+            try:
+                solve_data = json.loads(data.encode("utf-8"))
+                print(f"SOLVE DATA: {solve_data}")
 
-            # TODO error handling json
-            ws.send(solve_data)
+                # TODO error handling json
+                ws.send(solve_data)
+            except json.decoder.JSONDecodeError:
+                ws.send("COULD NOT DECODE JSON OBJECT")
 
     return app

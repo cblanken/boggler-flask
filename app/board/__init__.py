@@ -22,10 +22,9 @@ from logging import log
 from functools import reduce
 import operator
 import os
-from multiprocessing import Pool
 from requests import get, post
 from requests.exceptions import JSONDecodeError
-from ..db import add_solved_board, get_words_by_dict
+from ..db import add_solved_board
 
 Flask.url_defaults
 
@@ -105,7 +104,8 @@ def find_paths_by_word(
     board_tree = {}
     index: dict[str, list[str]] = {}
     for letters in board_alpha:
-        words = get_words_by_dict(current_app.get_db(), dict_name, letters)
+        # words = get_words_by_dict(current_app.get_db(), dict_name, letters)
+        words = current_app.dictionaries[dict_name][letters[0]]
         index[letters] = words
 
     params = [
@@ -113,9 +113,9 @@ def find_paths_by_word(
         for cell in boggle_board.board.values()
     ]
 
-    with Pool(processes=len(boggle_board.board)) as pool:
-        for i, res in enumerate(pool.map(build_boggle_tree, params)):
-            board_tree[params[i][2].pos] = res
+    for i, p in enumerate(params):
+        res = build_boggle_tree(p)
+        board_tree[params[i][2]] = res
 
     paths_by_word = reduce(
         operator.iconcat, [x.word_paths for x in board_tree.values()], []
@@ -128,7 +128,6 @@ def board():
     """Default board route"""
     if request.method == "GET":
         args = request.args
-        # breakpoint()
         rows = cols = 4
         (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
         return render_template(
@@ -157,10 +156,7 @@ def api_solve():
     else:
         return redirect(url_for("board.board"))
 
-    try:
-        word_data = find_paths_by_word(board_letters, max_len, dictionary)
-    except Exception as e:
-        return "Badly formed board solve request", 400
+    word_data = find_paths_by_word(board_letters, max_len, dictionary)
     data = {
         "words": word_data,
         "total": len(word_data),
@@ -177,7 +173,7 @@ def api_solve():
     try:
         conn = current_app.get_db()
         add_solved_board(conn, rows, board_letters, dictionary, max_len, word_data)
-    except Exception as e:
+    except Exception:
         data["errors"].append(
             "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
         )
@@ -197,7 +193,7 @@ def solve():
         data = post(
             request.host_url + url_for("board.api_solve"),
             headers=headers,
-            timeout=10,
+            timeout=30,
             data=json.dumps(data),
         ).json()
     except JSONDecodeError as e:
