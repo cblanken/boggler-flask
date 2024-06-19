@@ -3,6 +3,7 @@
 
 from flask import Flask, g, request, render_template, redirect
 from flask_sock import Sock
+from flask_debugtoolbar import DebugToolbarExtension
 from config import config
 from boggler.board_randomizer import read_dice_file, get_random_board
 import json
@@ -46,7 +47,6 @@ def create_app(config_name):
     def get_db() -> sqlite3.Connection | None:
         db = getattr(g, "_database", None)
         if db is None:
-            print(app.config.get("SQLITE_DB"))
             try:
                 db = g._database = sqlite3.connect(
                     app.config.get("SQLITE_DB", "app/db/boggler.sqlite")
@@ -84,6 +84,10 @@ def create_app(config_name):
                 app.dictionaries[name] = get_words_by_dict(db, name)
 
     load_dictionaries()
+
+    if app.debug == True:
+        toolbar = DebugToolbarExtension(app)
+        app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
     @app.teardown_appcontext
     def close_db_connection(exception):

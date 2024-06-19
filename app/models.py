@@ -1,5 +1,6 @@
 from . import db
 
+
 class Dictionary(db.Model):
     __tablename__ = "dictionaries"
     id = db.Column(db.Integer, primary_key=True)
@@ -9,6 +10,7 @@ class Dictionary(db.Model):
 
     def __repr__(self):
         return f"Dictionary: {self.name}, Filepath: {self.filepath}"
+
 
 class Word(db.Model):
     __tablename__ = "words"
@@ -20,6 +22,7 @@ class Word(db.Model):
 
     def __repr__(self):
         return f"Word: {self.word}"
+
 
 class SolvedBoard(db.Model):
     __tablename__ = "solved_boards"
@@ -33,6 +36,7 @@ class SolvedBoard(db.Model):
     def __repr__(self):
         return f"SolvedBoard: {self.rows}, {self.cols}, {self.letters}, {self.max_word_len}"
 
+
 class SolvedBoardPath(db.Model):
     __tablename__ = "solved_board_paths"
     word_id = db.Column(db.Integer, db.ForeignKey(Word.id), primary_key=True)
@@ -40,4 +44,6 @@ class SolvedBoardPath(db.Model):
     path = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f"SolvedBoardWord: {self.id}, Board ID: {self.board_id}, Path: {self.path}"
+        return (
+            f"SolvedBoardWord: {self.id}, Board ID: {self.board_id}, Path: {self.path}"
+        )

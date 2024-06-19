@@ -1,5 +1,6 @@
 """Entrypoint module for starting app and loading configurations
 """
+
 from os import getenv
 from app import create_app
 from app.board import bp
