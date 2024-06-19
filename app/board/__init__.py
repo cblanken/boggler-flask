@@ -3,8 +3,7 @@
 
 from boggler.boggler_utils import (
     BoggleBoard,
-    build_full_boggle_tree,
-    read_boggle_file,
+    build_boggle_tree,
     WordNode,
 )
 from boggler.board_randomizer import read_dice_file, get_random_board
@@ -16,17 +15,17 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
-import functools
 import json
+from logging import log
+from functools import reduce
 import operator
 import os
+from multiprocessing import Pool
 from requests import get, post
 from requests.exceptions import JSONDecodeError
-import sqlite3
-from ..db import add_solved_board
+from ..db import add_solved_board, get_words_by_dict
 
 Flask.url_defaults
 
@@ -99,13 +98,27 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
 
 
 def find_paths_by_word(
-    board_letters, dictionary_path, max_len
+    board_letters: list[str], max_len: int, dict_name: str
 ) -> list[dict[str, WordNode]]:
-    """Return list of paths by word"""
     boggle_board = BoggleBoard(board_letters, max_len)
-    boggle_tree = build_full_boggle_tree(boggle_board, dictionary_path)
-    paths_by_word = functools.reduce(
-        operator.iconcat, [x.word_paths for x in boggle_tree.values()], []
+    board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))
+    board_tree = {}
+    index: dict[str, list[str]] = {}
+    for letters in board_alpha:
+        words = get_words_by_dict(current_app.get_db(), dict_name, letters)
+        index[letters] = words
+
+    params = [
+        (board_alpha, boggle_board, cell, index[cell.letters])
+        for cell in boggle_board.board.values()
+    ]
+
+    with Pool(processes=len(boggle_board.board)) as pool:
+        for i, res in enumerate(pool.map(build_boggle_tree, params)):
+            board_tree[params[i][2].pos] = res
+
+    paths_by_word = reduce(
+        operator.iconcat, [x.word_paths for x in board_tree.values()], []
     )
     return paths_by_word
 
@@ -127,7 +140,7 @@ def board():
 def api_solve():
     """API endpoint for solving boards with the provided GET parameters
 
-    Returns JSON containing board state and found words
+    Returns JSON containing board data and found words
     """
 
     data = request.json
@@ -145,7 +158,7 @@ def api_solve():
         return redirect(url_for("board.board"))
 
     try:
-        word_data = find_paths_by_word(board_letters, dictionary_path, max_len)
+        word_data = find_paths_by_word(board_letters, max_len, dictionary)
     except Exception as e:
         return "Badly formed board solve request", 400
     data = {
@@ -161,7 +174,6 @@ def api_solve():
     }
 
     data["errors"] = []
-
     try:
         conn = current_app.get_db()
         add_solved_board(conn, rows, board_letters, dictionary, max_len, word_data)

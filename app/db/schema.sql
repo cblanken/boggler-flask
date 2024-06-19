@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS solved_words;
-DROP TABLE IF EXISTS solved_boards;
+DROP TABLE IF EXISTS dictionary_words;
 DROP TABLE IF EXISTS words;
+DROP TABLE IF EXISTS words;
+DROP TABLE IF EXISTS solved_boards;
 DROP TABLE IF EXISTS dictionaries;
 
 PRAGMA foreign_keys = ON;
@@ -24,14 +26,20 @@ CREATE TABLE solved_boards (
 
 CREATE TABLE words (
     id INTEGER PRIMARY KEY NOT NULL,
-    dict_id INTEGER NOT NULL REFERENCES dictionaries(id) ON DELETE CASCADE,
     word TEXT NOT NULL,
-    UNIQUE(dict_id, word)
+    UNIQUE(word)
+);
+
+CREATE TABLE dictionary_words (
+    id INTEGER PRIMARY KEY NOT NULL,
+    dict_id INTEGER NOT NULL REFERENCES dictionaries(id) ON DELETE CASCADE,
+    word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
+    UNIQUE(dict_id, word_id)
 );
 
 CREATE TABLE solved_words (
-    word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
     solved_board_id INTEGER NOT NULL REFERENCES solved_boards(id) ON DELETE CASCADE,
+    word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
     word_path TEXT NOT NULL, -- JSON array of board indices
     PRIMARY KEY (word_id, solved_board_id, word_path)
 );

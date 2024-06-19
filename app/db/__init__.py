@@ -10,13 +10,23 @@ def get_dict_names(conn: sqlite3.Connection) -> List[str]:
     return [n[0] for n in names]
 
 
-def get_words_by_dict(conn: sqlite3.Connection, dict_name: str) -> List[str]:
+def get_words_by_dict(
+    conn: sqlite3.Connection, dict_name: str, prefix: str | None = None
+) -> List[str]:
     curr = conn.cursor()
-    recs = curr.execute(
-        """SELECT word FROM words
-        INNER JOIN dictionaries as di ON di.name = ?""",
-        (dict_name,),
-    ).fetchall()
+
+    if prefix:
+        sql = """SELECT word FROM words
+            INNER JOIN dictionary_words as dw ON words.id=dw.word_id
+            INNER JOIN dictionaries as di ON di.name = ?
+            WHERE word LIKE ?"""
+        recs = curr.execute(sql, (dict_name, f"{prefix}%")).fetchall()
+    else:
+        sql = """SELECT word FROM words
+            INNER JOIN dictionary_words as dw ON words.id=dw.word_id
+            INNER JOIN dictionaries as di ON di.name = ?"""
+        recs = curr.execute(sql, (dict_name,)).fetchall()
+
     return [r[0] for r in recs]
 
 
@@ -67,14 +77,13 @@ def add_solved_board(
                 solved_board_id,
                 f"[{','.join(str([x[0], x[1]]) for x in path)}]",
                 word,
-                dict_id,
             )
             for word, path in word_data
         ]
         conn.executemany(
             """
             INSERT INTO solved_words(solved_board_id, word_path, word_id) 
-            SELECT ?, ?, id FROM (SELECT id FROM words WHERE word = ? AND dict_id = ?)
+            SELECT ?, ?, id FROM (SELECT id FROM words WHERE word = ?)
             """,
             word_inserts,
         )

@@ -3,3 +3,4 @@ venv
 dump.rdb
 __pycache__
 *.sqlite
+.db_no_init

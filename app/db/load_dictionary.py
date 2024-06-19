@@ -7,8 +7,11 @@ import time
 VALID_WORD = re.compile(r"^[a-zA-Z]{3,}$")
 
 
-def load_dictionary(words_file: Path, db_file: Path, dict_name: str):
-    conn = sqlite3.connect(db_file)
+def load_dictionary(words_file: Path, conn: sqlite3.Connection | None, dict_name: str):
+    if conn is None:
+        # TODO: log
+        return
+
     curr = conn.cursor()
 
     with open(words_file, encoding="utf-8") as f:
@@ -24,8 +27,6 @@ def load_dictionary(words_file: Path, db_file: Path, dict_name: str):
         except (TypeError, IndexError):
             print(f'No dictionary with the name "{dict_name}" found in the database.')
             return
-
-        # TODO: filter words with numbers or punctuation
 
         print(f"\nDictionary: {dict_name}")
         while True:
@@ -43,52 +44,69 @@ def load_dictionary(words_file: Path, db_file: Path, dict_name: str):
 
             # Chunk file in case the dictionary is very large and could result in OOM errors
             chunk_i += 1
-            word_values = [(dict_id, w) for w in words]
+            # Insert words
+            print(f"> COMMITTING WORDS CHUNK: {chunk_i}")
             curr.executemany(
-                "INSERT INTO words (dict_id, word) VALUES(?, ?)", word_values
+                "INSERT OR IGNORE INTO words (word) VALUES(?)", [(w,) for w in words]
             )
-            print(f"> COMMITTING CHUNK: {chunk_i}")
+            conn.commit()
+
+            word_values = [(dict_id, w) for w in words]
+
+            # Link dictionary and words
+            print("  > LINKING WORDS TO DICTIONARY")
+            curr.executemany(
+                """INSERT INTO dictionary_words (dict_id, word_id) VALUES(?, (
+                        SELECT id FROM words WHERE word = ?
+                    )
+                )""",
+                word_values,
+            )
             conn.commit()
 
             if last_line:
                 break
 
 
-def load_default_dictionaries(db_path: Path):
+def load_default_dictionaries(conn: sqlite3.Connection | None):
+    if conn is None:
+        # TODO: log
+        return
     start = time.time()
     curr_dir = Path(__file__).parent
     load_dictionary(
         Path(curr_dir, "../../wordlists/dwyl/words_alpha.txt"),
-        db_path,
+        conn,
         "dwyl",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/na_english/NA_english.txt"),
-        db_path,
+        conn,
         "na_english",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/scrabble_2019/words_alpha.txt"),
-        db_path,
+        conn,
         "scrabble_2019",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/sowpods/sowpods.txt"),
-        db_path,
+        conn,
         "sowpods",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/twl06/twl06.txt"),
-        db_path,
+        conn,
         "twl06",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/wordnik_2021_07_29/wordnik.txt"),
-        db_path,
+        conn,
         "wordnik_2021_07_29",
     )
     end = time.time()
     print(f"Loaded all dictionaries in {(end - start):.4f} seconds")
+
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:

@@ -43,12 +43,14 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    def get_db() -> sqlite3.Connection:
+    def get_db() -> sqlite3.Connection | None:
         db = getattr(g, "_database", None)
         if db is None:
             print(app.config.get("SQLITE_DB"))
             try:
-                db = g._database = sqlite3.connect(app.config.get("SQLITE_DB"))
+                db = g._database = sqlite3.connect(
+                    app.config.get("SQLITE_DB", "app/db/boggler.sqlite")
+                )
             except sqlite3.OperationalError as e:
                 print(
                     f'An error ocurred when attempting to connect to the database "{app.config.get("SQLITE_DB")}". Error: {e}'
@@ -64,7 +66,7 @@ def create_app(config_name):
                 db.cursor().executescript(f.read())
             db.commit()
 
-            load_default_dictionaries(Path(app.config.get("SQLITE_DB")))
+            load_default_dictionaries(db)
 
     disable_init_file = Path(".db_no_init")
     if app.config.get("INIT_DB") and not Path.exists(
@@ -75,14 +77,13 @@ def create_app(config_name):
 
     def load_dictionaries():
         with app.app_context():
-            db = app.get_db()
-            app.dictionaries = {}
+            db = get_db()
+            app.__setattr__("dictionaries", {})
             dict_names = get_dict_names(db)
             for name in dict_names:
                 app.dictionaries[name] = get_words_by_dict(db, name)
-    
+
     load_dictionaries()
-    breakpoint()
 
     @app.teardown_appcontext
     def close_db_connection(exception):
