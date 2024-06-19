@@ -1,12 +1,11 @@
 # boggler-flask
-A [Flask](https://flask.palletsprojects.com) web app for solving the Boggle word game
+A [Flask](https://flask.palletsprojects.com) web app for solving the Boggle word game.
 
 ## Live-demo
-It's still a work in progress, but a live demo can be found -> [here](https://boggler.cblanken.dev)
+It's still a work in progress, but you can check out the live site at [https://boggler.cblanken.dev](https://boggler.cblanken.dev).
 
 ## Issues
-Please feel free to submit an [issue](https://github.com/cblanken/boggler-flask/issues) if
-you notice any bugs while exploring the app. Thanks!
+If you notice any bugs while exploring the app please file an [issue](https://github.com/cblanken/boggler-flask/issues), so I can fix it. Thanks!
 
 ## Usage
 1. Submit the board
@@ -22,30 +21,27 @@ corresponding letter in your boggle board.
   through that specific cell. The cell will be highlighted in red.
     - To remove the filter, click the button with the filter icon below the board.
     ![boggle3](https://user-images.githubusercontent.com/19908880/195198375-206ac6ff-0e1f-430d-88ca-8d81b9cf78d0.png)
+    - Click on words in the table to show their path on the board.
 
 ## Development
-### With live reload
-A few services are required to run the full application. The easiest way to get up running
-is to follow these steps:
-1. Spin up the redis instance. You may want to run this without the `-d` to monitor the `redis` logs live for any errors.
-    ```console
-    $ docker-compose up redis -d
-    ```
-2. Run the startup script. This start the gunicorn server and the backend celery process for queuing multiple board solve tasks
-    ```console
-    $ ./boot.sh
-    ```
-Navigate to the app at `http://localhost:5000`
+2. Run one of the the startup scripts.
+Launches the app in debug mode
+```console
+$ ./boot-dev.sh
+```
 
-### No live reload
+Launches the app with gunicorn in production mode
+```console
+$ ./boot.sh
+```
+
+Navigate to the app at `http://localhost:5000`.
+
+### Docker
 If you don't care about live reload you can run the fully containerized app with:
 ```console
 $ sudo FLASK_CONFIG=development docker-compose up 
 ```
 Then the app should be available at `http://localhost`
+This is only really recommended this for deployment.
 
-## Deployment
-### Renew HTTPs Certs
-- To renew Let's Encrypt cert, shutdown the app (`sudo docker compose down`), then run
-`sudo certbot --nginx renew`. Stop `nginx.service` with `sudo systemctl stop nginx.service`
-(it may be necessary to restart the host) then restart the app with `sudo FLASK_CONFIG=production docker compose up -d`.
