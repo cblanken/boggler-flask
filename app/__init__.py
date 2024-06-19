@@ -12,6 +12,7 @@ from random import choices
 import sqlite3
 import importlib.resources as ILR
 from .db.load_dictionary import load_default_dictionaries
+from .db import get_dict_names, get_words_by_dict
 
 sock = Sock()
 
@@ -71,6 +72,17 @@ def create_app(config_name):
     ):
         Path.touch(disable_init_file)
         init_db()
+
+    def load_dictionaries():
+        with app.app_context():
+            db = app.get_db()
+            app.dictionaries = {}
+            dict_names = get_dict_names(db)
+            for name in dict_names:
+                app.dictionaries[name] = get_words_by_dict(db, name)
+    
+    load_dictionaries()
+    breakpoint()
 
     @app.teardown_appcontext
     def close_db_connection(exception):

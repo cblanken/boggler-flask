@@ -4,6 +4,22 @@ from typing import List
 from boggler.boggler_utils import WordNode
 
 
+def get_dict_names(conn: sqlite3.Connection) -> List[str]:
+    curr = conn.cursor()
+    names = curr.execute("""SELECT name FROM dictionaries""").fetchall()
+    return [n[0] for n in names]
+
+
+def get_words_by_dict(conn: sqlite3.Connection, dict_name: str) -> List[str]:
+    curr = conn.cursor()
+    recs = curr.execute(
+        """SELECT word FROM words
+        INNER JOIN dictionaries as di ON di.name = ?""",
+        (dict_name,),
+    ).fetchall()
+    return [r[0] for r in recs]
+
+
 def add_solved_board(
     conn: sqlite3.Connection,
     size: int,
