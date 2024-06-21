@@ -241,8 +241,8 @@ document.addEventListener("scroll", (e) => {
     timeout = true;
 });
 
-async function get_board_data(board_id) {
-    const response = await fetch(`task/data/${board_id}`, {
+async function get_board_data(board_hash) {
+    const response = await fetch(`${window.location.origin}/board/api/solved/${board_hash}`, {
         method: "GET",
         headers: {"Content-type": "application/json;charset=UTF-8"}
     });
@@ -252,8 +252,9 @@ async function get_board_data(board_id) {
 
 // Board heatmap
 function toggle_heatmap() {
-    const board_id = window.location.href.split("/").pop();
-    get_board_data(board_id)
+    const copyUrlBtn = document.getElementById("copyBoardUrlBtn");
+    const hash = copyUrlBtn.dataset["board_hash"]
+    get_board_data(hash)
     .then(json => {
         let rows = json["rows"];
         let cols = json["cols"];
@@ -266,9 +267,9 @@ function toggle_heatmap() {
             cell_counts[i].fill(0);
             cell_colors[i].fill(0);
         }
-        let words = json["found_words"];
+        let words = json["words"];
         words.forEach((word) => {
-            let path = word[1];
+            let path = JSON.parse(word[1]);
             path.forEach((cell_pos) => {
                 cell_counts[cell_pos[0]][cell_pos[1]] += 1;
                 cell_colors[cell_pos[0]][cell_pos[1]] += 1;
@@ -296,7 +297,6 @@ function toggle_heatmap() {
             let lightness = getComputedStyle(document.documentElement).getPropertyValue("--heatmap-lightness")
             if (count_style.display == "none") {
                 heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
-                console.log(theme, lightness);
                 cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, ${lightness})`, cell_style.getPropertyPriority("background-color"));
             } else {
                 heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));

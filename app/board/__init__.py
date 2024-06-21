@@ -249,7 +249,13 @@ def solve():
     )
 
 
-@bp.route("/solved/<hash>")
+@bp.route("/api/solved/<hash>", methods=["GET"])
+def api_solved_by_hash(hash):
+    data = get_solved_board_by_hash(current_app.get_db(), hash)
+    return data
+
+
+@bp.route("/solved/<hash>", methods=["GET"])
 def solved_by_hash(hash):
     data = get_solved_board_by_hash(current_app.get_db(), hash)
     if data is None:
