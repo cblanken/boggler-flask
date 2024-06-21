@@ -16,12 +16,13 @@ CREATE TABLE dictionaries (
 
 CREATE TABLE solved_boards (
     id INTEGER PRIMARY KEY NOT NULL,
+    hash TEXT CHECK(length(hash) == 64) UNIQUE NOT NULL,
     rows INTEGER CHECK (rows >= 3 AND rows <= 10) NOT NULL,
     cols INTEGER CHECK (cols >= 3 AND cols <= 10 AND cols = rows) NOT NULL,
     letters TEXT NOT NULL, -- JSON array of letters
     dict_id INTEGER NOT NULL REFERENCES dictionaries(id) ON DELETE CASCADE,
-    max_word_len INTEGER CHECK (max_word_len <= rows * cols) NOT NULL,
-    UNIQUE(rows, cols, letters, dict_id, max_word_len)
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UNIQUE(rows, cols, letters, dict_id)
 );
 
 CREATE INDEX sb_dict_idx ON solved_boards (dict_id);
@@ -50,8 +51,6 @@ CREATE TABLE solved_words (
 
 CREATE INDEX sw_word_idx ON solved_words (word_id);
 CREATE INDEX sw_sboard_idx ON solved_words (solved_board_id);
-
--- TODO: CREATE INDEXES
 
 INSERT INTO dictionaries (name, description)
 VALUES

@@ -23,7 +23,12 @@ import operator
 import os
 from requests import get, post
 from requests.exceptions import JSONDecodeError
-from ..db import add_solved_board, get_solved_board_words
+from ..db import (
+    add_solved_board,
+    get_solved_board_words,
+    get_solved_board_by_hash,
+    make_board_hash,
+)
 from .. import socketio
 from flask_socketio import emit, send
 
@@ -140,7 +145,13 @@ def board():
 def api_solve():
     """API endpoint for solving boards with the provided GET parameters
 
-    Returns JSON containing board data and found words
+    Returns found words and their paths for a given board.
+
+    If the board has not already been solved, then the new board is solved with the maximium
+    possible `max_len` and then added to the database. Otherwise the solved_words are retrieved
+    from the database.
+
+    Words with their associated paths are returned, filtering based on the `max_len` provided by the user.
     """
 
     data = request.json
@@ -161,7 +172,7 @@ def api_solve():
     data = {
         "letters": board_letters,
         "max_len": max_len,
-        "dictionary": os.path.basename(os.path.normpath(dictionary_path)),
+        "dictionary": dictionary,
         "size": {
             "rows": rows,
             "cols": cols,
@@ -169,13 +180,17 @@ def api_solve():
     }
 
     solved_words = get_solved_board_words(
-        current_app.get_db(), board_letters, dictionary
+        current_app.get_db(), board_letters, dictionary, max_len
     )
-    word_data = (
-        find_paths_by_word(board_letters, max_len, dictionary)
-        if solved_words is None
-        else solved_words
-    )
+    word_data = [
+        w
+        for w in (
+            find_paths_by_word(board_letters, len(letters), dictionary)
+            if solved_words is None
+            else solved_words
+        )
+        if len(w) <= max_len
+    ]
     data["words"] = word_data
     data["total"] = len(data["words"])
     data["errors"] = []
@@ -183,9 +198,7 @@ def api_solve():
     if solved_words is None:
         try:
             conn = current_app.get_db()
-            add_solved_board(
-                conn, rows, board_letters, dictionary, max_len, data["words"]
-            )
+            add_solved_board(conn, rows, board_letters, dictionary, data["words"])
         except Exception:
             data["errors"].append(
                 "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
@@ -230,13 +243,25 @@ def solve():
         rows=data.get("size").get("rows"),
         cols=data.get("size").get("cols"),
         board_letters=data.get("letters"),
-        dictionary=data.get("dictionary_path"),
-        max_len=data.get("max_len"),
+        dictionary=data.get("dictionary"),
         found_words=data.get("words"),
+        board_hash=make_board_hash(data.get("letters"), data.get("dictionary")),
     )
 
 
-@socketio.on("solve-board")
-def handle_solve_board(params):
-    print("Received json: ", str(json))
-    # TODO: verify socket connected
+@bp.route("/solved/<hash>")
+def solved_by_hash(hash):
+    data = get_solved_board_by_hash(current_app.get_db(), hash)
+    if data is None:
+        flash("This board doesn't exist!", "error")
+        return render_template("errors/404.html"), 404
+
+    return render_template(
+        "pages/solved.html",
+        found_words=data.get("words"),
+        rows=data.get("rows"),
+        cols=data.get("cols"),
+        board_letters=json.loads(data.get("letters", "").encode("utf-8")),
+        dictionary=data.get("dictionary"),
+        board_hash=hash,
+    )

@@ -198,7 +198,8 @@ copyUrlBtn.addEventListener("click", e => {
         copyUrlBtnText.textContent = btnText;
     }, 1500);
 
-    navigator.clipboard.writeText(encodeURI(window.location.href));
+    let board_hash = copyUrlBtn.dataset["board_hash"]
+    navigator.clipboard.writeText(encodeURI(`${window.location.origin}/board/solved/${board_hash}`));
 });
 
 // Scroll-to-top popup button

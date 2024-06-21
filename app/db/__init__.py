@@ -1,13 +1,39 @@
 import sqlite3
 import json
+from hashlib import sha256
 from typing import List
 from boggler.boggler_utils import WordNode
+
+
+def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None:
+    curr = conn.cursor()
+    sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, di.name, sb.created FROM solved_boards as sb
+        INNER JOIN dictionaries as di ON sb.dict_id = di.id
+        WHERE sb.hash = ?"""
+    board = curr.execute(sql, (hash,)).fetchone()
+    if board is None:
+        return None
+
+    sql = """SELECT word, sw.word_path from words
+        INNER JOIN solved_words as sw ON sw.word_id = words.id
+        WHERE sw.solved_board_id = ?"""
+
+    words = curr.execute(sql, (board[0],)).fetchall()
+    return {
+        "words": words if len(words) != 0 else None,
+        "rows": board[1],
+        "cols": board[2],
+        "letters": board[3],
+        "dictionary": board[4],
+        "created": board[5],
+    }
 
 
 def get_solved_board_words(
     conn: sqlite3.Connection,
     letters: List[str],
     dict_name: str,
+    max_word_len: int,
 ) -> List[str] | None:
     curr = conn.cursor()
 
@@ -21,10 +47,9 @@ def get_solved_board_words(
 
     sql = """SELECT word, sw.word_path from words
         INNER JOIN solved_words as sw ON sw.word_id = words.id
-        WHERE sw.solved_board_id = ?"""
+        WHERE sw.solved_board_id = ? AND length(word) <= ?"""
 
-    words = curr.execute(sql, (solved_board_id[0],)).fetchall()
-
+    words = curr.execute(sql, (solved_board_id[0], max_word_len)).fetchall()
     return words if len(words) != 0 else None
 
 
@@ -54,22 +79,34 @@ def get_words_by_dict(
     return [r[0] for r in recs]
 
 
+def make_board_hash(letters: List, dict_name: str) -> str:
+    """Create unique solved board hash for permalinks"""
+    return sha256(
+        f"{letters}{dict_name}".encode("utf-8"), usedforsecurity=False
+    ).hexdigest()
+
+
 def add_solved_board(
     conn: sqlite3.Connection,
     size: int,
     letters: List[str],
     dict_name: str,
-    max_word_len: int,
     word_data: List[dict[str, WordNode]],
 ):
     try:
         curr = conn.cursor()
         # TODO: setup SAVEPOINTS for proper rollbacks
         curr.execute(
-            """INSERT INTO solved_boards(rows, cols, letters, dict_id, max_word_len) VALUES(?, ?, ?, (
+            """INSERT INTO solved_boards(hash, rows, cols, letters, dict_id) VALUES(?, ?, ?, ?, (
                 SELECT id FROM dictionaries WHERE name = ? LIMIT 1
-            ), ?)""",
-            (size, size, json.dumps(letters), dict_name, max_word_len),
+            ))""",
+            (
+                make_board_hash(letters, dict_name),
+                size,
+                size,
+                json.dumps(letters),
+                dict_name,
+            ),
         )
 
         conn.commit()
