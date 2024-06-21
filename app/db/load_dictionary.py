@@ -105,7 +105,7 @@ def load_default_dictionaries(conn: sqlite3.Connection | None):
         "wordnik_2021_07_29",
     )
     end = time.time()
-    print(f"Loaded all dictionaries in {(end - start):.4f} seconds")
+    print(f"Loaded all dictionaries into database in {(end - start):.4f} seconds\n")
 
 
 if __name__ == "__main__":

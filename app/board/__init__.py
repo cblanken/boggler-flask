@@ -25,6 +25,8 @@ import os
 from requests import get, post
 from requests.exceptions import JSONDecodeError
 from ..db import add_solved_board
+from .. import socketio
+from flask_socketio import emit, send
 
 Flask.url_defaults
 
@@ -103,8 +105,8 @@ def find_paths_by_word(
     board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))
     board_tree = {}
     index: dict[str, list[str]] = {}
+    print("BOARD LETTERS", board_letters)
     for letters in board_alpha:
-        # words = get_words_by_dict(current_app.get_db(), dict_name, letters)
         words = current_app.dictionaries[dict_name][letters[0]]
         index[letters] = words
 
@@ -221,3 +223,9 @@ def solve():
         max_len=data.get("max_len"),
         found_words=data.get("words"),
     )
+
+
+@socketio.on("solve-board")
+def handle_solve_board(params):
+    print("Received json: ", str(json))
+    # TODO: verify socket connected

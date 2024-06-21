@@ -24,9 +24,11 @@ CREATE TABLE solved_boards (
     UNIQUE(rows, cols, letters, dict_id, max_word_len)
 );
 
+CREATE INDEX sb_dict_idx ON solved_boards (dict_id);
+
 CREATE TABLE words (
     id INTEGER PRIMARY KEY NOT NULL,
-    word TEXT NOT NULL,
+    word TEXT COLLATE NOCASE NOT NULL,
     UNIQUE(word)
 );
 
@@ -37,12 +39,17 @@ CREATE TABLE dictionary_words (
     UNIQUE(dict_id, word_id)
 );
 
+CREATE INDEX dw_idx ON dictionary_words (word_id);
+
 CREATE TABLE solved_words (
     solved_board_id INTEGER NOT NULL REFERENCES solved_boards(id) ON DELETE CASCADE,
     word_id INTEGER NOT NULL REFERENCES words(id) ON DELETE CASCADE,
     word_path TEXT NOT NULL, -- JSON array of board indices
     PRIMARY KEY (word_id, solved_board_id, word_path)
 );
+
+CREATE INDEX sw_word_idx ON solved_words (word_id);
+CREATE INDEX sw_sboard_idx ON solved_words (solved_board_id);
 
 -- TODO: CREATE INDEXES
 

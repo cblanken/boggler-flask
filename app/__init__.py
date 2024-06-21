@@ -2,7 +2,6 @@
 """
 
 from flask import Flask, g, request, render_template, redirect
-from flask_sock import Sock
 from flask_debugtoolbar import DebugToolbarExtension
 from config import config
 from boggler.board_randomizer import read_dice_file, get_random_board
@@ -11,12 +10,13 @@ from math import sqrt
 from pathlib import Path
 from random import choices
 from string import ascii_lowercase
-import sqlite3
+from time import time
+from flask_socketio import SocketIO
 import importlib.resources as ILR
+import sqlite3
 from .db.load_dictionary import load_default_dictionaries
 from .db import get_dict_names, get_words_by_dict
 
-sock = Sock()
 
 # Initialize DICE for random board generation
 DICE = {}
@@ -38,10 +38,12 @@ DICE = {
 }
 
 
+socketio = SocketIO()
+
+
 def create_app(config_name):
     """Return base Flask app object"""
     app = Flask(__name__)
-    sock.init_app(app)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
@@ -82,6 +84,7 @@ def create_app(config_name):
             app.__setattr__("dictionaries", {})
             dict_names = get_dict_names(db)
 
+            start = time()
             print("Loading dictionaries into memory...")
             for name in dict_names:
                 print(f"> Loading dictionary: {name}")
@@ -89,6 +92,8 @@ def create_app(config_name):
                 for letter in ascii_lowercase:
                     print(f"> Loading words with prefix: {letter}")
                     app.dictionaries[name][letter] = get_words_by_dict(db, name, letter)
+            end = time()
+            print(f"Loaded dictionaries into memory in {(end - start):.4f} seconds")
 
     load_dictionaries()
 
@@ -150,20 +155,5 @@ def create_app(config_name):
                 "dice_type": "random",
             }
 
-    @sock.route("/solve")
-    def solve(ws):
-        while True:
-            data = ws.receive()
-            print(f"RECEIVED DATA: {data}")
-
-            # TODO: solve board
-            try:
-                solve_data = json.loads(data.encode("utf-8"))
-                print(f"SOLVE DATA: {solve_data}")
-
-                # TODO error handling json
-                ws.send(solve_data)
-            except json.decoder.JSONDecodeError:
-                ws.send("COULD NOT DECODE JSON OBJECT")
-
+    socketio.init_app(app)
     return app

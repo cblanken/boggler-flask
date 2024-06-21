@@ -22,6 +22,7 @@ async function get_random_board(dice_type, size) {
     return json;
 }
 
+let sizeSelect = document.getElementById("sizeSelect");
 let randomBoardBtn = document.getElementById("randomBoardBtn");
 let randomDiceSelect = document.getElementById("diceSelect");
 randomBoardBtn.addEventListener("click", e => {
@@ -45,41 +46,22 @@ function toggle_board_controls() {
     solveBtn.toggleAttribute("disabled")
 }
 
-// // Setup websocket
-// let url = new URL(window.origin)
-// url.protocol = "ws:"
-// url.pathname = "/solve"
-// let sock = new WebSocket(url);
-// sock.addEventListener("message", e => {
-//   console.log("MESSAGE RECEIVED")
-//   console.log(JSON.stringify(e.data))
-//   fetch("/board/solved", {
-//     method: "POST",
-//     redirect: "follow",
-//     headers: {
-//       "Content-type": "application/json"
-//     },
-//     // body: JSON.stringify(e.data)
-//     body: e.data
-//   }).then((res) => {
-//       console.log(res.json())
-//   });
-//   // Redirect to solved page
-//   //window.location = "/"
-// })
-
 // Solve button
-solveBtn.addEventListener("click", x => {
+boardForm = document.getElementById("board-options");
+// solveBtn.addEventListener("click", x => {
+boardForm.addEventListener("submit", e => {
     let letter_inputs = document.querySelectorAll(".board-cell-input");
     let letters = Array.from(letter_inputs).map(x => x.value).join(",");
     lettersInput.setAttribute("value", letters);
 
     let rows, cols;
     rows = cols = document.getElementById("sizeSelect").value;
+
+    toggle_board_controls();
+    return true;
 });
 
 // Board resizing
-let sizeSelect = document.getElementById("sizeSelect");
 sizeSelect.addEventListener("change", e => {
     // Delete old board
     board = document.getElementById("board");
