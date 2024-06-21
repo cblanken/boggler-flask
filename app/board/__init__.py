@@ -6,7 +6,6 @@ from boggler.boggler_utils import (
     build_boggle_tree,
     WordNode,
 )
-from boggler.board_randomizer import read_dice_file, get_random_board
 from flask import (
     Blueprint,
     Flask,
@@ -24,7 +23,7 @@ import operator
 import os
 from requests import get, post
 from requests.exceptions import JSONDecodeError
-from ..db import add_solved_board
+from ..db import add_solved_board, get_solved_board_words
 from .. import socketio
 from flask_socketio import emit, send
 
@@ -147,7 +146,8 @@ def api_solve():
     data = request.json
     if data is None:
         return {}
-    elif request.method == "POST":
+
+    if request.method == "POST":
         rows = cols = data.get("sizeSelect")
         letters = data.get("letters")
         dictionary = data.get("dictionarySelect")
@@ -158,10 +158,7 @@ def api_solve():
     else:
         return redirect(url_for("board.board"))
 
-    word_data = find_paths_by_word(board_letters, max_len, dictionary)
     data = {
-        "words": word_data,
-        "total": len(word_data),
         "letters": board_letters,
         "max_len": max_len,
         "dictionary": os.path.basename(os.path.normpath(dictionary_path)),
@@ -171,15 +168,29 @@ def api_solve():
         },
     }
 
+    solved_words = get_solved_board_words(
+        current_app.get_db(), board_letters, dictionary
+    )
+    word_data = (
+        find_paths_by_word(board_letters, max_len, dictionary)
+        if solved_words is None
+        else solved_words
+    )
+    data["words"] = word_data
+    data["total"] = len(data["words"])
     data["errors"] = []
-    try:
-        conn = current_app.get_db()
-        add_solved_board(conn, rows, board_letters, dictionary, max_len, word_data)
-    except Exception:
-        data["errors"].append(
-            "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
-        )
-        raise
+
+    if solved_words is None:
+        try:
+            conn = current_app.get_db()
+            add_solved_board(
+                conn, rows, board_letters, dictionary, max_len, data["words"]
+            )
+        except Exception:
+            data["errors"].append(
+                "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
+            )
+            raise
     return data
 
 

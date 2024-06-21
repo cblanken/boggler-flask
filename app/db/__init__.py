@@ -4,6 +4,30 @@ from typing import List
 from boggler.boggler_utils import WordNode
 
 
+def get_solved_board_words(
+    conn: sqlite3.Connection,
+    letters: List[str],
+    dict_name: str,
+) -> List[str] | None:
+    curr = conn.cursor()
+
+    sql = """SELECT sb.id FROM solved_boards as sb
+    INNER JOIN dictionaries as di ON di.id = sb.dict_id
+    WHERE sb.letters = ? AND di.name = ?"""
+
+    solved_board_id = curr.execute(sql, (json.dumps(letters), dict_name)).fetchone()
+    if solved_board_id is None:
+        return None
+
+    sql = """SELECT word, sw.word_path from words
+        INNER JOIN solved_words as sw ON sw.word_id = words.id
+        WHERE sw.solved_board_id = ?"""
+
+    words = curr.execute(sql, (solved_board_id[0],)).fetchall()
+
+    return words if len(words) != 0 else None
+
+
 def get_dict_names(conn: sqlite3.Connection) -> List[str]:
     curr = conn.cursor()
     names = curr.execute("""SELECT name FROM dictionaries""").fetchall()
@@ -40,8 +64,6 @@ def add_solved_board(
 ):
     try:
         curr = conn.cursor()
-        # TODO: check for existing solved board and return
-
         # TODO: setup SAVEPOINTS for proper rollbacks
         curr.execute(
             """INSERT INTO solved_boards(rows, cols, letters, dict_id, max_word_len) VALUES(?, ?, ?, (
@@ -67,10 +89,6 @@ def add_solved_board(
             )
             conn.rollback()
             return
-
-        dict_id = curr.execute(
-            "SELECT id FROM dictionaries WHERE name = ?", (dict_name,)
-        ).fetchone()[0]
 
         word_inserts = [
             (
