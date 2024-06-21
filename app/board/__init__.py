@@ -17,7 +17,6 @@ from flask import (
     url_for,
 )
 import json
-from logging import log
 from functools import reduce
 import operator
 import os
@@ -29,8 +28,6 @@ from ..db import (
     get_solved_board_by_hash,
     make_board_hash,
 )
-from .. import socketio
-from flask_socketio import emit, send
 
 Flask.url_defaults
 
@@ -133,7 +130,6 @@ def find_paths_by_word(
 def board():
     """Default board route"""
     if request.method == "GET":
-        args = request.args
         rows = cols = 4
         (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
         return render_template(

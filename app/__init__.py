@@ -5,7 +5,6 @@ from flask import Flask, g, request, render_template, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 from config import config
 from boggler.board_randomizer import read_dice_file, get_random_board
-import json
 from math import sqrt
 from pathlib import Path
 from random import choices
@@ -97,8 +96,8 @@ def create_app(config_name):
 
     load_dictionaries()
 
-    if app.debug == True:
-        toolbar = DebugToolbarExtension(app)
+    if app.debug:
+        DebugToolbarExtension(app)
         app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
     @app.teardown_appcontext
