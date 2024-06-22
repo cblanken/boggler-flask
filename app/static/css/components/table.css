@@ -22,3 +22,15 @@
 #table-wrapper tr.selected {
     background-color: var(--secondary-color);
 }
+
+.table-letter-board {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.table-letter-board td {
+    padding: 0.1rem 0.5rem;
+    color: white;
+    background: #333838 !important;
+    border: 2px white solid !important;
+}

@@ -1,7 +1,7 @@
 """Main app module
 """
 
-from flask import Flask, g, request, render_template, redirect
+from flask import Flask, current_app, g, jsonify, request, render_template, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 from config import config
 from boggler.board_randomizer import read_dice_file, get_random_board
@@ -14,7 +14,7 @@ from flask_socketio import SocketIO
 import importlib.resources as ILR
 import sqlite3
 from .db.load_dictionary import load_default_dictionaries
-from .db import get_dict_names, get_words_by_dict
+from .db import get_dict_names, get_words_by_dict, get_solved_boards
 
 
 # Initialize DICE for random board generation
@@ -118,9 +118,15 @@ def create_app(config_name):
     def index():
         return redirect("board")
 
-    @app.route("/history")
+    @app.route("/api/solved", methods=["GET"])
+    def api_solved():
+        solved_boards = get_solved_boards(current_app.get_db())
+        return jsonify(solved_boards)
+        
+
+    @app.route("/solved")
     def history():
-        return render_template("pages/solve_history.html")
+        return render_template("pages/solved_boards.html")
 
     @app.route("/api/random", methods=["GET"])
     def api_random():

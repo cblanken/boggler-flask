@@ -5,6 +5,14 @@ from typing import List
 from boggler.boggler_utils import WordNode
 
 
+def get_solved_boards(conn: sqlite3.Connection) -> tuple:
+    curr = conn.cursor()
+    sql = """SELECT hash, created, di.name, letters, rows, cols FROM solved_boards as sb
+        INNER JOIN dictionaries as di ON sb.dict_id = di.id"""
+
+    return curr.execute(sql).fetchall()
+
+
 def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None:
     curr = conn.cursor()
     sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, di.name, sb.created FROM solved_boards as sb
