@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block page_content %}
-<h1 class="fs-1 px-4 py-2">Solved Boards</h1>
+<h1 class="fs-1 px-4 pt-4 m-0">Solved Boards</h1>
 <div class="m-4">
     <table id="solved-boards-table" class="cell-border hover stripe" style="font: bold 1.2rem 'Courier New', monospace"></table>
 </div>
@@ -26,6 +26,14 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
 .then(json => {
     console.table(json)
     let table = new DataTable("#solved-boards-table", {
+        layout: {
+            top2Start: 'info',
+            top2End: 'paging',
+        },
+        lengthMenu: [
+            [5, 10, 25, 100, -1],
+            [5, 10, 25, 100, 'All'],
+        ],
         columns: [
             { title: 'ID' },
             { title: "Solve Time (UTC)" },

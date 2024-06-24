@@ -24,13 +24,16 @@
 }
 
 .table-letter-board {
-    table-layout: fixed;
+    table-layout: auto;
     border-collapse: collapse;
+    text-transform: capitalize;
 }
 
 .table-letter-board td {
-    padding: 0.1rem 0.5rem;
+    text-align: center;
+    padding: 0.5rem 0.8rem;
     color: white;
     background: #333838 !important;
     border: 2px white solid !important;
+    vertical-align: middle;
 }
