@@ -21,7 +21,10 @@ let words_datatable = new DataTable("#word-table", {
 });
 
 words_datatable.ready(() => {
-    document.getElementById("word-table").style["display"] = "block";
+    let word_table = document.getElementById("word-table")
+    word_table.classList.add("fade-in");
+    word_table.style["display"] = "block";
+
     let spinner = document.getElementById("word-table-spinner");
     spinner.style["display"] = "none";
     spinner.classList.remove("d-flex");
@@ -184,10 +187,12 @@ words_datatable.on("click", "tbody tr", function() {
 
 });
 
+
 // Share board link button
 let copyUrlBtn = document.getElementById("copyBoardUrlBtn");
 let copyUrlBtnIcon = document.getElementById("copyBoardUrlBtnIcon");
 let copyUrlBtnText = document.getElementById("copyBoardUrlBtnText");
+let board_hash = copyUrlBtn.dataset["board_hash"]
 copyUrlBtn.addEventListener("click", e => {
     copyUrlBtn.classList.remove("btn-primary");
     copyUrlBtn.classList.add("btn-success");
@@ -204,9 +209,12 @@ copyUrlBtn.addEventListener("click", e => {
         copyUrlBtnText.textContent = btnText;
     }, 1500);
 
-    let board_hash = copyUrlBtn.dataset["board_hash"]
     navigator.clipboard.writeText(encodeURI(`${window.location.origin}/board/solved/${board_hash}`));
 });
+
+// Update URL
+history.replaceState(null, "", encodeURI(`${window.location.origin}/board/solved/${board_hash}`));
+
 
 // Scroll-to-top popup button
 let scrollToTopBtn = document.getElementById("scroll-to-top-btn");
