@@ -22,6 +22,9 @@ let words_datatable = new DataTable("#word-table", {
 
 words_datatable.ready(() => {
     document.getElementById("word-table").style["display"] = "block";
+    let spinner = document.getElementById("word-table-spinner");
+    spinner.style["display"] = "none";
+    spinner.classList.remove("d-flex");
 })
 
 function unhighlight_board_filter() {
