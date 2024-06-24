@@ -3,6 +3,27 @@ let board_cells = document.querySelectorAll(".board-cell");
 let board_cells_inputs = document.querySelectorAll(".board-cell-input");
 let path_buttons = document.querySelectorAll("#test-table tr .path-cell button");
 
+let words_datatable = new DataTable("#word-table", {
+    lengthMenu: [
+        [15, 30, 50, 100, -1],
+        [15, 30, 50, 100, 'All'],
+    ],
+    columnDefs: [
+        {
+            target: 2,
+            sortable: false,
+        },
+        {
+            target: 3,
+            visible: false,
+        },
+    ],
+});
+
+words_datatable.ready(() => {
+    document.getElementById("word-table").style["display"] = "block";
+})
+
 function unhighlight_board_filter() {
     board_cells_inputs.forEach(cell => {
         cell.classList.remove("cell-highlight-filter");
@@ -18,11 +39,11 @@ function unhighlight_board() {
 function toggle_path_highlight(path) {
     // Highlight first letter in word
     let cell = path[0];
-    let c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"] input`);
+    let c = document.querySelector(`#board [data-pos=\"${cell[0]}, ${cell[1]}\"] input`);
     // Highlight remainder
     c.classList.toggle("cell-highlight-first-letter");
     path.slice(1,).forEach(cell => {
-        c = document.querySelector(`#board [data-pos=\"${cell[0]},${cell[1]}\"] input`);
+        c = document.querySelector(`#board [data-pos=\"${cell[0]}, ${cell[1]}\"] input`);
         c.classList.toggle("cell-highlight");
     })
 }
@@ -46,8 +67,8 @@ function draw_path_connections(path) {
     for (i=1; i < path.length; i++) {
         let cell1 = path[i-1];
         let cell2 = path[i];
-        let c1 = document.querySelector(`#board [data-pos=\"${cell1[0]},${cell1[1]}\"] input`);
-        let c2 = document.querySelector(`#board [data-pos=\"${cell2[0]},${cell2[1]}\"] input`);
+        let c1 = document.querySelector(`#board [data-pos=\"${cell1[0]}, ${cell1[1]}\"] input`);
+        let c2 = document.querySelector(`#board [data-pos=\"${cell2[0]}, ${cell2[1]}\"] input`);
 
         if (cell1[0] === cell2[0] ||
             cell1[1] === cell2[1] 
@@ -127,12 +148,7 @@ window.operateEvents = {};
 
 let remove_filter_btn = document.querySelector("#remove-filter-btn");
 remove_filter_btn.addEventListener("click", _ => {
-        $table.bootstrapTable("filterBy", {
-        }, {
-            'filterAlgorithm': (row, filters) => {
-                return true;
-            }
-        });
+        words_datatable.column(3).search("").draw()
         remove_filter_btn.style.display = "none";
         unhighlight_board_filter();
         unhighlight_board();
@@ -141,15 +157,8 @@ remove_filter_btn.addEventListener("click", _ => {
 })
 
 board_cells.forEach( cell => {
-    cell.addEventListener("click", (event) => {
-        $table.bootstrapTable("filterBy", {
-            pos: cell.dataset.pos
-        }, {
-            'filterAlgorithm': (row, filters) => {
-                pos = filters.pos.split(',');
-                return row.path.includes(`${pos[0]}, ${pos[1]}`);
-            }
-        });
+    cell.addEventListener("click", () => {
+        words_datatable.column(3).search(p => p.includes(cell.dataset.pos)).draw()
         unhighlight_board_filter();
         unhighlight_board();
         remove_arrows(active_arrows);
@@ -161,21 +170,15 @@ board_cells.forEach( cell => {
 
 // Add board highlight table click events
 let active_arrows = [];
-$table.bootstrapTable({
-    onCheck: function (row, element) {
-        // TODO: implement correct API query to avoid doing this weird parsing
-        // TODO: current solution only works for single digit indices
-        unhighlight_board();
-        remove_arrows(active_arrows);
-        path = get_path_from_string(row.path);
-        toggle_path_highlight(path);
-        active_arrows = draw_path_connections(path);
-    },
-    onUncheck: function (row, element) {
-        unhighlight_board();
-        remove_arrows(active_arrows);
-        active_arrows = [];
-    }
+words_datatable.on("click", "tbody tr", function() {
+    let data = words_datatable.row(this).data();
+    
+    unhighlight_board();
+    remove_arrows(active_arrows);
+    path = get_path_from_string(data[3]);
+    toggle_path_highlight(path);
+    active_arrows = draw_path_connections(path);
+
 });
 
 // Share board link button

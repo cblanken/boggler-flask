@@ -122,7 +122,6 @@ def create_app(config_name):
     def api_solved():
         solved_boards = get_solved_boards(current_app.get_db())
         return jsonify(solved_boards)
-        
 
     @app.route("/solved")
     def history():

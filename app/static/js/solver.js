@@ -30,7 +30,7 @@ randomBoardBtn.addEventListener("click", e => {
     .then(json => {
         for (let row = 0; row < sizeSelect.value; row++) {
             for (let col = 0; col < sizeSelect.value; col++) {
-                letter_input = document.querySelector(`.board-cell[data-pos='${row},${col}']`)
+                letter_input = document.querySelector(`.board-cell[data-pos='${row}, ${col}']`)
                 letter_input.firstElementChild.value = json.board[row][col]
             }
         }
@@ -77,7 +77,7 @@ sizeSelect.addEventListener("change", e => {
         for (c = 0; c < sizeSelect.value; c++) {
             cell_div = document.createElement("div");
             cell_div.setAttribute("class", "board-cell");
-            cell_div.setAttribute("data-pos", `${r},${c}`);
+            cell_div.setAttribute("data-pos", `${r}, ${c}`);
             cell_div.style["board-radius"] = "1px";
             input = document.createElement("input");
             input.setAttribute("class", "board-cell-input");

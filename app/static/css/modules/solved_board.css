@@ -21,6 +21,6 @@
     stroke-width: 3px;
 }
 
-#word-table td {
-    border: solid 1px var(--fg-color-2);
+#word-table {
+    display: none;
 }
