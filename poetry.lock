@@ -122,13 +122,13 @@ files = [
 
 [[package]]
 name = "boggler"
-version = "2.0.3"
+version = "2.0.4"
 description = "Utilities for solving the Boggle word game."
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "boggler-2.0.3-py3-none-any.whl", hash = "sha256:939b897dfed3c997219bd5804fd2c868735343e59d073944f49cb96f391c7ae7"},
-    {file = "boggler-2.0.3.tar.gz", hash = "sha256:795d2a13c67c157637aee1ca5a2aab736868aee04bbd57ae19f34ed9195ccc85"},
+    {file = "boggler-2.0.4-py3-none-any.whl", hash = "sha256:94ee177920fffcd3cca2071a5e0ad0e00b7c33e6812dc63a9fdca61b28149984"},
+    {file = "boggler-2.0.4.tar.gz", hash = "sha256:81abd6b672fb35fef523063c20b08a9d64c5ca70944767b8913b995c0315d378"},
 ]
 
 [package.dependencies]
@@ -608,13 +608,13 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "7.2.0"
+version = "8.0.0"
 description = "Read metadata from Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "importlib_metadata-7.2.0-py3-none-any.whl", hash = "sha256:04e4aad329b8b948a5711d394fa8759cb80f009225441b4f2a02bd4d8e5f426c"},
-    {file = "importlib_metadata-7.2.0.tar.gz", hash = "sha256:3ff4519071ed42740522d494d04819b666541b9752c43012f85afb2cc220fcc6"},
+    {file = "importlib_metadata-8.0.0-py3-none-any.whl", hash = "sha256:15584cf2b1bf449d98ff8a6ff1abef57bf20f3ac6454f431736cd3e660921b2f"},
+    {file = "importlib_metadata-8.0.0.tar.gz", hash = "sha256:188bd24e4c346d3f0a933f275c2fec67050326a856b9a359881d7c2a697e8812"},
 ]
 
 [package.dependencies]
@@ -1385,4 +1385,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "735217fd112840d8e0e7dbfe68330963b2e75988a6324a8dfda6f8c809de371b"
+content-hash = "3a5882099d4ee8dff119ac783024b32592c95366cfcfc5c148073603adc7a112"
