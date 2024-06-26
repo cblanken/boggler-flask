@@ -29,6 +29,8 @@ from ..db import (
     make_board_hash,
 )
 
+import multiprocessing
+
 Flask.url_defaults
 
 MIN_BOARD_SIZE = 2
@@ -106,7 +108,6 @@ def find_paths_by_word(
     board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))
     board_tree = {}
     index: dict[str, list[str]] = {}
-    print("BOARD LETTERS", board_letters)
     for letters in board_alpha:
         words = current_app.dictionaries[dict_name][letters[0]]
         index[letters] = words
@@ -116,9 +117,12 @@ def find_paths_by_word(
         for cell in boggle_board.board.values()
     ]
 
-    for i, p in enumerate(params):
-        res = build_boggle_tree(p)
-        board_tree[params[i][2]] = res
+    print(f">> Generating WordTrees...")
+    mp = multiprocessing.get_context("spawn")
+    with mp.Pool(processes=len(params)) as pool:
+        for i, res in enumerate(pool.map(build_boggle_tree, params)):
+            print(f">> {params[i][2]}")
+            board_tree[params[i][2]] = res
 
     paths_by_word = reduce(
         operator.iconcat, [x.word_paths for x in board_tree.values()], []
