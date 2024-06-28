@@ -9,12 +9,13 @@ from math import sqrt
 from pathlib import Path
 from random import choices
 from string import ascii_lowercase
+from sys import getsizeof
 from time import time
 from flask_socketio import SocketIO
 import importlib.resources as ILR
 import sqlite3
 from .db.load_dictionary import load_default_dictionaries
-from .db import get_dict_names, get_words_by_dict, get_solved_boards
+from .db import get_words, get_solved_boards
 
 
 # Initialize DICE for random board generation
@@ -77,24 +78,21 @@ def create_app(config_name):
         Path.touch(disable_init_file)
         init_db()
 
-    def load_dictionaries():
+    def load_words():
         with app.app_context():
             db = get_db()
-            app.__setattr__("dictionaries", {})
-            dict_names = get_dict_names(db)
-
+            app.__setattr__("words_by_alpha", {})
+            print("Loading words into memory...")
             start = time()
-            print("Loading dictionaries into memory...")
-            for name in dict_names:
-                print(f"> Loading dictionary: {name}")
-                app.dictionaries[name] = {}
-                for letter in ascii_lowercase:
-                    print(f"> Loading words with prefix: {letter}")
-                    app.dictionaries[name][letter] = get_words_by_dict(db, name, letter)
+            for letter in ascii_lowercase:
+                print(f"> Loading words with prefix: {letter}")
+                app.words_by_alpha[letter] = get_words(db, prefix=letter)
             end = time()
-            print(f"Loaded dictionaries into memory in {(end - start):.4f} seconds")
+            print(
+                f"Loaded dictionaries into memory in {(end - start):.4f} seconds with a size of {getsizeof(app.words_by_alpha) / 1024}MB"
+            )
 
-    load_dictionaries()
+    load_words()
 
     if app.debug:
         DebugToolbarExtension(app)

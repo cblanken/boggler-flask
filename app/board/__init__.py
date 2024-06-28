@@ -109,8 +109,7 @@ def find_paths_by_word(
     board_tree = {}
     index: dict[str, list[str]] = {}
     for letters in board_alpha:
-        words = current_app.dictionaries[dict_name][letters[0]]
-        index[letters] = words
+        index[letters] = current_app.words_by_alpha[letters[0]]
 
     params = [
         (board_alpha, boggle_board, cell, index[cell.letters])
@@ -182,15 +181,11 @@ def api_solve():
     solved_words = get_solved_board_words(
         current_app.get_db(), board_letters, dictionary, max_len
     )
-    word_data = [
-        w
-        for w in (
-            find_paths_by_word(board_letters, len(letters), dictionary)
-            if solved_words is None
-            else solved_words
-        )
-        if len(w) <= max_len
-    ]
+    word_data = (
+        find_paths_by_word(board_letters, len(letters), dictionary)
+        if solved_words is None
+        else solved_words
+    )
     data["words"] = word_data
     data["total"] = len(data["words"])
     data["errors"] = []
@@ -198,7 +193,7 @@ def api_solve():
     if solved_words is None:
         try:
             conn = current_app.get_db()
-            add_solved_board(conn, rows, board_letters, dictionary, data["words"])
+            add_solved_board(conn, rows, board_letters, dictionary, word_data)
         except Exception:
             data["errors"].append(
                 "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
@@ -268,6 +263,5 @@ def solved_by_hash(hash):
         rows=data.get("rows"),
         cols=data.get("cols"),
         board_letters=json.loads(data.get("letters", "").encode("utf-8")),
-        dictionary=data.get("dictionary"),
         board_hash=hash,
     )

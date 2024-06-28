@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS corpus_versions;
 DROP TABLE IF EXISTS solved_words;
 DROP TABLE IF EXISTS dictionary_words;
 DROP TABLE IF EXISTS words;
@@ -16,16 +17,15 @@ CREATE TABLE dictionaries (
 
 CREATE TABLE solved_boards (
     id INTEGER PRIMARY KEY NOT NULL,
-    hash TEXT CHECK(length(hash) == 64) UNIQUE NOT NULL,
+    hash TEXT CHECK(length(hash) == 32) UNIQUE NOT NULL,
     rows INTEGER CHECK (rows >= 3 AND rows <= 10) NOT NULL,
     cols INTEGER CHECK (cols >= 3 AND cols <= 10 AND cols = rows) NOT NULL,
     letters TEXT NOT NULL, -- JSON array of letters
-    dict_id INTEGER NOT NULL REFERENCES dictionaries(id) ON DELETE CASCADE,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(rows, cols, letters, dict_id)
+    UNIQUE(rows, cols, letters)
 );
 
-CREATE INDEX sb_dict_idx ON solved_boards (dict_id);
+CREATE INDEX sb_hash_idx ON solved_boards (hash);
 
 CREATE TABLE words (
     id INTEGER PRIMARY KEY NOT NULL,
@@ -51,6 +51,21 @@ CREATE TABLE solved_words (
 
 CREATE INDEX sw_word_idx ON solved_words (word_id);
 CREATE INDEX sw_sboard_idx ON solved_words (solved_board_id);
+
+-- Tracks versioning of dictioanries and all their words (corpus), so
+-- board can be solved on the entire word set but also indicate
+-- if it has been solved on an old version of the corpus
+CREATE TABLE corpus_versions (
+    id INTEGER NOT NULL PRIMARY KEY,
+    -- What changed and why
+    description TEXT NOT NULL,
+    -- type = Type of change
+    -- ADD = additive like new words and dictionaries
+    -- DEL = deletions like removing typos or invalid words
+    -- MIX = updates to fix typos or combination of ADD & DEL to fix a single issue
+    type TEXT CHECK( type IN ('ADD','DEL','MIX') ) NOT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 INSERT INTO dictionaries (name, description)
 VALUES

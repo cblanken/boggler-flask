@@ -1,22 +1,23 @@
 import sqlite3
 import json
-from hashlib import sha256
+from hashlib import md5
 from typing import List
 from boggler.boggler_utils import WordNode
 
 
 def get_solved_boards(conn: sqlite3.Connection) -> tuple:
     curr = conn.cursor()
-    sql = """SELECT hash, created, di.name, letters, rows, cols FROM solved_boards as sb
-        INNER JOIN dictionaries as di ON sb.dict_id = di.id"""
+    sql = """SELECT hash, created, letters, rows, cols, COUNT(*)
+        FROM solved_boards as sb
+        INNER JOIN solved_words as sw ON sw.solved_board_id = sb.id
+        GROUP BY sb.id"""
 
     return curr.execute(sql).fetchall()
 
 
 def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None:
     curr = conn.cursor()
-    sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, di.name, sb.created FROM solved_boards as sb
-        INNER JOIN dictionaries as di ON sb.dict_id = di.id
+    sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, sb.created FROM solved_boards as sb
         WHERE sb.hash = ?"""
     board = curr.execute(sql, (hash,)).fetchone()
     if board is None:
@@ -32,32 +33,36 @@ def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None
         "rows": board[1],
         "cols": board[2],
         "letters": board[3],
-        "dictionary": board[4],
-        "created": board[5],
+        "created": board[4],
     }
 
 
 def get_solved_board_words(
     conn: sqlite3.Connection,
     letters: List[str],
-    dict_name: str,
-    max_word_len: int,
+    dict_names: List[str] = [],
+    max_word_len: int = 0,
 ) -> List[str] | None:
     curr = conn.cursor()
 
     sql = """SELECT sb.id FROM solved_boards as sb
-    INNER JOIN dictionaries as di ON di.id = sb.dict_id
-    WHERE sb.letters = ? AND di.name = ?"""
+    WHERE sb.letters = ?"""
 
-    solved_board_id = curr.execute(sql, (json.dumps(letters), dict_name)).fetchone()
+    solved_board_id = curr.execute(sql, (json.dumps(letters),)).fetchone()
     if solved_board_id is None:
         return None
 
-    sql = """SELECT word, sw.word_path from words
-        INNER JOIN solved_words as sw ON sw.word_id = words.id
-        WHERE sw.solved_board_id = ? AND length(word) <= ?"""
+    if max_word_len > 0:
+        sql = """SELECT word, sw.word_path from words
+            INNER JOIN solved_words as sw ON sw.word_id = words.id
+            WHERE sw.solved_board_id = ? AND length(word) <= ?"""
+        words = curr.execute(sql, (solved_board_id[0], max_word_len)).fetchall()
+    else:
+        sql = """SELECT word, sw.word_path from words
+            INNER JOIN solved_words as sw ON sw.word_id = words.id
+            WHERE sw.solved_board_id = ?"""
+        words = curr.execute(sql, (solved_board_id[0],)).fetchall()
 
-    words = curr.execute(sql, (solved_board_id[0], max_word_len)).fetchall()
     return words if len(words) != 0 else None
 
 
@@ -65,6 +70,19 @@ def get_dict_names(conn: sqlite3.Connection) -> List[str]:
     curr = conn.cursor()
     names = curr.execute("""SELECT name FROM dictionaries""").fetchall()
     return [n[0] for n in names]
+
+
+def get_words(conn: sqlite3.Connection, prefix: str | None = None) -> List[str]:
+    curr = conn.cursor()
+
+    if prefix:
+        sql = """SELECT word FROM words WHERE word LIKE ?"""
+        recs = curr.execute(sql, (f"{prefix}%",)).fetchall()
+    else:
+        sql = """SELECT word FROM words"""
+        recs = curr.execute(sql).fetchall()
+
+    return [r[0] for r in recs]
 
 
 def get_words_by_dict(
@@ -89,7 +107,7 @@ def get_words_by_dict(
 
 def make_board_hash(letters: List, dict_name: str) -> str:
     """Create unique solved board hash for permalinks"""
-    return sha256(
+    return md5(
         f"{letters}{dict_name}".encode("utf-8"), usedforsecurity=False
     ).hexdigest()
 
@@ -105,15 +123,12 @@ def add_solved_board(
         curr = conn.cursor()
         # TODO: setup SAVEPOINTS for proper rollbacks
         curr.execute(
-            """INSERT INTO solved_boards(hash, rows, cols, letters, dict_id) VALUES(?, ?, ?, ?, (
-                SELECT id FROM dictionaries WHERE name = ? LIMIT 1
-            ))""",
+            """INSERT INTO solved_boards(hash, rows, cols, letters) VALUES(?, ?, ?, ?)""",
             (
                 make_board_hash(letters, dict_name),
                 size,
                 size,
                 json.dumps(letters),
-                dict_name,
             ),
         )
 
