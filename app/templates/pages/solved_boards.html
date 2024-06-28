@@ -56,7 +56,6 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
                 target: 2,
                 render: (data, type, row) => {
                     let rows = JSON.parse(data).map(row => "<tr>" + row.map(col => "<td>" + col + "</td>").join("") + "</tr>").join("")
-                    console.log(rows)
                     let table = "<table class='table-letter-board cell-border'>" + rows + "</table>"
                     return table
                 }
