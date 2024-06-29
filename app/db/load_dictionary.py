@@ -80,9 +80,9 @@ def load_default_dictionaries(conn: sqlite3.Connection | None):
         "dwyl",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/na_english/NA_english.txt"),
+        Path(curr_dir, "../../wordlists/free_scrabble/free_scrabble.txt"),
         conn,
-        "na_english",
+        "free_scrabble",
     )
     load_dictionary(
         Path(curr_dir, "../../wordlists/scrabble_2019/words_alpha.txt"),

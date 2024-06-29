@@ -9,7 +9,7 @@ html {
     --fg-color-1: var(--dark);
     --fg-color-2: rgb(74, 74, 74);
     --bg-color-1: rgb(232, 228, 215);
-    --bg-color-2: rgb(183, 183, 183);
+    --bg-color-2: rgb(212, 212, 212);
     --title-color: rgb(16, 139, 129);
     --primary-color: hsl(41, 90.6%, 41.8%);
     --primary-color-accent: hsl(41, 90.6%, 31.8%);

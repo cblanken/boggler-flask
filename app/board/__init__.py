@@ -24,7 +24,8 @@ from requests import get, post
 from requests.exceptions import JSONDecodeError
 from ..db import (
     add_solved_board,
-    get_solved_board_words,
+    get_dictionaries,
+    get_solved_board_by_letters,
     get_solved_board_by_hash,
     make_board_hash,
 )
@@ -178,9 +179,7 @@ def api_solve():
         },
     }
 
-    solved_words = get_solved_board_words(
-        current_app.get_db(), board_letters, dictionary, max_len
-    )
+    solved_words = get_solved_board_by_letters(current_app.get_db(), board_letters)
     word_data = (
         find_paths_by_word(board_letters, len(letters), dictionary)
         if solved_words is None
@@ -241,6 +240,7 @@ def solve():
         dictionary=data.get("dictionary"),
         found_words=data.get("words"),
         board_hash=make_board_hash(data.get("letters"), data.get("dictionary")),
+        dictionaries=get_dictionaries(current_app.get_db()),
     )
 
 
@@ -264,4 +264,5 @@ def solved_by_hash(hash):
         cols=data.get("cols"),
         board_letters=json.loads(data.get("letters", "").encode("utf-8")),
         board_hash=hash,
+        dictionaries=get_dictionaries(current_app.get_db()),
     )

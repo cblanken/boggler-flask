@@ -15,7 +15,7 @@ from flask_socketio import SocketIO
 import importlib.resources as ILR
 import sqlite3
 from .db.load_dictionary import load_default_dictionaries
-from .db import get_words, get_solved_boards
+from .db import get_dictionaries, get_words, get_solved_boards
 
 
 # Initialize DICE for random board generation
@@ -156,6 +156,10 @@ def create_app(config_name):
                 "board": [choices(alphabet, k=size) for x in range(0, size)],
                 "dice_type": "random",
             }
+
+    @app.route("/api/dictionaries")
+    def api_dictionaries():
+        return jsonify(get_dictionaries(current_app.get_db()))
 
     socketio.init_app(app)
     return app

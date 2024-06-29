@@ -30,14 +30,21 @@ copyUrlBtn.addEventListener("click", e => {
 // Update URL
 history.replaceState(null, "", encodeURI(`${window.location.origin}/board/solved/${board_hash}`));
 
+const dictionaries = await fetch(`${window.location.origin}/api/dictionaries`).then(res => res.json());
+const board_data = await fetch(`${window.location.origin}/board/api/solved/${copyUrlBtn.dataset["board_hash"]}`).then(res => res.json());
+
+// Add word lengths to word data
+board_data["words"] = board_data["words"].map(row => row.concat(row[0].length));
+
 let words_datatable = new DataTable("#word-table", {
     lengthMenu: [
-        [15, 30, 50, 100, -1],
-        [15, 30, 50, 100, 'All'],
+        [10, 25, 50, 100, -1],
+        [10, 25, 50, 100, 'All'],
     ],
     columns: [
         { title: 'Word' },
         { title: "Path" },
+        { title: 'Dictionaries' },
         { title: "Length" },
         { title: "Definitions" },
     ],
@@ -47,7 +54,11 @@ let words_datatable = new DataTable("#word-table", {
             visible: false,
         },
         {
-            target: 3,
+            target: 2,
+            visible: true,
+        },
+        {
+            target: 4,
             render: (data, type, row) => {
                 let html = `
                     <a rel="noopener noreferrer" target="_blank" href="https://www.dictionary.com/browse/${row[0]}"><svg width="5mm" height="5mm" viewBox="0 0 10.223001 11.01918"><path d="M 5.063901,0.03997366 0.13741,3.6557552e-6 C 0.11932,-1.1834424e-4 0.10154,0.00280366 0.08493,0.01020366 c -0.01662,0.0074 -0.03182,0.01702 -0.04471,0.02971 -0.01281,0.01274 -0.02284,0.02791 -0.02982,0.04475 C 0.0028,0.10134366 0,0.11936366 0,0.13753366 V 8.7100267 c 1.1e-5,0.02669 0.0076,0.05299 0.02026,0.07608 0.01324,0.02321 0.0322,0.04246 0.05519,0.05595 l 3.694472,2.1606843 c 0.01845,0.0106 0.03948,0.01644 0.06067,0.01644 0.02136,0 0.04222,-0.0064 0.06074,-0.01635 0.01847,-0.0106 0.03382,-0.02619 0.04457,-0.04478 0.0106,-0.0185 0.01631,-0.03964 0.01632,-0.06112 V 2.8807997 c 8e-6,-0.02742 -0.0079,-0.05426 -0.02124,-0.07782 -0.01394,-0.02356 -0.0338,-0.04294 -0.05761,-0.05612 L 1.909323,1.6655667 c -0.01628,-0.0093 -0.02875,-0.02365 -0.03545,-0.04112 -0.0074,-0.01748 -0.0076,-0.03678 -7.01e-4,-0.05438 0.007,-0.01761 0.01832,-0.03258 0.0344,-0.04204 0.01609,-0.0096 0.03483,-0.01307 0.05319,-0.01 l 3.543052,0.611575 c 0.03255,0.0062 0.06209,0.02242 0.0833,0.04779 0.02131,0.02538 0.03285,0.05742 0.0328,0.09067 v 7.216684 c 1.8e-5,0.02007 0.0034,0.03978 0.01242,0.05802 0.0086,0.01825 0.02021,0.03451 0.03502,0.04773 0.015,0.01322 0.03251,0.02313 0.05139,0.02888 0.01909,0.0065 0.03899,0.008 0.05875,0.0043 2.623358,-0.29547 4.411597,-2.153998 4.44505,-4.731994 0.03621,-2.88776 -2.084816,-4.81197704 -5.158707,-4.85228204 z" fill="white" id="path46" style="fill:#00248b;fill-opacity:1;stroke-width:0.102852"/></svg></a>
@@ -61,13 +72,7 @@ let words_datatable = new DataTable("#word-table", {
             }
         }
     ],
-    ajax: {
-        url: `${window.location.origin}/board/api/solved/${copyUrlBtn.dataset["board_hash"]}`,
-        dataSrc: function(json) {
-            console.table(json["words"]);
-            return json["words"].map(row => row.concat(row[0].length));
-        }
-    }
+    data: board_data["words"],
 });
 
 words_datatable.ready(() => {
@@ -78,6 +83,25 @@ words_datatable.ready(() => {
     let spinner = document.getElementById("word-table-spinner");
     spinner.style["display"] = "none";
     spinner.classList.remove("d-flex");
+})
+
+document.querySelectorAll("#dictionary-checkboxes input").forEach(input => {
+    input.addEventListener("change", (e) => {
+        let ids = Array.from(document.querySelectorAll("#dictionary-checkboxes input")).filter(x => x?.checked).map(x => x.dataset["id"])
+        if (ids.length === 0) {
+            words_datatable.column(2).search().draw()
+        } else {
+            words_datatable.column(2).search(new RegExp(ids.join("|"))).draw()
+        }
+    });
+})
+
+document.querySelectorAll("#dictionary-checkboxes button").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        let input = e.target.querySelector("input[type='checkbox']")
+        input.checked = !input.checked;
+        input.dispatchEvent(new Event("change"));
+    })
 })
 
 function unhighlight_board_filter() {
@@ -120,11 +144,12 @@ function draw_path_connections(path) {
         size: font_size * arrow_scale,
     }
 
-    for (i=1; i < path.length; i++) {
+    for (let i=1; i < path.length; i++) {
         let cell1 = path[i-1];
         let cell2 = path[i];
         let c1 = document.querySelector(`#board [data-pos=\"${cell1[0]}, ${cell1[1]}\"] input`);
         let c2 = document.querySelector(`#board [data-pos=\"${cell2[0]}, ${cell2[1]}\"] input`);
+        let x1, x2, y1, y2;
 
         if (cell1[0] === cell2[0] ||
             cell1[1] === cell2[1] 
@@ -189,7 +214,7 @@ function get_path_from_string(path_string) {
         }
     }
 
-    path = []
+    let path = []
     for (var i=0; i < Math.min(open_braces.length, close_braces.length); i++) {
         let r = path_string[open_braces[i]+1];
         let c = path_string[close_braces[i]-1];
@@ -204,7 +229,7 @@ window.operateEvents = {};
 
 let remove_filter_btn = document.querySelector("#remove-filter-btn");
 remove_filter_btn.addEventListener("click", _ => {
-        words_datatable.column(3).search("").draw()
+        words_datatable.column(1).search("").draw()
         remove_filter_btn.style.display = "none";
         unhighlight_board_filter();
         unhighlight_board();
@@ -214,7 +239,7 @@ remove_filter_btn.addEventListener("click", _ => {
 
 board_cells.forEach( cell => {
     cell.addEventListener("click", () => {
-        words_datatable.column(3).search(p => p.includes(cell.dataset.pos)).draw()
+        words_datatable.column(1).search(p => p.includes(cell.dataset.pos)).draw()
         unhighlight_board_filter();
         unhighlight_board();
         remove_arrows(active_arrows);
@@ -231,10 +256,9 @@ words_datatable.on("click", "tbody tr", function() {
     
     unhighlight_board();
     remove_arrows(active_arrows);
-    path = get_path_from_string(data[1]);
+    let path = get_path_from_string(data[1]);
     toggle_path_highlight(path);
     active_arrows = draw_path_connections(path);
-
 });
 
 

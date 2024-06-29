@@ -11,6 +11,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE dictionaries (
     id INTEGER PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
+    display_name TEXT NOT NULL,
     description TEXT,
     UNIQUE(name, description)
 );
@@ -67,12 +68,12 @@ CREATE TABLE corpus_versions (
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO dictionaries (name, description)
+INSERT INTO dictionaries (name, display_name, description)
 VALUES
-    ('dwyl', 'dwyl Dictionary'),
-    ('na_english', 'NA English'),
-    ('scrabble_2019', 'Scrabble 2019'),
-    ('sowpods', 'sowpods'),
-    ('twl06', 'Scrabble Tournament List 2006'),
-    ('wordnik_2021_07_29', 'Wordnik (2021/07/29)');
+    ('dwyl', 'dwyl', 'The dwyl (Do What You Love) open source English wordlist. See https://github.com/dwyl/english-words for details.'),
+    ('free_scrabble', 'Free Scrabble Dictionary', 'The English wordlist provided by https://www.freescrabbledictionary.com/english-word-list/.'),
+    ('scrabble_2019', 'Scrabble 2019', "A wordlist based off the Collins official Scrabble dictionary (2019)"),
+    ('sowpods', 'sowpods', 'A European English word list also provided by freescrabbledictionary.com at https://www.freescrabbledictionary.com/twl06/.'),
+    ('twl06', 'Scrabble Tournament List (2006)', 'The official Scrabble Tournament word list from 2006'),
+    ('wordnik_2021_07_29', 'Wordnik (2021/07/29)', 'A wordlist based off the Wordnik online dictionary. See https://www.wordnik.com for the official online dictionary.');
 	

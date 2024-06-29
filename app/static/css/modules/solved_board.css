@@ -42,3 +42,18 @@
         opacity: 1;
     }
 }
+
+#dictionary-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+#dictionary-checkboxes button {
+    background: var(--bg-color-2);
+}
+
+#dictionary-checkboxes button > * {
+    pointer-events: none;
+}

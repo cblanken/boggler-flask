@@ -23,9 +23,15 @@ def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None
     if board is None:
         return None
 
-    sql = """SELECT word, sw.word_path from words
-        INNER JOIN solved_words as sw ON sw.word_id = words.id
-        WHERE sw.solved_board_id = ?"""
+    sql = """SELECT word, word_path, string_agg(dict_id, ',')
+        FROM solved_boards as sb
+        INNER JOIN solved_words as sw ON sw.solved_board_id = sb.id
+        INNER JOIN dictionary_words as dw ON dw.word_id = sw.word_id
+        INNER JOIN words as wo ON wo.id = sw.word_id
+        WHERE sb.id = ?
+        GROUP BY sw.word_path
+        ORDER BY word
+        """
 
     words = curr.execute(sql, (board[0],)).fetchall()
     return {
@@ -37,11 +43,9 @@ def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None
     }
 
 
-def get_solved_board_words(
+def get_solved_board_by_letters(
     conn: sqlite3.Connection,
     letters: List[str],
-    dict_names: List[str] = [],
-    max_word_len: int = 0,
 ) -> List[str] | None:
     curr = conn.cursor()
 
@@ -52,27 +56,27 @@ def get_solved_board_words(
     if solved_board_id is None:
         return None
 
-    if max_word_len > 0:
-        sql = """SELECT word, sw.word_path from words
-            INNER JOIN solved_words as sw ON sw.word_id = words.id
-            WHERE sw.solved_board_id = ? AND length(word) <= ?"""
-        words = curr.execute(sql, (solved_board_id[0], max_word_len)).fetchall()
-    else:
-        sql = """SELECT word, sw.word_path from words
-            INNER JOIN solved_words as sw ON sw.word_id = words.id
-            WHERE sw.solved_board_id = ?"""
-        words = curr.execute(sql, (solved_board_id[0],)).fetchall()
+    sql = """SELECT word, word_path, string_agg(dict_id, ',')
+        FROM solved_boards as sb
+        INNER JOIN solved_words as sw ON sw.solved_board_id = sb.id
+        INNER JOIN dictionary_words as dw ON dw.word_id = sw.word_id
+        INNER JOIN words as wo ON wo.id = sw.word_id
+        WHERE sb.hash = ?
+        GROUP BY sw.word_path
+        ORDER BY word
+        """
+
+    words = curr.execute(sql, (solved_board_id[0],)).fetchall()
 
     return words if len(words) != 0 else None
 
 
-def get_dict_names(conn: sqlite3.Connection) -> List[str]:
+def get_dictionaries(conn: sqlite3.Connection) -> List[str] | None:
     curr = conn.cursor()
-    names = curr.execute("""SELECT name FROM dictionaries""").fetchall()
-    return [n[0] for n in names]
+    return curr.execute("""SELECT id, name, display_name, description FROM dictionaries""").fetchall()
 
 
-def get_words(conn: sqlite3.Connection, prefix: str | None = None) -> List[str]:
+def get_words(conn: sqlite3.Connection, prefix: str | None = None) -> List[str] | None:
     curr = conn.cursor()
 
     if prefix:

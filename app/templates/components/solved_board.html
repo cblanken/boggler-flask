@@ -15,7 +15,7 @@
                     <i class="bi bi-table"></i>
                     <span class="ms-1">Heatmap</span>
                     <div class="d-inline ms-2">
-                        <input disabled id="heatMapCheckBox" class="form-check-input" type="checkbox" value="">
+                        <input disabled id="heatMapCheckBox" class="form-check-input" type="checkbox">
                     </div>
                 </button>
             </div>
@@ -30,7 +30,20 @@
                 </button>
             </div>
         </div>
-        <div class="col-lg-6">{% include 'components/words_table.html' %}</div>
+        <div class="col-lg-6">
+            <fieldset id="dictionary-checkboxes" role="dictionary-filters" aria-label="Dictionary filter selection">
+                {% for id, name, display_name, description in dictionaries %}
+                <button class="btn">
+                    <i class="bi bi-book-half"></i>
+                    <span class="ms-1">({{ id }}) {{ display_name }}</span>
+                    <div class="d-inline ms-2">
+                        <input disabled id="{{ name }}" class="form-check-input" data-id="{{ id }}" type="checkbox" name="{{ name }}" checked>
+                    </div>
+                </button>
+                {% endfor %}
+            </fieldset>
+            {% include 'components/words_table.html' %}
+        </div>
     </div>
 </div>
 <button id="scroll-to-top-btn">

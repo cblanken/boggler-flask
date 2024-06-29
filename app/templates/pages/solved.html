@@ -8,7 +8,7 @@
 
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='js/solved.js') }}" defer></script>
+<script type="module" src="{{ url_for('static', filename='js/solved.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/leader-line.min.js') }}" defer></script>
 {% endblock %}
 
