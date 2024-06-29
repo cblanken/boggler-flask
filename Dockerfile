@@ -15,7 +15,7 @@ COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
 COPY wordlists wordlists
-COPY app app
+COPY --chown=boggler:boggler app app
 COPY config config
 COPY main.py boot.sh ./
 

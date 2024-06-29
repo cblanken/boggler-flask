@@ -119,11 +119,10 @@ def find_paths_by_word(
     ]
 
     print(f">> Generating WordTrees...")
-    mp = multiprocessing.get_context("spawn")
-    with mp.Pool(processes=len(params)) as pool:
-        for i, res in enumerate(pool.map(build_boggle_tree, params)):
-            print(f">> {params[i][2]}")
-            board_tree[params[i][2]] = res
+    for p in params:
+        res = build_boggle_tree(p)
+        print(f">> {p[2]}")
+        board_tree[p[2]] = res
 
     paths_by_word = reduce(
         operator.iconcat, [x.word_paths for x in board_tree.values()], []
