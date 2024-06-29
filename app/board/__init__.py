@@ -103,7 +103,7 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
 
 
 def find_paths_by_word(
-    board_letters: list[str], max_len: int, dict_name: str
+    board_letters: list[str], max_len: int
 ) -> list[dict[str, WordNode]]:
     boggle_board = BoggleBoard(board_letters, max_len)
     board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))

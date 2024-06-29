@@ -5,10 +5,12 @@ theme_toggle.addEventListener("click", e => {
     theme_toggle_checkbox.checked = !theme_toggle_checkbox.checked;
     if (theme_toggle_checkbox.checked) {
         document.documentElement.setAttribute("data-theme", "dark");
+        document.cookie = "boggler-theme=dark"
         theme_toggle_slider.classList.add("toggle-slider-anim-dark")
         change_theme("toggle-slider-anim-light");
     } else {
         document.documentElement.setAttribute("data-theme", "light");
+        document.cookie = "boggler-theme=light"
         theme_toggle_slider.classList.add("toggle-slider-anim-light")
         change_theme("toggle-slider-anim-dark");
     }

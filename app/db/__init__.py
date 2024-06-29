@@ -73,7 +73,9 @@ def get_solved_board_by_letters(
 
 def get_dictionaries(conn: sqlite3.Connection) -> List[str] | None:
     curr = conn.cursor()
-    return curr.execute("""SELECT id, name, display_name, description FROM dictionaries""").fetchall()
+    return curr.execute(
+        """SELECT id, name, display_name, description FROM dictionaries"""
+    ).fetchall()
 
 
 def get_words(conn: sqlite3.Connection, prefix: str | None = None) -> List[str] | None:

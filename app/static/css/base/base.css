@@ -27,7 +27,7 @@ html[data-theme="dark"] {
     --fg-color-1: var(--light);
     --fg-color-2: rgb(201, 201, 201);
     --bg-color-1: var(--dark);
-    --bg-color-2: rgb(74, 74, 74);
+    --bg-color-2: rgb(82 90 102);
     --title-color: rgb(20, 173, 161);
     --primary-color: hsl(41, 90.6%, 41.8%);
     --primary-color-accent: hsl(41, 90.6%, 31.8%);

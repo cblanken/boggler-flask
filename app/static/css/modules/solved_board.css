@@ -51,6 +51,7 @@
 }
 
 #dictionary-checkboxes button {
+    color: var(--fg-color-1);
     background: var(--bg-color-2);
 }
 

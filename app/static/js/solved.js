@@ -44,7 +44,7 @@ let words_datatable = new DataTable("#word-table", {
     columns: [
         { title: 'Word' },
         { title: "Path" },
-        { title: 'Dictionaries' },
+        { title: '<span class="bi-book-half" style="margin-right: 0.5rem;"></span>Dictionaries' },
         { title: "Length" },
         { title: "Definitions" },
     ],
