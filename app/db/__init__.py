@@ -17,7 +17,7 @@ def get_solved_boards(conn: sqlite3.Connection) -> tuple:
 
 def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None:
     curr = conn.cursor()
-    sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, sb.created FROM solved_boards as sb
+    sql = """SELECT sb.id, sb.rows, sb.cols, sb.letters, sb.created, sb.cv_id FROM solved_boards as sb
         WHERE sb.hash = ?"""
     board = curr.execute(sql, (hash,)).fetchone()
     if board is None:
@@ -33,6 +33,9 @@ def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None
         ORDER BY word
         """
 
+    cv_most_recent_id = curr.execute(
+        "SELECT id FROM corpus_versions ORDER BY timestamp DESC LIMIT 1"
+    ).fetchone()[0]
     words = curr.execute(sql, (board[0],)).fetchall()
     return {
         "words": words if len(words) != 0 else None,
@@ -40,6 +43,7 @@ def get_solved_board_by_hash(conn: sqlite3.Connection, hash: str) -> dict | None
         "cols": board[2],
         "letters": board[3],
         "created": board[4],
+        "is_current": board[5] == cv_most_recent_id,
     }
 
 
@@ -128,13 +132,17 @@ def add_solved_board(
     try:
         curr = conn.cursor()
         # TODO: setup SAVEPOINTS for proper rollbacks
+        current_corpus_version_id = curr.execute(
+            "SELECT id FROM corpus_versions ORDER BY timestamp DESC"
+        ).fetchone()[0]
         curr.execute(
-            """INSERT INTO solved_boards(hash, rows, cols, letters) VALUES(?, ?, ?, ?)""",
+            """INSERT INTO solved_boards(hash, rows, cols, letters, cv_id) VALUES(?, ?, ?, ?, ?)""",
             (
                 make_board_hash(letters, dict_name),
                 size,
                 size,
                 json.dumps(letters),
+                current_corpus_version_id,
             ),
         )
 
@@ -164,6 +172,7 @@ def add_solved_board(
             )
             for word, path in word_data
         ]
+
         conn.executemany(
             """
             INSERT INTO solved_words(solved_board_id, word_path, word_id) 

@@ -14,6 +14,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    session,
     url_for,
 )
 import json
@@ -181,7 +182,7 @@ def api_solve():
 
     solved_words = get_solved_board_by_letters(current_app.get_db(), board_letters)
     word_data = (
-        find_paths_by_word(board_letters, len(letters), dictionary)
+        find_paths_by_word(board_letters, len(letters))
         if solved_words is None
         else solved_words
     )
@@ -256,6 +257,12 @@ def solved_by_hash(hash):
     if data is None:
         flash("This board doesn't exist!", "error")
         return render_template("errors/404.html"), 404
+
+    if not data["is_current"]:
+        flash(
+            "This board was solved on an old version of the provided dictionaries, so it may be missing some words or include words that have since been deleted.",
+            "warning",
+        )
 
     return render_template(
         "pages/solved.html",
