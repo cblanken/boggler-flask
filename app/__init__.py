@@ -31,10 +31,10 @@ def handle_dice_file(filename: str):
 
 
 DICE = {
-    "classic": handle_dice_file("4x4_classic.csv"),
-    "new": handle_dice_file("4x4_new.csv"),
-    "big": handle_dice_file("5x5_big.csv"),
-    "super": handle_dice_file("6x6_super_big.csv"),
+    "classic": {"dice": handle_dice_file("4x4_classic.csv"), "size": 4},
+    "new": {"dice": handle_dice_file("4x4_new.csv"), "size": 4},
+    "big": {"dice": handle_dice_file("5x5_big.csv"), "size": 5},
+    "super": {"dice": handle_dice_file("6x6_super_big.csv"), "size": 6},
 }
 
 
@@ -128,34 +128,41 @@ def create_app(config_name):
     @app.route("/api/random", methods=["GET"])
     def api_random():
         """API endpoint to get a random board"""
-        # Default letter distribution for board sizes without dice
-        # fmt: off
-        alphabet = [
-            "a", "a", "a", "a", "a", "a", "a", "a", "b", "b",
-            "b", "c", "c", "c", "d", "d", "d", "d", "e", "e",
-            "e", "e", "e", "e", "e", "e", "e", "e", "f", "f",
-            "g", "g", "g", "h", "h", "h", "i", "i", "i", "i",
-            "i", "i", "i", "j", "k", "k", "l", "l", "l", "l",
-            "l", "m", "m", "m", "n", "n", "n", "n", "n", "o",
-            "o", "o", "o", "o", "o", "p", "p", "p", "qu", "r",
-            "r", "r", "r", "s", "s", "s", "s", "s", "t", "t",
-            "t", "t", "t", "u", "u", "u", "u", "v", "v", "w",
-            "w", "x", "y", "y", "y", "z",
-        ]
-        # fmt: off
-        try:
-            size = int(request.args.get("size"))
-        except TypeError:
-            size = 4
+        args = request.args
 
-        dice_type = request.args.get("dice_type")
-        if dice_type in DICE and size == int(sqrt(len(DICE[dice_type]))):
-            return {"board": get_random_board(DICE.get(dice_type)), "dice_type": dice_type}
+        # Parse args
+        dice_type = args.get("dice_type")
+        dice = DICE.get(dice_type, None)
+
+        board = []
+        if dice is None:
+            # Default letter distribution for board sizes without dice
+            # fmt: off
+            alphabet = [
+                "a", "a", "a", "a", "a", "a", "a", "a", "b", "b",
+                "b", "c", "c", "c", "d", "d", "d", "d", "e", "e",
+                "e", "e", "e", "e", "e", "e", "e", "e", "f", "f",
+                "g", "g", "g", "h", "h", "h", "i", "i", "i", "i",
+                "i", "i", "i", "j", "k", "k", "l", "l", "l", "l",
+                "l", "m", "m", "m", "n", "n", "n", "n", "n", "o",
+                "o", "o", "o", "o", "o", "p", "p", "p", "qu", "r",
+                "r", "r", "r", "s", "s", "s", "s", "s", "t", "t",
+                "t", "t", "t", "u", "u", "u", "u", "v", "v", "w",
+                "w", "x", "y", "y", "y", "z",
+            ]
+            # fmt: off
+            try:
+                size = int(args.get("size"))
+            except TypeError:
+                size = 4
+
+            board = [choices(alphabet, k=size) for _ in range(0, size)],
+            dice_type = "random"
         else:
-            return {
-                "board": [choices(alphabet, k=size) for x in range(0, size)],
-                "dice_type": "random",
-            }
+            board = get_random_board(dice.get("dice"))
+            size = dice.get("size", 0)
+
+        return {"board": board, "dice_type": dice_type, "size": size}
 
     @app.route("/api/dictionaries")
     def api_dictionaries():

@@ -31,7 +31,12 @@ randomBoardBtn.addEventListener("click", e => {
         for (let row = 0; row < sizeSelect.value; row++) {
             for (let col = 0; col < sizeSelect.value; col++) {
                 letter_input = document.querySelector(`.board-cell[data-pos='${row}, ${col}']`)
-                letter_input.firstElementChild.value = json.board[row][col]
+                try {
+                    letter_input.firstElementChild.value = json.board[row][col] || "_"
+                } catch (TypeError) {
+                    letter_input.firstElementChild.value = "_"
+                }
+
             }
         }
     });

@@ -14,13 +14,11 @@ from flask import (
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 import json
-from functools import reduce
 import operator
-import os
+from functools import reduce
 from requests import get, post
 from requests.exceptions import JSONDecodeError
 from ..db import (
@@ -31,7 +29,6 @@ from ..db import (
     make_board_hash,
 )
 
-import multiprocessing
 
 Flask.url_defaults
 
@@ -44,11 +41,11 @@ MAX_WORD_LEN = 20
 bp = Blueprint("board", __name__, url_prefix="/board", static_folder="static")
 
 
-def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
+def parse_board_params(rows, cols, letters):
     """Returns tuple of parsed parameters defining a Board
 
     Returns
-        (board_letters, rows, cols, dictionary_path, max_len)
+        (board_letters, rows, cols)
     """
     # Default size of board is 4x4
     try:  # Default row count
@@ -86,27 +83,11 @@ def parse_board_params(rows, cols, letters, dictionary=None, max_len=None):
         offset = row * cols
         board_letters.append(letters[offset : offset + cols])
 
-    # Default dictionary
-    dictionary_path = f"wordlists/{dictionary}"
-    if not os.path.exists(dictionary_path) or dictionary is None:
-        dictionary_path = "wordlists/wordnik_2021_07_29"
-        print(f"Defaulting to {dictionary_path}")
-
-    # Default maximum word length
-    try:
-        max_len = int(max_len)
-        max_len = min(max_len, MAX_WORD_LEN)
-        max_len = max(max_len, MIN_WORD_LEN)
-    except (TypeError, ValueError):
-        max_len = 16
-
-    return (board_letters, rows, cols, dictionary_path, max_len)
+    return (board_letters, rows, cols)
 
 
-def find_paths_by_word(
-    board_letters: list[str], max_len: int
-) -> list[dict[str, WordNode]]:
-    boggle_board = BoggleBoard(board_letters, max_len)
+def find_paths_by_word(board_letters: list[str]) -> list[dict[str, WordNode]]:
+    boggle_board = BoggleBoard(board_letters, len(board_letters))
     board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))
     board_tree = {}
     index: dict[str, list[str]] = {}
@@ -135,7 +116,7 @@ def board():
     """Default board route"""
     if request.method == "GET":
         rows = cols = 4
-        (board_letters, rows, cols, _, max_len) = parse_board_params(rows, cols, None)
+        (board_letters, rows, cols) = parse_board_params(rows, cols, None)
         return render_template(
             "pages/solver.html", board_letters=board_letters, rows=rows, cols=cols
         )
@@ -150,8 +131,6 @@ def api_solve():
     If the board has not already been solved, then the new board is solved with the maximium
     possible `max_len` and then added to the database. Otherwise the solved_words are retrieved
     from the database.
-
-    Words with their associated paths are returned, filtering based on the `max_len` provided by the user.
     """
 
     data = request.json
@@ -162,16 +141,12 @@ def api_solve():
         rows = cols = data.get("sizeSelect")
         letters = data.get("letters")
         dictionary = data.get("dictionarySelect")
-        max_len = data.get("maxLengthSelect")
-        (board_letters, rows, cols, dictionary_path, max_len) = parse_board_params(
-            rows, cols, letters, dictionary, max_len
-        )
+        (board_letters, rows, cols) = parse_board_params(rows, cols, letters)
     else:
         return redirect(url_for("board.board"))
 
     data = {
         "letters": board_letters,
-        "max_len": max_len,
         "dictionary": dictionary,
         "size": {
             "rows": rows,
@@ -181,9 +156,7 @@ def api_solve():
 
     solved_words = get_solved_board_by_letters(current_app.get_db(), board_letters)
     word_data = (
-        find_paths_by_word(board_letters, len(letters))
-        if solved_words is None
-        else solved_words
+        find_paths_by_word(board_letters) if solved_words is None else solved_words
     )
     data["words"] = word_data
     data["total"] = len(data["words"])
