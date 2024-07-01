@@ -40,8 +40,8 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
             top2End: 'paging',
         },
         lengthMenu: [
-            [5, 10, 25, 100, -1],
-            [5, 10, 25, 100, 'All'],
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, 'All'],
         ],
         columns: [
             { title: 'ID' },
@@ -49,7 +49,8 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
             { title: "Board" },
             {},
             { title: "Board Size" },
-            { title: "Word Count" },
+            { title: "Total Words" },
+            { title: "Unique Words" },
             { title: "Solved Board" },
         ],
         columnDefs: [
@@ -80,7 +81,7 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
                 },
             },
             {
-                target: 6,
+                target: 7,
                 render: (data, type, row) => {
                     return `<a href="${window.location.origin}/board/solved/${row[0]}">${row[0].slice(0, 8)}</a>`
                 }

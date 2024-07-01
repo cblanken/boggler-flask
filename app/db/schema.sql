@@ -1,3 +1,6 @@
+-----------------
+-- CLEAR DATABASE
+-----------------
 DROP TABLE IF EXISTS corpus_versions;
 DROP TABLE IF EXISTS solved_words;
 DROP TABLE IF EXISTS dictionary_words;
@@ -5,9 +8,16 @@ DROP TABLE IF EXISTS words;
 DROP TABLE IF EXISTS words;
 DROP TABLE IF EXISTS solved_boards;
 DROP TABLE IF EXISTS dictionaries;
+DROP VIEW IF EXISTS most_common_total_words;
+DROP VIEW IF EXISTS most_common_unique_words;
+DROP VIEW IF EXISTS top_common_words;
 
 PRAGMA foreign_keys = ON;
 
+
+----------------------------
+-- CREATE TABLES AND INDEXES
+----------------------------
 CREATE TABLE dictionaries (
     id INTEGER PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
@@ -44,6 +54,7 @@ CREATE TABLE solved_boards (
     UNIQUE(rows, cols, letters)
 );
 
+CREATE INDEX sb_id_idx ON solved_boards (id);
 CREATE INDEX sb_hash_idx ON solved_boards (hash);
 
 CREATE TABLE words (
@@ -71,6 +82,52 @@ CREATE TABLE solved_words (
 CREATE INDEX sw_word_idx ON solved_words (word_id);
 CREATE INDEX sw_sboard_idx ON solved_words (solved_board_id);
 
+
+
+---------------
+-- CREATE VIEWS
+---------------
+CREATE VIEW most_common_total_words
+AS
+SELECT word, SUM(board_word_cnt) as cnt, ((SUM(board_word_cnt) + 0.0) / (SELECT COUNT(*) FROM solved_boards)) as pct FROM (
+	SELECT COUNT(sw.word_id) as board_word_cnt, solved_board_Id, word_id
+	FROM solved_words as sw
+	GROUP BY solved_board_id, word_id
+	ORDER BY word_id
+) INNER JOIN words ON words.id = word_id
+GROUP BY word_id
+ORDER BY cnt DESC;
+
+
+CREATE VIEW most_common_unique_words
+AS
+SELECT word, SUM(board_word_cnt) as cnt, ((SUM(board_word_cnt) + 0.0) / (SELECT COUNT(*) FROM solved_boards)) as pct FROM (
+	SELECT COUNT(DISTINCT sw.word_id) as board_word_cnt, solved_board_Id, word_id
+	FROM solved_words as sw
+	GROUP BY solved_board_id, word_id
+	ORDER BY word_id
+) INNER JOIN words ON words.id = word_id
+GROUP BY word_id
+ORDER BY cnt DESC;
+
+
+CREATE VIEW top_common_words
+AS
+SELECT
+	tw.word word,
+	tw.pct twpct,
+	uw.pct uwpct,
+	tw.cnt twcnt,
+	uw.cnt uwcnt
+FROM most_common_total_words tw
+INNER JOIN most_common_unique_words uw ON tw.word = uw.word
+ORDER BY uwpct DESC
+LIMIT 50;
+
+
+-----------------------
+-- INITIAL DATA INSERTS
+-----------------------
 INSERT INTO dictionaries (name, display_name, description)
 VALUES
     ('dwyl', 'dwyl', 'The dwyl (Do What You Love) open source English wordlist. See https://github.com/dwyl/english-words for details.'),

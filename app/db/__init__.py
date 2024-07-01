@@ -7,7 +7,7 @@ from boggler.boggler_utils import WordNode
 
 def get_solved_boards(conn: sqlite3.Connection) -> tuple:
     curr = conn.cursor()
-    sql = """SELECT hash, created, letters, rows, cols, COUNT(*)
+    sql = """SELECT hash, created, letters, rows, cols, COUNT(*), COUNT(DISTINCT sw.word_id) as unique_word_cnt
         FROM solved_boards as sb
         INNER JOIN solved_words as sw ON sw.solved_board_id = sb.id
         GROUP BY sb.id"""

@@ -63,6 +63,7 @@ def create_app(config_name):
     app.get_db = get_db
 
     def init_db():
+        print("Initializing database...")
         with app.app_context():
             db = get_db()
             with app.open_resource("db/schema.sql", mode="r") as f:
