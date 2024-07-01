@@ -76,13 +76,9 @@ let words_datatable = new DataTable("#word-table", {
 });
 
 words_datatable.ready(() => {
-    let word_table = document.getElementById("word-table")
-    word_table.classList.add("fade-in");
-    word_table.style["display"] = "block";
-
-    let spinner = document.getElementById("word-table-spinner");
-    spinner.style["display"] = "none";
-    spinner.classList.remove("d-flex");
+    let spinner = document.querySelector(".datatable-spinner");
+    spinner.classList.add("fade-out");
+    document.querySelector(".datatable-wrapper")?.classList.add("fade-in");
 })
 
 document.querySelectorAll("#dictionary-checkboxes input").forEach(input => {

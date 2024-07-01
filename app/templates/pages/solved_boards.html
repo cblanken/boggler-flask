@@ -4,6 +4,7 @@
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='datatables/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/components/table.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/components/datatables.css') }}">
 {% endblock %}
 
 {% block scripts %}
@@ -13,9 +14,18 @@
 
 {% block page_content %}
 <h1 class="fs-1 px-4 pt-4 m-0">Solved Boards</h1>
-<div class="m-4">
-    <table id="solved-boards-table" class="cell-border hover stripe" style="font: bold 1.2rem 'Courier New', monospace"></table>
+
+<div class="table-container m-4">
+    <div class="datatable-spinner">
+        <span class="spinner-border spinner-border-lg align-middle m-3" role="status" aria-hidden="true"></span>
+        <span class="fs-2 align-middle">Loading</span>
+    </div>
+    <div class="datatable-wrapper">
+        <!-- <table id="word-table" class="datatable cell-border hover stripe"></table> -->
+        <table id="solved-boards-table" class="datatable cell-border hover stripe" style="font: bold 1.2rem 'Courier New', monospace"></table>
+    </div>
 </div>
+
 
 <script>
 headers = {
@@ -24,7 +34,6 @@ headers = {
 fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers })
 .then(res => res.json())
 .then(json => {
-    console.table(json)
     let table = new DataTable("#solved-boards-table", {
         layout: {
             top2Start: 'info',
@@ -80,6 +89,12 @@ fetch(`${window.location.origin}/api/solved`, { method: "GET", headers: headers 
         order: [[1, 'desc']],
         data: json
     });
+
+    table.ready(() => {
+        let spinner = document.querySelector(".datatable-spinner");
+        spinner.classList.add("fade-out");
+        document.querySelector(".datatable-wrapper")?.classList.add("fade-in");
+    })
 })
 </script>
 {% endblock %}

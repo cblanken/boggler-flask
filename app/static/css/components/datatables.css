@@ -1,0 +1,41 @@
+.table-container {
+    position: relative;
+}
+
+.table-container .datatable-spinner {
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.datatable-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fade-in {
+    animation: fade-in-anim 1.0s ease-in forwards
+}
+
+.fade-out {
+    animation: fade-out-anim 0.5s ease-out forwards
+}
+
+@keyframes fade-in-anim {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out-anim {
+    100% {
+        opacity: 0;
+    }
+    0% {
+        opacity: 1;
+    }
+}
