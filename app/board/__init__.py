@@ -87,7 +87,7 @@ def parse_board_params(rows, cols, letters):
 
 
 def find_paths_by_word(board_letters: list[str]) -> list[dict[str, WordNode]]:
-    boggle_board = BoggleBoard(board_letters, len(board_letters))
+    boggle_board = BoggleBoard(board_letters, len(board_letters) ** 2)
     board_alpha = sorted(set([cell.letters for cell in boggle_board.board.values()]))
     board_tree = {}
     index: dict[str, list[str]] = {}
