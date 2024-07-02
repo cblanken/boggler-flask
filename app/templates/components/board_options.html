@@ -2,62 +2,26 @@
     <input hidden type="text" id="lettersInput" name="letters">
     <h1 class="m-0 text-center py-2 fs-1">Boggle Solver</h1>
     <div class="col p-2 bg-dark text-light">
-        <div class="row m-2">
-            <label for="sizeSelect" class="form-label col-md-4 text-end m-auto">Size</label>
-            <select id="sizeSelect" name="sizeSelect" class="form-select col" aria-label="The dimensions of the board">
-                <option value="3">3</option>
-                <option value="4" selected>4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
+        <div class="fs-5">
+            <label for="sizeSelect" class="form-label">Size</label>
+            <select id="sizeSelect" name="sizeSelect" class="form-select" aria-label="The dimensions of the board">
+                <option value="3">3x3</option>
+                <option value="4" selected>4x4</option>
+                <option value="5">5x5</option>
+                <option value="6">6x6</option>
             </select>
         </div>
-        <div class="row m-2">
-            <label for="dictionarySelect" class="form-label col-md-4 text-end m-auto">Dictionary</label>
-            <select id="dictionarySelect" name="dictionarySelect" class="form-select col" aria-label="A list of valid words used to solve the board">
-                <option value="wordnik_2021_07_29" selected>Wordnik (2021/07/29)</option>
-                <option value="na_english">NA English</option>
-                <option value="sowpods">SOWPODS 2006 (European English)</option>
-                <option value="twl06">Scrabble Tournament Word List 2006</option>
-                <option value="scrabble_2019">Scrabble 2019</option>
-                <option value="dwyl">dwyl</option>
-                <option disabled value="wordnet">WordNet</option>
-                <option disabled value="webster-unabridged">Webster Unabridged (1913) - Project Gutenberg</option>
-            </select>
-        </div>
-        <div class="row m-2">
-            <label for="maxLengthSelect" class="form-label text-nowrap col-md-4 text-end m-auto">Max Word Length</label>
-            <select id="maxLengthSelect" name="maxLengthSelect" class="form-select col" aria-label="The maximum length of words to solve for">
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16" selected>16</option>
-                <option value="17">17</option>
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20</option>
-            </select>
-        </div>
-        <div id="randomBoardGroup" class="row m-2">
-            <label for="diceSelect" class="form-label col-md-4 text-end m-auto">Dice</label>
-            <div class="col p-0">
-                <select id="diceSelect" name="diceSelect" class="col form-select" aria-label="The dice to be used for the board randomizer">
-                    <option value="classic">(4x4) Classic Boggle</option>
-                    <option selected value="new">(4x4) New Boggle</option>
-                    <option value="big">(5x5) Big Boggle</option>
-                    <option value="super">(6x6) Super Big Boggle</option>
+        <div id="randomBoardGroup" class="mt-2 fs-5">
+            <label for="diceSelect" class="form-label">Dice</label>
+            <div>
+                <select id="diceSelect" name="diceSelect" class="form-select" aria-label="The dice to be used for the board randomizer">
+                    <option data-size="4" value="classic">(4x4) Classic Boggle</option>
+                    <option data-size="4" selected value="new">(4x4) New Boggle</option>
+                    <option data-size="5" value="big">(5x5) Big Boggle</option>
+                    <option data-size="6" value="super">(6x6) Super Big Boggle</option>
                 </select>
             </div>
-            <button id="randomBoardBtn" type="button" class="btn btn-primary col-12 mt-3" title="Randomize board letters">
+            <button id="randomBoardBtn" type="button" class="btn btn-primary col-12 mt-3 fs-5" title="Randomize board letters">
                 <i class="bi bi-shuffle mx-1"></i>
                 <span class="d-none d-sm-inline">Randomize</span>
             </button>

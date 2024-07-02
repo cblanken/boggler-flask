@@ -92,11 +92,13 @@ def find_paths_by_word(board_letters: list[str]) -> list[dict[str, WordNode]]:
     board_tree = {}
     index: dict[str, list[str]] = {}
     for letters in board_alpha:
-        index[letters] = current_app.words_by_alpha[letters[0]]
+        if len(letters) > 0:
+            index[letters] = current_app.words_by_alpha[letters[0]]
 
     params = [
         (board_alpha, boggle_board, cell, index[cell.letters])
         for cell in boggle_board.board.values()
+        if len(cell.letters) > 0
     ]
 
     print(f">> Generating WordTrees...")
@@ -140,14 +142,12 @@ def api_solve():
     if request.method == "POST":
         rows = cols = data.get("sizeSelect")
         letters = data.get("letters")
-        dictionary = data.get("dictionarySelect")
         (board_letters, rows, cols) = parse_board_params(rows, cols, letters)
     else:
         return redirect(url_for("board.board"))
 
     data = {
         "letters": board_letters,
-        "dictionary": dictionary,
         "size": {
             "rows": rows,
             "cols": cols,
@@ -165,12 +165,12 @@ def api_solve():
     if solved_words is None:
         try:
             conn = current_app.get_db()
-            add_solved_board(conn, rows, board_letters, dictionary, word_data)
+            add_solved_board(conn, rows, board_letters, word_data)
         except Exception:
             data["errors"].append(
                 "An error occurred when adding the solved board to the database, so it won't be available under the Solved Boards."
             )
-            raise
+
     return data
 
 
@@ -200,19 +200,20 @@ def solve():
     # TODO: handle missing post data
     for e in data.get("errors", []):
         flash(e, "error")
-    flash("Board solved!", "message")
-    flash(
-        "Don't forget to checkout the word paths by clicking on words in the table.",
-        "message",
-    )
+
+    if not len(data.get("errors", [])) > 0:
+        flash("Board solved!", "message")
+        flash(
+            "Don't forget to checkout the word paths by clicking on words in the table.",
+            "message",
+        )
     return render_template(
         "pages/solved.html",
         rows=data.get("size").get("rows"),
         cols=data.get("size").get("cols"),
         board_letters=data.get("letters"),
-        dictionary=data.get("dictionary"),
         found_words=data.get("words"),
-        board_hash=make_board_hash(data.get("letters"), data.get("dictionary")),
+        board_hash=make_board_hash(data.get("letters")),
         dictionaries=get_dictionaries(current_app.get_db()),
     )
 
@@ -220,7 +221,7 @@ def solve():
 @bp.route("/api/solved/<hash>", methods=["GET"])
 def api_solved_by_hash(hash):
     data = get_solved_board_by_hash(current_app.get_db(), hash)
-    return data
+    return data or {}
 
 
 @bp.route("/solved/<hash>", methods=["GET"])

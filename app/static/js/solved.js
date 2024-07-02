@@ -34,7 +34,7 @@ const dictionaries = await fetch(`${window.location.origin}/api/dictionaries`).t
 const board_data = await fetch(`${window.location.origin}/board/api/solved/${copyUrlBtn.dataset["board_hash"]}`).then(res => res.json());
 
 // Add word lengths to word data
-board_data["words"] = board_data["words"].map(row => row.concat(row[0].length));
+board_data["words"] = board_data?.words?.map(row => row.concat(row[0].length)) || {};
 
 let words_datatable = new DataTable("#word-table", {
     lengthMenu: [

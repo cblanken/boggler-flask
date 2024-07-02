@@ -53,7 +53,6 @@ function toggle_board_controls() {
 
 // Solve button
 boardForm = document.getElementById("board-options");
-// solveBtn.addEventListener("click", x => {
 boardForm.addEventListener("submit", e => {
     let letter_inputs = document.querySelectorAll(".board-cell-input");
     let letters = Array.from(letter_inputs).map(x => x.value).join(",");
@@ -69,10 +68,10 @@ boardForm.addEventListener("submit", e => {
 // Board resizing
 sizeSelect.addEventListener("change", e => {
     // Delete old board
-    board = document.getElementById("board");
+    let board = document.getElementById("board");
     board.textContent = "";
-    DEFAULT_LETTER_SIZE = `calc(${BASE_LETTER_SIZE} * 4 / ${sizeSelect.value}`;
-    DEFAULT_GAP_SIZE = `calc(${BASE_GAP_SIZE} * 4 / ${sizeSelect.value})`;
+    const DEFAULT_LETTER_SIZE = `calc(${BASE_LETTER_SIZE} * 4 / ${sizeSelect.value}`;
+    const DEFAULT_GAP_SIZE = `calc(${BASE_GAP_SIZE} * 4 / ${sizeSelect.value})`;
     root.style.setProperty("--letter-size", DEFAULT_LETTER_SIZE)
     root.style.setProperty("--cell-gap", DEFAULT_GAP_SIZE)
     // Generate HTML for resized board
@@ -95,5 +94,21 @@ sizeSelect.addEventListener("change", e => {
         }
         board.append(row_div);
     }
+
+    // Set available dice
+    const options = Array.from(document.querySelectorAll("#diceSelect option"))
+    options
+        .filter(opt => opt.dataset?.size == e.target.value.toString())
+        .forEach(opt => {
+            opt.selected = true
+            opt.disabled = false
+        })
+
+    options
+        .filter(opt => opt.dataset?.size != e.target.value.toString())
+        .forEach(opt => {
+            opt.selected = false
+            opt.disabled = true
+        })
 });
 

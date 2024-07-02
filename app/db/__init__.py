@@ -115,18 +115,15 @@ def get_words_by_dict(
     return [r[0] for r in recs]
 
 
-def make_board_hash(letters: List, dict_name: str) -> str:
+def make_board_hash(letters: List) -> str:
     """Create unique solved board hash for permalinks"""
-    return md5(
-        f"{letters}{dict_name}".encode("utf-8"), usedforsecurity=False
-    ).hexdigest()
+    return md5(f"{letters}".encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 def add_solved_board(
     conn: sqlite3.Connection,
     size: int,
     letters: List[str],
-    dict_name: str,
     word_data: List[dict[str, WordNode]],
 ):
     try:
@@ -138,7 +135,7 @@ def add_solved_board(
         curr.execute(
             """INSERT INTO solved_boards(hash, rows, cols, letters, cv_id) VALUES(?, ?, ?, ?, ?)""",
             (
-                make_board_hash(letters, dict_name),
+                make_board_hash(letters),
                 size,
                 size,
                 json.dumps(letters),
@@ -184,9 +181,7 @@ def add_solved_board(
         conn.commit()
     except sqlite3.IntegrityError as e:
         conn.rollback()
-        print(
-            f"No solved board was added since an integrity error ocurred. The dictionary for the given name '{dict_name}' probably doesn't exist."
-        )
+        print(f"No solved board was added since an integrity error ocurred.")
         raise e
     except Exception as e:
         conn.rollback()
