@@ -139,4 +139,4 @@ VALUES
 	
 INSERT INTO corpus_versions (description, type)
 VALUES
-    ("Database initialization", "INIT")
+    ("Database initialization", "INIT");

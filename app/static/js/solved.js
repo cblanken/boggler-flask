@@ -33,8 +33,43 @@ history.replaceState(null, "", encodeURI(`${window.location.origin}/board/solved
 const dictionaries = await fetch(`${window.location.origin}/api/dictionaries`).then(res => res.json());
 const board_data = await fetch(`${window.location.origin}/board/api/solved/${copyUrlBtn.dataset["board_hash"]}`).then(res => res.json());
 
-// Add word lengths to word data
-board_data["words"] = board_data?.words?.map(row => row.concat(row[0].length)) || {};
+function word_score(word_len, board_size) {
+    if (board_size === 3 || board_size === 4) {
+        if (word_len < 3) return 0
+        else if (word_len === 3 || word_len === 4) return 1
+        else if (word_len === 5) return 2
+        else if (word_len === 6) return 3
+        else if (word_len === 7) return 5
+        else if (word_len > 7) return 11
+    } else if (board_size === 5) {
+        if (word_len < 4) return 0
+        else if (word_len === 4) return 1
+        else if (word_len === 5) return 2
+        else if (word_len === 6) return 3
+        else if (word_len === 7) return 5
+        else if (word_len > 7) return 11
+    } else if (board_size === 6 ) {
+        if (word_len < 4) return 0
+        else if (word_len === 4) return 1
+        else if (word_len === 5) return 2
+        else if (word_len === 6) return 3
+        else if (word_len === 7) return 5
+        else if (word_len === 8) return 11
+        else if (word_len > 8) return 2 * word_len
+    } else {
+        console.warn("Could not calculate word scores due to invalid board size.")
+        return 0
+    }
+}
+
+// Add word lengths and word score to word data
+board_data["words"] = board_data?.words?.map((row) => {
+    row = row.concat(row[0].length);
+    row = row.concat(word_score(row[0].length, board_data["rows"]));
+    return row;
+}) || {};
+
+console.log(board_data['words'])
 
 let words_datatable = new DataTable("#word-table", {
     lengthMenu: [
@@ -46,6 +81,7 @@ let words_datatable = new DataTable("#word-table", {
         { title: "Path" },
         { title: '<span class="bi-book-half" style="margin-right: 0.5rem;"></span>Dictionaries' },
         { title: "Length" },
+        { title: "Score" },
         { title: "Definitions" },
     ],
     columnDefs: [
@@ -58,7 +94,7 @@ let words_datatable = new DataTable("#word-table", {
             visible: true,
         },
         {
-            target: 4,
+            target: 5,
             render: (data, type, row) => {
                 let html = `
                     <a rel="noopener noreferrer" target="_blank" href="https://www.dictionary.com/browse/${row[0]}"><svg width="5mm" height="5mm" viewBox="0 0 10.223001 11.01918"><path d="M 5.063901,0.03997366 0.13741,3.6557552e-6 C 0.11932,-1.1834424e-4 0.10154,0.00280366 0.08493,0.01020366 c -0.01662,0.0074 -0.03182,0.01702 -0.04471,0.02971 -0.01281,0.01274 -0.02284,0.02791 -0.02982,0.04475 C 0.0028,0.10134366 0,0.11936366 0,0.13753366 V 8.7100267 c 1.1e-5,0.02669 0.0076,0.05299 0.02026,0.07608 0.01324,0.02321 0.0322,0.04246 0.05519,0.05595 l 3.694472,2.1606843 c 0.01845,0.0106 0.03948,0.01644 0.06067,0.01644 0.02136,0 0.04222,-0.0064 0.06074,-0.01635 0.01847,-0.0106 0.03382,-0.02619 0.04457,-0.04478 0.0106,-0.0185 0.01631,-0.03964 0.01632,-0.06112 V 2.8807997 c 8e-6,-0.02742 -0.0079,-0.05426 -0.02124,-0.07782 -0.01394,-0.02356 -0.0338,-0.04294 -0.05761,-0.05612 L 1.909323,1.6655667 c -0.01628,-0.0093 -0.02875,-0.02365 -0.03545,-0.04112 -0.0074,-0.01748 -0.0076,-0.03678 -7.01e-4,-0.05438 0.007,-0.01761 0.01832,-0.03258 0.0344,-0.04204 0.01609,-0.0096 0.03483,-0.01307 0.05319,-0.01 l 3.543052,0.611575 c 0.03255,0.0062 0.06209,0.02242 0.0833,0.04779 0.02131,0.02538 0.03285,0.05742 0.0328,0.09067 v 7.216684 c 1.8e-5,0.02007 0.0034,0.03978 0.01242,0.05802 0.0086,0.01825 0.02021,0.03451 0.03502,0.04773 0.015,0.01322 0.03251,0.02313 0.05139,0.02888 0.01909,0.0065 0.03899,0.008 0.05875,0.0043 2.623358,-0.29547 4.411597,-2.153998 4.44505,-4.731994 0.03621,-2.88776 -2.084816,-4.81197704 -5.158707,-4.85228204 z" fill="white" id="path46" style="fill:#00248b;fill-opacity:1;stroke-width:0.102852"/></svg></a>
