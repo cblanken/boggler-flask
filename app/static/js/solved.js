@@ -81,13 +81,23 @@ words_datatable.ready(() => {
     document.querySelector(".datatable-wrapper")?.classList.add("fade-in");
 })
 
+function get_active_dictionary_ids() {
+    return Array
+        .from(document.querySelectorAll("#dictionary-checkboxes input"))
+        .filter(x => x?.checked)
+        .map(x => x.dataset["id"])
+}
+
 document.querySelectorAll("#dictionary-checkboxes input").forEach(input => {
     input.addEventListener("change", (e) => {
-        let ids = Array.from(document.querySelectorAll("#dictionary-checkboxes input")).filter(x => x?.checked).map(x => x.dataset["id"])
+        let ids = get_active_dictionary_ids();
         if (ids.length === 0) {
             words_datatable.column(2).search().draw()
         } else {
             words_datatable.column(2).search(new RegExp(ids.join("|"))).draw()
+            if (heatMapCheckBox.checked) {
+                update_and_show_heatmap_counts();
+            }
         }
     });
 })
@@ -308,7 +318,7 @@ async function get_board_data(board_hash) {
 }
 
 // Board heatmap
-function toggle_heatmap() {
+function update_and_show_heatmap_counts() {
     let rows = board_data["rows"];
     let cols = board_data["cols"];
 
@@ -321,19 +331,26 @@ function toggle_heatmap() {
         cell_counts[i].fill(0);
         cell_colors[i].fill(0);
     }
-    let words = board_data["words"];
-    words.forEach((word) => {
-        let path = JSON.parse(word[1]);
-        path.forEach((cell_pos) => {
-            cell_counts[cell_pos[0]][cell_pos[1]] += 1;
-            cell_colors[cell_pos[0]][cell_pos[1]] += 1;
-        })
+
+    // Update increment counts
+    let table_columns = words_datatable.columns([0, 1, 2]).data();
+    const ids = get_active_dictionary_ids();
+    const dicts_re = new RegExp(ids.join("|"))
+    table_columns[0].forEach((word, i) => {
+        const path = JSON.parse(table_columns[1][i]);
+        const dicts = table_columns[2][i];
+        if (dicts_re.exec(dicts)) {
+            path.forEach((cell_pos) => {
+                cell_counts[cell_pos[0]][cell_pos[1]] += 1;
+                cell_colors[cell_pos[0]][cell_pos[1]] += 1;
+            })
+        }
     })
     
+    // Scale HSL hue values by cell count
     let max = Math.max(...cell_counts.flat());
     for (let row = 0; row < cell_counts.length; row++) {
         for (let col = 0; col < cell_counts[row].length; col++) {
-            // Scale count for HSL hue value
             cell_colors[row][col] = Math.floor(cell_counts[row][col] / max * 120);
         }
     }
@@ -347,25 +364,39 @@ function toggle_heatmap() {
         count.textContent = cell_counts[pos[0]][pos[1]];
         let count_style = window.getComputedStyle(heatmap_container);
         let cell_style = window.getComputedStyle(cell);
-        let theme = document.documentElement.getAttribute("data-theme");
         let lightness = getComputedStyle(document.documentElement).getPropertyValue("--heatmap-lightness")
-        if (count_style.display == "none") {
-            heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
-            cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, ${lightness})`, cell_style.getPropertyPriority("background-color"));
-        } else {
-            heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
-            cell.style.removeProperty("background-color");
-        }
+
+        // Show counts and update background colors
+        heatmap_container.style.setProperty("display", "flex", count_style.getPropertyPriority("display"));
+        cell.style.setProperty("background-color", `hsl(${cell_colors[pos[0]][pos[1]]}, 50%, ${lightness})`, cell_style.getPropertyPriority("background-color"));
+    });
+
+}
+
+function hide_heatmap() {
+    let heatmap_counts = document.querySelectorAll(".heatmap-count > div");
+    heatmap_counts.forEach((count) => {
+        let heatmap_container = count.parentElement;
+        let count_style = window.getComputedStyle(heatmap_container);
+        let parent = heatmap_container.parentElement;
+        let cell = parent.querySelector(".board-cell-input");
+        heatmap_container.style.setProperty("display", "none", count_style.getPropertyPriority("display"));
+        cell.style.removeProperty("background-color");
     });
 }
 
+
 let heatMapBtn = document.getElementById("heatMapBtn");
 heatMapBtn.addEventListener("click", (e) => {
-    toggle_heatmap();
     heatMapCheckBox.checked = !heatMapCheckBox.checked;
+    if (heatMapCheckBox.checked) {
+        update_and_show_heatmap_counts();
+    } else {
+        hide_heatmap();
+    }
 })
 
 if (heatMapCheckBox.checked) {
     // Disply heatmap on load if already enabled
-    toggle_heatmap();
+    update_and_show_heatmap_counts();
 }
