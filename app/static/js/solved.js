@@ -107,20 +107,22 @@ let words_datatable = new DataTable("#word-table", {
         }
     ],
     data: board_data["words"],
+    processing: true,
 });
 
 words_datatable.ready(() => {
     let spinner = document.querySelector(".datatable-spinner");
     spinner.classList.add("fade-out");
     document.querySelector(".datatable-wrapper")?.classList.add("fade-in");
+
+    // Calculate max score
+    let word_score_data = words_datatable.columns([0,4]).data();
+    let zipped_word_score_data = word_score_data[0].map((word, i) => [word, word_score_data[1][i]]);
+    let unique_word_scores = new Map(zipped_word_score_data);
+    let max_word_score = unique_word_scores.values().reduce((a, b) => a + b, 0);
+    document.getElementById("max-score").textContent = max_word_score
 })
 
-// Calculate max score
-let word_score_data = words_datatable.columns([0,4]).data();
-let zipped_word_score_data = word_score_data[0].map((word, i) => [word, word_score_data[1][i]]);
-let unique_word_scores = new Map(zipped_word_score_data);
-let max_word_score = unique_word_scores.values().reduce((a, b) => a + b, 0);
-document.getElementById("max-score").textContent = max_word_score
 
 function get_active_dictionary_ids() {
     return Array
