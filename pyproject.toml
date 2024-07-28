@@ -12,7 +12,7 @@ python = "^3.8"
 flask = {extras = ["async"], version = "^3.0.3"}
 boggler = "^2.0.4"
 celery = "^5.2.7"
-certifi = "^2024.2.2"
+certifi = "^2024.07.04"
 jinja2 = "^3.1.4"
 requests = "^2.32.2"
 psycopg2-binary = "^2.9.9"
