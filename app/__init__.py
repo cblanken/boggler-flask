@@ -47,41 +47,42 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    data_dir = Path(app.config.get("DATA_DIR"))
+    data_dir.mkdir(exist_ok=True)
+
+    db_path = Path(data_dir, "boggler.sqlite")
+    try:
+        sqlite3.connect(db_path)
+    except Exception:
+        raise RuntimeError(f"Unable to create or connect to database at: {db_path}")
+
     def get_db() -> sqlite3.Connection | None:
         db = getattr(g, "_database", None)
         if db is None:
             try:
-                db = g._database = sqlite3.connect(
-                    app.config.get("SQLITE_DB", "app/db/boggler.sqlite")
-                )
+                setattr(g, "_database", sqlite3.connect(db_path))
+                db = g._database
             except sqlite3.OperationalError as e:
                 print(
-                    f'An error ocurred when attempting to connect to the database "{app.config.get("SQLITE_DB")}". Error: {e}'
+                    f"An error ocurred when attempting to connect to the database. Error: {e}"
                 )
+            except Exception as e:
+                # TODO: fix exception specificity
+                print(
+                    f"Application failed to connect or initialize database. Ensure the data directory is accessible and has appropriate permissions. Error: {e}"
+                )
+
         return db
 
     app.get_db = get_db
 
-    def init_db():
-        print("Initializing database...")
-        with app.app_context():
-            db = get_db()
-            with app.open_resource("db/schema.sql", mode="r") as f:
-                db.cursor().executescript(f.read())
-            db.commit()
-
-            load_default_dictionaries(db)
-
-    disable_init_file = Path(".db_no_init")
-    if app.config.get("INIT_DB") and not Path.exists(
-        disable_init_file, follow_symlinks=False
-    ):
-        Path.touch(disable_init_file)
-        init_db()
-
     def load_words():
         with app.app_context():
             db = get_db()
+            if db is None:
+                raise RuntimeError(
+                    f"Unable to load words into database. DB connection is {db}"
+                )
             app.__setattr__("words_by_alpha", {})
             print("Loading words into memory...")
             start = time()
@@ -93,7 +94,58 @@ def create_app(config_name):
                 f"Loaded dictionaries into memory in {(end - start):.4f} seconds with a size of {getsizeof(app.words_by_alpha) / 1024}MB"
             )
 
-    load_words()
+    def init_db():
+        print("Initializing database...")
+        with app.app_context():
+            db = get_db()
+            if db is None:
+                raise RuntimeError(
+                    f"The database could not be initialized because the DB connection is {db}"
+                )
+
+            with app.open_resource("db/schema.sql", mode="r") as f:
+                db.cursor().executescript(f.read())
+                db.commit()
+
+            load_default_dictionaries(db, data_dir)
+
+    # This file is necessary to prevent multiple threads
+    # from attempting to initialize the db simultaneously
+    disable_init_file = Path(".db_no_init")
+
+    try:
+        with app.app_context():
+            db = get_db()
+            if (
+                db is None or (app.config.get("INIT_DB")
+            ) and not disable_init_file.exists()):
+                disable_init_file.touch()
+                disable_init_file.chmod(0o660)
+                init_db()
+            
+            db = get_db()
+            curr = db.cursor()
+            table_names = [x[0] for x in curr.execute("SELECT name FROM sqlite_master").fetchall()]
+            db_has_tables = all(
+                [
+                    table in table_names
+                    for table in [
+                        "dictionaries",
+                        "words",
+                        "dictionary_words",
+                        "solved_boards",
+                    ]
+                ]
+            )
+
+            if not db_has_tables:
+                print("The database has not been properly initialized. Try starting the application with INIT_DB=1")
+                exit(1)
+
+            load_words()
+    except RuntimeError as e:
+        print(f"Unable to start application: {e}")
+        exit(1)
 
     if app.debug:
         DebugToolbarExtension(app)

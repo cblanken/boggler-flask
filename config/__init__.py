@@ -5,6 +5,7 @@ import os
 import secrets
 import string
 from werkzeug.middleware.proxy_fix import ProxyFix
+from pathlib import Path
 
 
 def get_secret():
@@ -15,7 +16,8 @@ def get_secret():
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY") or get_secret()
+    SECRET_KEY = os.environ.get("SECRET_KEY", get_secret())
+    DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
 
     @staticmethod
     def init_app(app):
@@ -25,23 +27,14 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     INIT_DB = os.environ.get("INIT_DB")
-    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/db/boggler.sqlite"
 
 
 class ProductionConfig(Config):
     DEBUG = False
     INIT_DB = os.environ.get("INIT_DB")
-    SQLITE_DB = os.environ.get("SQLITE_DB") or "app/db/boggler.sqlite"
 
     @classmethod
     def init_app(cls, app):
-        if cls.SQLITE_DB is None:
-            print(
-                "Incomplete configuration. A sqlite database file must be provided via the SQLITE_DB variable.",
-                file=sys.stderr,
-            )
-            sys.exit()
-
         Config.init_app(app)
         app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 

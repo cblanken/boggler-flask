@@ -14,6 +14,10 @@ def load_dictionary(words_file: Path, conn: sqlite3.Connection | None, dict_name
 
     curr = conn.cursor()
 
+    if not words_file.exists():
+        print(f"Unable to load dictionary word file at \"{words_file}\". File does not exist.")
+        return
+
     with open(words_file, encoding="utf-8") as f:
         max_chunk_size = 100_000
         chunk_i = 0
@@ -68,64 +72,40 @@ def load_dictionary(words_file: Path, conn: sqlite3.Connection | None, dict_name
                 break
 
 
-def load_default_dictionaries(conn: sqlite3.Connection | None):
+def load_default_dictionaries(conn: sqlite3.Connection | None, data_dir: Path):
     if conn is None:
         # TODO: log
         return
     start = time.time()
-    curr_dir = Path(__file__).parent
     load_dictionary(
-        Path(curr_dir, "../../wordlists/dwyl/words_alpha.txt"),
+        Path(data_dir, "wordlists/dwyl/words_alpha.txt"),
         conn,
         "dwyl",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/free_scrabble/free_scrabble.txt"),
+        Path(data_dir, "wordlists/free_scrabble/free_scrabble.txt"),
         conn,
         "free_scrabble",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/scrabble_2019/words_alpha.txt"),
+        Path(data_dir, "wordlists/scrabble_2019/words_alpha.txt"),
         conn,
         "scrabble_2019",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/sowpods/sowpods.txt"),
+        Path(data_dir, "wordlists/sowpods/sowpods.txt"),
         conn,
         "sowpods",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/twl06/twl06.txt"),
+        Path(data_dir, "wordlists/twl06/twl06.txt"),
         conn,
         "twl06",
     )
     load_dictionary(
-        Path(curr_dir, "../../wordlists/wordnik_2021_07_29/wordnik.txt"),
+        Path(data_dir, "wordlists/wordnik_2021_07_29/wordnik.txt"),
         conn,
         "wordnik_2021_07_29",
     )
     end = time.time()
     print(f"Loaded all dictionaries into database in {(end - start):.4f} seconds\n")
-
-
-if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        resp = input("Load all predefined dictionaries? (y/n): ")
-        db_path = Path(sys.argv[1].strip())
-        if re.match(r"^[Yy]$", resp):
-            load_default_dictionaries(db_path)
-    elif len(sys.argv) == 4:
-        load_dictionary(Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3].strip())
-    else:
-        print("Load one dictionary file:")
-        print(
-            "Usage: python load_dictionary.py <dictionary_file_path.txt> <sqlite_db.sqlite> <dictionary_name>"
-        )
-        print(
-            "The <dictionary_name> must match the dictionary name in the `dictionaries` table."
-        )
-
-        print()
-        print("Load all predefined dictionaries:")
-        print("Usage: python load_dictionary.py <sqlite_db.sqlite>")
-        sys.exit(0)
