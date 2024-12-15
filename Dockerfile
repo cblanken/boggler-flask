@@ -14,7 +14,6 @@ WORKDIR /home/boggler
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
-COPY wordlists wordlists
 COPY --chown=boggler:boggler app app
 COPY --chown=boggler:boggler data data
 COPY config config
