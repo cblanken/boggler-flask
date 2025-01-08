@@ -1,5 +1,6 @@
 .vscode
 venv
+.venv
 dump.rdb
 __pycache__
 *.sqlite
