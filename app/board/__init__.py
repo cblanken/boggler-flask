@@ -183,7 +183,7 @@ def solve():
     }
     try:
         data = post(
-            f'http://{request.server[0]}:{request.server[1]}{url_for("board.api_solve")}',
+            f'http://localhost:{request.server[1]}{url_for("board.api_solve")}',
             headers=headers,
             timeout=30,
             data=json.dumps(data),
