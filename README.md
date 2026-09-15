@@ -1,4 +1,10 @@
 # boggler-flask
+
+> [!IMPORTANT]
+> The Boggler Flask app has moved to [Codeberg](https://codeberg.org/about). Follow all future development at [https://codeberg.org/cblanken/boggler-flask](https://codeberg.org/cblanken/boggler-flask).
+
+----
+
 A [Flask](https://flask.palletsprojects.com) web app for solving the Boggle word game.
 
 ## Live-demo
